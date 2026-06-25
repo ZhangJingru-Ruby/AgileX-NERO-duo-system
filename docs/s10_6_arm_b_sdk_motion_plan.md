@@ -1,6 +1,7 @@
 # S10.6 Arm B SDK Single-Joint Motion Plan
 
-Status: dry-run accepted; execution pending.
+Status: accepted. SDK execution passed by operator observation and post-motion
+read-only snapshot.
 
 S10.5 Arm B Web first motion passed by operator confirmation and read-only
 snapshot validation. S10.6 tests direct SDK control on Arm B, matching the
@@ -98,6 +99,13 @@ Expected:
 - Script prints `S10.2 SDK single-joint step completed.`
 - Final status has no error flags.
 
+Actual execution result on 2026-06-25:
+
+- Operator report: real motion was observed successfully and execution was
+  smooth.
+- Full SDK execute terminal output was not pasted into the chat log, so exact
+  `after_step_deg` and `after_return_deg` values are not recorded here.
+
 ## Post-Execute Snapshot
 
 After execution, start dual-arm read-only validation and capture a new snapshot:
@@ -113,5 +121,23 @@ NERO_CONTAINER_NAME=nero-humble-s10b-sdk-snapshot \
     bash /workspace/nero/scripts/snapshot_ros_readonly_state.sh
 ```
 
-S10.6 passes only if SDK execution succeeds and the post-execute snapshot is
-clean for both arms.
+Actual post-execute snapshot on 2026-06-25:
+
+- Path: `docs/s9_ros_snapshots/20260625_074048/`.
+- Failed capture commands: `0`.
+- Topic list includes complete `/arm_a/...` and `/arm_b/...` feedback topics.
+- Arm A joint-state feedback: about `200 Hz`.
+- Arm B joint-state feedback: about `200 Hz`.
+- Arm A `err_status: 0`, all joint limits `false`, all joint communication
+  statuses `false`.
+- Arm B `err_status: 0`, all joint limits `false`, all joint communication
+  statuses `false`.
+- Arm B sampled joint positions in radians:
+  `[0.57246799465414, 1.3979563709698983, -0.30017917805050476,
+  0.36302848441482055, -1.2374035330789397, 0.37355281980434635,
+  0.16053538459843844]`.
+
+Acceptance:
+
+- S10.6 SDK execution is accepted.
+- S10.7 Arm B ROS motion may start after stopping the read-only driver.

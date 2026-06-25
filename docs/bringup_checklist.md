@@ -214,8 +214,11 @@
 - [x] S10.5 Web 复刻已通过。
 - [x] Arm B SDK J1 `+2 deg` dry-run 已通过且未运动。
 - [x] SDK dry-run 后 ROS 只读快照已保存：`docs/s9_ros_snapshots/20260625_072742/`。
-- [ ] Arm B SDK J1 `+2 deg` 低速运动通过并回原角。
-- [ ] SDK 动作后 ROS 只读快照已保存且正常。
+- [x] Arm B SDK J1 `+2 deg` 低速运动通过并回原角。
+- [x] SDK 动作后 ROS 只读快照已保存且正常：`docs/s9_ros_snapshots/20260625_074048/`。
+- [ ] 已阅读 `docs/s10_7_arm_b_ros_motion_plan.md`。
+- [ ] 双臂只读 driver 已停止。
+- [ ] Arm B ROS control driver 已以 `auto_enable:=true control_enabled:=true speed_percent:=5` 启动。
 - [ ] Arm B ROS `joint1 +2 deg` dry-run 已通过且未运动。
 - [ ] Arm B ROS `joint1 +2 deg` 低速运动通过并回原角。
 - [ ] ROS 动作后 ROS 只读快照已保存且正常。

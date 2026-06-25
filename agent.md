@@ -228,11 +228,18 @@ S10.5 Arm B status: accepted. Pre-motion audit
 post-Web/read-only snapshot `docs/s9_ros_snapshots/20260625_072129/` is clean,
 and the operator confirmed Arm B Web motion was normal.
 
-S10.6 Arm B status: SDK dry-run accepted. Dry-run used `can_arm_b`, firmware
-`v112`, J1 `+2 deg`, speed `5%`, and target differed only in J1. Read-only
-snapshot `docs/s9_ros_snapshots/20260625_072742/` is clean. Before SDK
-`--execute`, stop the dual-arm read-only driver so SDK is the only motion
-control source.
+S10.6 Arm B status: accepted. SDK dry-run used `can_arm_b`, firmware `v112`,
+J1 `+2 deg`, speed `5%`, and target differed only in J1. Operator confirmed SDK
+real motion was observed successfully and execution was smooth. Post-SDK
+snapshot `docs/s9_ros_snapshots/20260625_074048/` is clean. Full SDK execute
+terminal output was not pasted, so exact `after_step_deg` and `after_return_deg`
+values are not recorded.
+
+S10.7 prepared path: use `docs/s10_7_arm_b_ros_motion_plan.md`. Stop the
+dual-arm read-only driver, start only the Arm B ROS control driver with
+`namespace:=arm_b`, `can_port:=can_arm_b`, `auto_enable:=true`,
+`control_enabled:=true`, `speed_percent:=5`, then run the `/arm_b` dry-run
+before any ROS execute.
 
 ## Raw CAN Policy
 

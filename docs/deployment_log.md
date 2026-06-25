@@ -3385,3 +3385,78 @@ Open risks:
 Next:
 Stop dual-arm read-only, run the S10.6 SDK execute command, then capture a
 post-execute read-only snapshot.
+
+## 2026-06-25 - S10.6 Arm B SDK Motion Accepted And S10.7 Prepared
+
+Phase: S10 首次低速运动
+
+Goal:
+Accept Arm B SDK execution and prepare the Arm B ROS single-joint replication
+step.
+
+Action:
+Recorded the operator's SDK execution result, read post-SDK snapshot
+`docs/s9_ros_snapshots/20260625_074048/`, and created the S10.7 ROS plan.
+
+Commands / evidence:
+
+- Operator report: Arm B SDK real motion was observed successfully and execution
+  was smooth.
+- Full SDK execute terminal output was not pasted, so exact `after_step_deg`
+  and `after_return_deg` values are not recorded.
+- Post-SDK snapshot:
+  `docs/s9_ros_snapshots/20260625_074048/`.
+- Snapshot `README.md`: `Failed capture commands: 0`.
+- Topic list includes complete `/arm_a/...` and `/arm_b/...` feedback and
+  control topics.
+- Arm A joint-state frequency: about `200 Hz`.
+- Arm B joint-state frequency: about `200 Hz`.
+- Arm A `arm_status`: `err_status: 0`, all joint angle limits `false`, all
+  joint communication statuses `false`.
+- Arm B `arm_status`: `err_status: 0`, all joint angle limits `false`, all
+  joint communication statuses `false`.
+- Arm B sampled joint positions in radians:
+  `[0.57246799465414, 1.3979563709698983, -0.30017917805050476,
+  0.36302848441482055, -1.2374035330789397, 0.37355281980434635,
+  0.16053538459843844]`.
+- New ROS plan:
+  `docs/s10_7_arm_b_ros_motion_plan.md`.
+
+Result:
+
+- S10.6 Arm B SDK execution is accepted.
+- S10.7 Arm B ROS motion is prepared but not executed.
+
+Deployment choices:
+
+- S10.7 must start with dry-run, not execute.
+- Stop the dual-arm read-only driver before starting the Arm B ROS control
+  driver.
+- Start only the Arm B ROS control driver for S10.7:
+  `namespace:=arm_b`, `can_port:=can_arm_b`, `auto_enable:=true`,
+  `control_enabled:=true`, `speed_percent:=5`.
+- Keep the motion target as `joint1 +2 deg`, then return to original angle.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/current_bringup_status.md`,
+`docs/bringup_checklist.md`, `docs/deployment_log.md`,
+`docs/机器人部署与调试行动路线.md`,
+`docs/s10_6_arm_b_sdk_motion_plan.md`,
+`docs/s10_7_arm_b_ros_motion_plan.md`,
+`docs/s9_ros_snapshots/20260625_074048/`.
+
+Verification:
+Post-SDK snapshot is complete and clean for both arms.
+
+Route updates:
+Immediate next step is S10.7 ROS dry-run on `/arm_b`.
+
+Open risks:
+
+- ROS control driver uses `auto_enable:=true` and `control_enabled:=true`; keep
+  only Arm B control active.
+- Intentional emergency-stop recovery remains deferred.
+
+Next:
+Stop dual-arm read-only, start the Arm B ROS control driver, and run S10.7
+dry-run.
