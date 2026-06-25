@@ -3460,3 +3460,63 @@ Open risks:
 Next:
 Stop dual-arm read-only, start the Arm B ROS control driver, and run S10.7
 dry-run.
+
+## 2026-06-25 - S10.7 Arm B ROS Dry-Run Accepted
+
+Phase: S10 首次低速运动
+
+Goal:
+Accept the Arm B ROS `move_j` dry-run before real ROS execution.
+
+Action:
+Recorded the S10.7 dry-run output from `scripts/ros_single_joint_step.py`.
+
+Commands / evidence:
+
+- Dry-run command:
+  `NERO_CONTAINER_NAME=nero-humble-s10-ros-tool bash scripts/run_humble_container.sh python3 /workspace/nero/scripts/ros_single_joint_step.py --namespace arm_b --joint joint1 --delta-deg 2`
+- Namespace: `arm_b`.
+- Feedback topic: `/arm_b/feedback/joint_states`.
+- Command topic: `/arm_b/control/move_j`.
+- Current degrees:
+  `[32.798, 80.098, -17.204, 20.797, -70.9, 21.403, 9.198]`.
+- Target degrees:
+  `[34.798, 80.098, -17.204, 20.797, -70.9, 21.403, 9.198]`.
+- `pre_status`: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`.
+- Script ended with:
+  `Dry run only. Add --execute after the S10.3 safety gate is confirmed.`
+
+Result:
+
+- S10.7 ROS dry-run is accepted.
+- Target changes only Arm B `joint1` by `+2 deg`.
+- No ROS motion has been executed yet.
+
+Deployment choices:
+
+- Proceed to S10.7 ROS execution only if the Arm B ROS control driver remains
+  running and no other control source is active.
+- Keep the command as Arm B only, `joint1 +2 deg`, then return to original
+  angle.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/current_bringup_status.md`,
+`docs/bringup_checklist.md`, `docs/deployment_log.md`,
+`docs/机器人部署与调试行动路线.md`,
+`docs/s10_7_arm_b_ros_motion_plan.md`.
+
+Verification:
+Dry-run target changes only `joint1` by `+2 deg`; pre-status is healthy.
+
+Route updates:
+S10.7 ROS execution is pending.
+
+Open risks:
+
+- ROS control driver uses `auto_enable:=true control_enabled:=true`; keep only
+  the Arm B control driver active.
+- Intentional emergency-stop recovery remains deferred.
+
+Next:
+Run the S10.7 `--execute` command if the safety gate remains true.

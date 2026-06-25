@@ -241,6 +241,13 @@ dual-arm read-only driver, start only the Arm B ROS control driver with
 `control_enabled:=true`, `speed_percent:=5`, then run the `/arm_b` dry-run
 before any ROS execute.
 
+S10.7 dry-run is accepted. It used namespace `arm_b`, feedback topic
+`/arm_b/feedback/joint_states`, command topic `/arm_b/control/move_j`, changed
+only `joint1` from `32.798 deg` to `34.798 deg`, and reported `ctrl_mode=1`,
+`arm_status=0`, `mode_feedback=1`, `motion_status=0`. Next step is ROS execute
+only if the Arm B ROS control driver is still running and no other control
+source is active.
+
 ## Raw CAN Policy
 
 Raw CAN is not the default control path. Use raw CAN first for observation and

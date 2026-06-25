@@ -1,6 +1,6 @@
 # S10.7 Arm B ROS Single-Joint Motion Plan
 
-Status: prepared, not executed.
+Status: dry-run accepted; execution pending.
 
 S10.5 Arm B Web motion and S10.6 Arm B SDK motion have passed. S10.7 tests the
 ROS control layer on Arm B, matching the Arm A S10.3 path.
@@ -75,6 +75,21 @@ Expected:
 - Target differs from current only in `joint1` by `+2 deg`.
 - `pre_status` is printed.
 - No motion occurs.
+
+Actual dry-run result on 2026-06-25:
+
+- Namespace: `arm_b`.
+- Feedback topic: `/arm_b/feedback/joint_states`.
+- Command topic: `/arm_b/control/move_j`.
+- Current degrees:
+  `[32.798, 80.098, -17.204, 20.797, -70.9, 21.403, 9.198]`.
+- Target degrees:
+  `[34.798, 80.098, -17.204, 20.797, -70.9, 21.403, 9.198]`.
+- Target differs from current only in `joint1` by `+2 deg`.
+- `pre_status`: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`.
+- No motion occurred.
+- Dry-run is accepted.
 
 ## Terminal 2: Execute
 
