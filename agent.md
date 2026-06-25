@@ -175,10 +175,10 @@ These are the current deployment assumptions. Update them only when verified.
 | CAN bitrate | `1000000` |
 | Initial TCP offset | `[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]` |
 | Deployment mode | Ubuntu 20.04 host SDK/CAN-only + Docker ROS2 Humble |
-| Current live state | Arm A passed S10 Web/SDK/ROS first-motion ladder and S10.4 no-motion closure; Arm B passed through S9 and S10.5 Web replication is prepared |
+| Current live state | S10 complete: Arm A and Arm B both passed Web/SDK/ROS low-speed single-joint motion and final control-source closure |
 | Observed Web model | `7ax`, interpreted as one NERO 7-axis arm/controller per physical arm |
 | Observed Web footer version | `v1.121`; current SDK firmware selector is `v112` |
-| Current next phase | S10.5 Arm B Web first-motion replication |
+| Current next phase | S11 dual-arm experiment baseline and coordinate closure |
 
 Current Web evidence shows one set of joint tabs, `关节1` through `关节7`.
 Treat this as normal for one NERO 7-axis arm/controller. The physical setup has
@@ -249,6 +249,13 @@ tolerance, and final status was `ctrl_mode=1`, `arm_status=0`,
 `32.797 deg`, consistent with settled return. Next step is S10.8 closure:
 stop/account for Arm B ROS control and audit active control sources before any
 broader motion phase.
+
+S10.8 status: accepted. Final control-source audit
+`docs/s10_8_control_source_audit_live_20260625_155538.txt` shows A/B CAN
+UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker containers, and no NERO host
+processes. S10 is complete. Next phase is S11 dual-arm experiment baseline:
+define `lab_world`, measure both base transforms, establish static TF, and
+create logging/rosbag rules before any coordinated dual-arm motion.
 
 ## Raw CAN Policy
 

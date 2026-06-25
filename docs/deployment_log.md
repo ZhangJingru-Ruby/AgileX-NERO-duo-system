@@ -3600,3 +3600,62 @@ Open risks:
 Next:
 Stop/account for Arm B ROS control driver, run the control-source audit, and
 record S10.8 closure before any broader motion phase.
+
+## 2026-06-25 - S10.8 Dual-Arm First-Motion Closure Accepted
+
+Phase: S10 首次低速运动
+
+Goal:
+Close S10 after both arms passed Web, SDK, and ROS first-motion ladders.
+
+Action:
+Recorded the final control-source audit and updated the project route to enter
+S11 dual-arm experiment baseline.
+
+Commands / evidence:
+
+- Final audit saved to:
+  `docs/s10_8_control_source_audit_live_20260625_155538.txt`.
+- `can_arm_a`: UP, LOWER_UP, ERROR-ACTIVE, bitrate `1000000`.
+- `can_arm_b`: UP, LOWER_UP, ERROR-ACTIVE, bitrate `1000000`.
+- NERO-related Docker containers: none.
+- NERO-related host processes: none.
+- S10 closure document:
+  `docs/s10_8_dual_arm_first_motion_closure.md`.
+
+Result:
+
+- S10 is complete.
+- Arm A and Arm B both passed Web, SDK, and ROS low-speed single-joint motion.
+- No Web, SDK, or ROS motion process remains active.
+- CAN interfaces may remain UP for the next phase.
+
+Deployment choices:
+
+- Do not proceed directly to coordinated dual-arm motion.
+- Next phase is S11 dual-arm experiment baseline and coordinate closure.
+- Former S11/S12 route items are renumbered: end-effector work moves to S14,
+  and manipulation application integration moves to S15.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/current_bringup_status.md`,
+`docs/bringup_checklist.md`, `docs/deployment_log.md`,
+`docs/机器人部署与调试行动路线.md`,
+`docs/s10_8_control_source_audit_live_20260625_155538.txt`,
+`docs/s10_8_dual_arm_first_motion_closure.md`.
+
+Verification:
+Final audit is clean and confirms no active NERO Docker or host control
+process.
+
+Route updates:
+S10 accepted and closed. S11 dual-arm experiment baseline is next.
+
+Open risks:
+
+- Intentional emergency-stop recovery remains deferred.
+- Dual-arm coordinated motion has not been tested.
+- External lab-frame transforms remain unmeasured.
+
+Next:
+Create and execute the S11 baseline plan.

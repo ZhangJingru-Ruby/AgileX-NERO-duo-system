@@ -1,0 +1,31 @@
+S10.4 control-source audit
+Timestamp: 2026-06-25T15:55:38+08:00
+
+CAN interfaces:
+  23: can_arm_a: <NOARP,UP,LOWER_UP,ECHO> mtu 16 qdisc pfifo_fast state UP mode DEFAULT group default qlen 10
+      link/can  promiscuity 0 minmtu 0 maxmtu 0
+      can state ERROR-ACTIVE restart-ms 0
+      bitrate 1000000 sample-point 0.750
+      tq 62 prop-seg 5 phase-seg1 6 phase-seg2 4 sjw 1
+      gs_usb: tseg1 1..16 tseg2 1..8 sjw 1..4 brp 1..1024 brp-inc 1
+      clock 48000000 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535
+  21: can_arm_b: <NOARP,UP,LOWER_UP,ECHO> mtu 16 qdisc pfifo_fast state UP mode DEFAULT group default qlen 10
+      link/can  promiscuity 0 minmtu 0 maxmtu 0
+      can state ERROR-ACTIVE restart-ms 0
+      bitrate 1000000 sample-point 0.750
+      tq 62 prop-seg 5 phase-seg1 6 phase-seg2 4 sjw 1
+      gs_usb: tseg1 1..16 tseg2 1..8 sjw 1..4 brp 1..1024 brp-inc 1
+      clock 48000000 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535
+
+NERO-related Docker containers:
+  none
+
+NERO-related host processes:
+  none
+
+Expected S10.4 handoff state before Arm B motion:
+  - no Arm A ROS control container running
+  - no SDK motion script running
+  - no Web motion command active
+  - CAN interfaces may remain UP
+  - dual read-only driver may run only for monitoring; stop it before Arm B Web/SDK/ROS motion

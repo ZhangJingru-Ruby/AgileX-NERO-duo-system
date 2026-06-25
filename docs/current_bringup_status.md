@@ -39,7 +39,8 @@ Last updated: 2026-06-25
 | S7 SDK 只读 | Complete by operator report | SDK read-only checks passed on `can_arm_a` and `can_arm_b`. |
 | S8 ROS 只读 | Complete; coordinate alignment deferred to S9 | `/arm_a` and `/arm_b` feedback topics publish at about 200 Hz; arm status has `err_status: 0`; RViz follow is normal after the dual ROS read-only driver terminal is started first. |
 | S9 标定与配置 | Complete by operator confirmation and ROS revalidation | Load mode was changed by operator report; Arm A CAN recovered after USB-CAN replug/reactivation; S9.3 snapshot `20260625_054435` has complete A/B feedback, `err_status: 0`, no joint limits, no joint communication errors, and about 200 Hz joint-state feedback. |
-| S10 首次低速运动 | Arm A ladder accepted; Arm B Web/SDK/ROS ladder accepted | Web, SDK, and ROS J1 motion passed on Arm A. Arm B Web motion is confirmed normal and snapshot `20260625_072129` is clean. Arm B SDK motion passed with post-SDK snapshot `20260625_074048` clean. Arm B ROS motion passed with post-ROS snapshot `20260625_074953` clean. |
+| S10 首次低速运动 | Complete for both arms | Web, SDK, and ROS J1 motion passed on Arm A and Arm B. Final S10.8 audit `20260625_155538` shows both CAN interfaces UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker container, and no NERO host process. |
+| S11 双臂实验基线 | Prepared as next phase | Next phase will define `lab_world`, measure `lab_world -> arm_a/base_link` and `lab_world -> arm_b/base_link`, establish static TF, and define logging/rosbag evidence rules before dual-arm coordination. |
 
 ## S0 Evidence
 
@@ -115,10 +116,10 @@ S2 offline environment result:
 S10.1 Web first motion, S10.2 SDK motion, S10.3 ROS motion, and S10.4
 no-motion control-source closure have passed for Arm A. S10.3 post-ROS snapshot
 `20260625_064243` is clean, and live S10.4 audit `20260625_150438` is clean.
-The git baseline commit `fb8a262` exists. S10.5 Arm B Web motion, S10.6 Arm B
-SDK motion, and S10.7 Arm B ROS motion are accepted. Post-ROS snapshot
-`20260625_074953` is clean. The immediate next step is S10.8 closure before
-moving to any broader dual-arm, Cartesian, MoveIt, or dexterous-hand phase.
+The git baseline commit `fb8a262` exists. S10 is complete for both arms:
+Arm A and Arm B both passed Web, SDK, and ROS low-speed single-joint motion.
+Final S10.8 audit `20260625_155538` is clean. The immediate next step is S11
+dual-arm experiment baseline and coordinate closure.
 
 Next checks:
 
@@ -130,8 +131,8 @@ Next checks:
   starting the next controlled test.
 - Do not expand to Cartesian, MoveIt, MIT/JS, dual-arm coordinated motion, or
   dexterous-hand actuation yet.
-- Next recommended action: stop/account for the Arm B ROS control driver, record
-  S10.8 closure, then decide the next phase.
+- Next recommended action: start S11 by defining `lab_world`, measuring the two
+  base transforms, and creating a static TF/logging baseline.
 - Actual SDK speed was `10%`, not the planned `5%`; keep future first tests at
   or below `10%`, and prefer `5%` unless observability requires otherwise.
 - Do not use SDK motion, ROS `/control/*`, raw CAN motion, MoveIt execute,
@@ -141,7 +142,7 @@ Next checks:
   of the earlier `6`, while `err_status` and all flags remain healthy.
 - S10.4 accepted handoff state is `handoff_to_arm_b`.
 - Do not move into dual-arm coordination, Cartesian, MoveIt, or dexterous-hand
-  motion until S10.8 closure is complete.
+  motion until S11/S12 baselines are accepted.
 
 ## S2 Discovery Result
 

@@ -225,12 +225,40 @@
 
 ## S10.8 双臂首次运动收束
 
-- [ ] Arm B ROS control driver 已停止或确认未运行。
-- [ ] 已运行 `bash scripts/s10_control_source_audit.sh`。
-- [ ] 已确认无 Web/SDK/ROS motion 脚本运行。
-- [ ] 已记录下一阶段选择。
+- [x] Arm B ROS control driver 已停止或确认未运行。
+- [x] 已运行 `bash scripts/s10_control_source_audit.sh`。
+- [x] 已确认无 Web/SDK/ROS motion 脚本运行。
+- [x] 已记录下一阶段选择：S11 双臂实验基线与坐标闭环。
 
-## S11 末端执行器
+## S11 双臂实验基线与坐标闭环
+
+- [ ] 已定义 `lab_world` 坐标系。
+- [ ] 已测量 `lab_world -> arm_a/base_link`。
+- [ ] 已测量 `lab_world -> arm_b/base_link`。
+- [ ] 已记录测量方法、工具、误差估计和照片。
+- [ ] 已建立静态 TF 发布方案。
+- [ ] RViz 中双臂相对位置与实物一致。
+- [ ] 当前 TCP 定义已记录，裸臂阶段保持默认 TCP。
+- [ ] rosbag / snapshot / 实验日志命名规范已确定。
+
+## S12 控制隔离与日志闭环
+
+- [ ] 向 Arm A 下发小命令时 Arm B 不动。
+- [ ] 向 Arm B 下发小命令时 Arm A 不动。
+- [ ] 同时启动两个控制 driver 时 namespace、CAN、日志互不混淆。
+- [ ] 每次实验均记录命令、反馈、状态、rosbag、快照和 git commit。
+- [ ] 异常停止和恢复记录格式已确定。
+
+## S13 低风险双臂协同原语
+
+- [ ] 双臂同时只读运行稳定。
+- [ ] 双臂同时 enable / hold，无位移。
+- [ ] A 小动、B 保持通过。
+- [ ] B 小动、A 保持通过。
+- [ ] A/B 同时小幅、互不接近 joint-space 动作通过。
+- [ ] 未进入笛卡尔、MoveIt 或 manipulation primitive 之前已完成快照验收。
+
+## S14 末端执行器
 
 - [ ] 末端工具机械固定完成。
 - [ ] 末端工具供电和通讯线无干涉。
@@ -241,7 +269,7 @@
 - [ ] 低速小行程动作正常。
 - [ ] 无过流、过温、传感器异常。
 
-## S12 应用集成
+## S15 应用集成
 
 - [ ] MoveIt 先规划不执行，轨迹可达且不越限。
 - [ ] 应用节点有速度、加速度、限位保护。
