@@ -3659,3 +3659,70 @@ Open risks:
 
 Next:
 Create and execute the S11 baseline plan.
+
+## 2026-06-25 - S11 Dual-Arm Experiment Baseline Plan Prepared
+
+Phase: S11 双臂实验基线与坐标闭环
+
+Goal:
+Prepare the acceptance-first plan for turning the two individually validated
+arms into a measurable dual-arm experiment platform.
+
+Action:
+Created the S11 plan and synchronized the route, current status, README, agent
+rules, and environment variables with the new phase ordering.
+
+Commands / evidence:
+
+- S11 plan and templates:
+  - `docs/s11_dual_arm_experiment_baseline.md`
+  - `docs/s11_measurement_notes.md`
+  - `docs/s11_static_tf_plan.md`
+  - `docs/s11_rosbag_logging_plan.md`
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile examples/nero_read_state.py examples/nero_sdk_single_joint_step.py scripts/ros_single_joint_step.py`
+- S10 closure commit exists before this planning step:
+  `3507a8a Close S10 dual-arm first motion`.
+
+Result:
+
+- S11 is prepared but not executed.
+- `lab_world`, measured A/B base transforms, static TF, TCP baseline, rosbag
+  topics, and experiment-run directory conventions are now explicit.
+- Measurement, static TF, and rosbag/logging templates exist with `TBD` fields
+  awaiting physical execution.
+- End-effector installation is renumbered to S14, and application integration
+  is renumbered to S15.
+
+Deployment choices:
+
+- Do not expand motion during S11.
+- Keep current ROS `effector_type:=none` and TCP offset zero until a physical
+  end effector is installed and measured.
+- Require static TF and logging evidence before S12 control-isolation tests.
+
+Files changed:
+`agent.md`, `README.md`, `config/nero.env`, `docs/current_bringup_status.md`,
+`docs/deployment_log.md`, `docs/机器人部署与调试行动路线.md`,
+`docs/s11_dual_arm_experiment_baseline.md`, `docs/s11_measurement_notes.md`,
+`docs/s11_static_tf_plan.md`, `docs/s11_rosbag_logging_plan.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile examples/nero_read_state.py examples/nero_sdk_single_joint_step.py scripts/ros_single_joint_step.py`
+
+Route updates:
+S11, S12, and S13 are now explicit pre-manipulation phases. Former end-effector
+and application phases are S14 and S15.
+
+Open risks:
+
+- `lab_world` has not yet been physically marked.
+- A/B base transforms have not yet been measured.
+- Static TF values are not yet available.
+
+Next:
+Run document and script checks, commit the S11 plan, then execute S11
+measurement and TF validation.

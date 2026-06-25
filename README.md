@@ -1,6 +1,6 @@
 # NERO Arm 部署与调试工作区
 
-这个目录用于沉淀 NERO 七自由度机械臂的本地部署、调试、验收与注意事项。当前目标不是直接运动真机，而是先把资料、环境、模型、CAN、SDK、ROS 和安全闸口整理清楚。
+这个目录用于沉淀 NERO 七自由度双臂系统的本地部署、调试、验收与注意事项。当前 S10 双臂首次低速运动已关闭通过，下一目标是建立 S11 双臂实验坐标、TF 和日志基线。
 
 ## 必读入口
 
@@ -10,6 +10,7 @@
 - [部署日志](docs/deployment_log.md)：每一步实际执行、证据、选择和风险记录。
 - [上游仓库分析](docs/upstream_repo_analysis.md)：本地 clone 的 AgileX ROS/SDK/URDF 仓库证据与 ROS 版本决策。
 - [S2 混合部署方案](docs/s2_hybrid_host_container_plan.md)：共享 Ubuntu 20.04 主机 + Docker ROS2 Humble 的执行方案。
+- [S11 双臂实验基线](docs/s11_dual_arm_experiment_baseline.md)：`lab_world`、双臂 base TF、TCP 和日志/rosbag 规则。
 - [Setup Framework](docs/setup_framework.md)：工程分层、关键事实、配置边界。
 - [Bring-Up Checklist](docs/bringup_checklist.md)：现场逐项检查表。
 - [NERO 用户手册](docs/nero%20用户手册.md)：语雀导出的用户手册文本。
@@ -124,6 +125,6 @@ python3 examples/nero_read_state.py --connect --channel can0 --firmware v112
 
 - 供电使用 DC24V；外部供电电压不得超过 25V，电流能力不小于 10A。
 - 末端 XT30 2+2 接口为 24V、2A MAX，末端 CAN 只适配松灵自有设备。
-- 首次真机调试只做 Web/SDK/ROS 反馈读取，不直接下发运动命令。
+- S10 首次低速运动已通过；后续任何新控制路径或更大动作仍需按阶段闸口单独验收。
 - 不在原点/奇异点附近做笛卡尔点位运动；先用低速关节运动离开奇异位形。
 - MIT 控制、固件升级、零点设置、主从联动、碰撞等级修改属于高风险操作，单独审批后执行。

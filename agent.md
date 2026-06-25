@@ -24,6 +24,7 @@ Use sources in this order:
    - `docs/setup_framework.md`
    - `docs/s2_hybrid_host_container_plan.md`
    - `docs/s9_configuration_review.md`
+   - `docs/s11_dual_arm_experiment_baseline.md`
    - `docs/nero 用户手册.md`
    - `docs/机械臂通信协议V1.2.1.xlsx`
    - `docs/pics/`
@@ -256,6 +257,11 @@ UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker containers, and no NERO host
 processes. S10 is complete. Next phase is S11 dual-arm experiment baseline:
 define `lab_world`, measure both base transforms, establish static TF, and
 create logging/rosbag rules before any coordinated dual-arm motion.
+
+S11 prepared path: use `docs/s11_dual_arm_experiment_baseline.md`. S11 is a
+coordinate, TF, TCP, and logging baseline phase, not a motion-expansion phase.
+Keep `effector_type:=none` and TCP offset zero until an end effector is
+installed and measured. End-effector installation is now S14, not S11.
 
 ## Raw CAN Policy
 

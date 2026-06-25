@@ -40,7 +40,7 @@ Last updated: 2026-06-25
 | S8 ROS 只读 | Complete; coordinate alignment deferred to S9 | `/arm_a` and `/arm_b` feedback topics publish at about 200 Hz; arm status has `err_status: 0`; RViz follow is normal after the dual ROS read-only driver terminal is started first. |
 | S9 标定与配置 | Complete by operator confirmation and ROS revalidation | Load mode was changed by operator report; Arm A CAN recovered after USB-CAN replug/reactivation; S9.3 snapshot `20260625_054435` has complete A/B feedback, `err_status: 0`, no joint limits, no joint communication errors, and about 200 Hz joint-state feedback. |
 | S10 首次低速运动 | Complete for both arms | Web, SDK, and ROS J1 motion passed on Arm A and Arm B. Final S10.8 audit `20260625_155538` shows both CAN interfaces UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker container, and no NERO host process. |
-| S11 双臂实验基线 | Prepared as next phase | Next phase will define `lab_world`, measure `lab_world -> arm_a/base_link` and `lab_world -> arm_b/base_link`, establish static TF, and define logging/rosbag evidence rules before dual-arm coordination. |
+| S11 双臂实验基线 | Prepared as next phase | Plan and templates exist for `lab_world`, A/B base measurements, static TF, and rosbag/logging. Physical measurements and TF validation have not been executed yet. |
 
 ## S0 Evidence
 
@@ -63,13 +63,13 @@ Manual image index:
 | CAN wiring | `docs/pics/3.1can线链接.jpg` | Red/black go to power adapter branch; yellow/blue go to USB-CAN branch. |
 | CAN terminal | `docs/pics/3.1can线链接1.png` | Wire cores must be clamped at the terminal center; yellow is CAN_H, blue is CAN_L, final check follows terminal labels. |
 | Power sequence | `docs/pics/3.2上电使用说明.png` | Physical harness/power connection is completed before USB-CAN host-side setup. |
-| Dexterous hand size | `docs/pics/4 灵巧手示意图.png` | Hand clearance and flange dimensions are available for S11. |
-| Dexterous hand flange | `docs/pics/5 灵巧手法兰安装示意图.png` | Dexterous hand flange mounting details are available for S11. |
+| Dexterous hand size | `docs/pics/4 灵巧手示意图.png` | Hand clearance and flange dimensions are available for S14. |
+| Dexterous hand flange | `docs/pics/5 灵巧手法兰安装示意图.png` | Dexterous hand flange mounting details are available for S14. |
 
 S0 result:
 
 - No manual-image blocker remains for S2-S4.
-- Dexterous hand images are available, but dexterous hand installation remains deferred to S11.
+- Dexterous hand images are available, but dexterous hand installation remains deferred to S14.
 - Initial ROS `effector_type` remains `none`.
 - Initial TCP offset remains zero until a tool is installed and measured.
 
@@ -202,7 +202,7 @@ Observed on 2026-06-24:
 - Bare-arm model structure: robot `nero`, 9 links, 8 joints, chain
   `world -> base_link -> link1 -> ... -> link7`.
 - Gripper and Revo2/dexterous-hand model variants also pass `xacro` and
-  `check_urdf`, but they remain deferred to S11.
+  `check_urdf`, but they remain deferred to S14.
 - RViz GUI verification succeeded from the real desktop terminal:
   `rviz2` started, OpenGL `4.5` was reported, and the model segments
   `base_link`, `link1` through `link7`, and `world` were loaded.
