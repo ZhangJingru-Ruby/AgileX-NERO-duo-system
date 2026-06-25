@@ -3167,3 +3167,69 @@ Open risks:
 
 Next:
 Run the first commit.
+
+## 2026-06-25 - Arm B First-Motion Replication Prepared
+
+Phase: S10 首次低速运动
+
+Goal:
+Start Arm B motion validation after Arm A Web/SDK/ROS ladder, S10.4 closure,
+and the first git baseline commit.
+
+Action:
+Created the Arm B first-motion replication plan and updated project status,
+checklist, route, and environment defaults.
+
+Commands / evidence:
+
+- New procedure: `docs/s10_5_arm_b_first_motion_plan.md`.
+- Current accepted handoff state from S10.4: `handoff_to_arm_b`.
+- Arm B identity:
+  - Web SSID: `agx-7ax-armB`
+  - CAN: `can_arm_b`
+  - ROS namespace: `arm_b`
+  - USB bus: `1-11:1.0`
+- Baseline git commit exists:
+  `fb8a262 Initial NERO bring-up baseline`.
+
+Result:
+
+- S10.5 is prepared but not executed.
+- The next real motion is Arm B Web-only J1 `+2 deg`, then return to the
+  original angle.
+- SDK and ROS Arm B motion remain pending until S10.5 Web motion and post-Web
+  read-only snapshot pass.
+
+Deployment choices:
+
+- Use J1 again because Arm A showed J7 is hard to observe visually and J1
+  `+2 deg` is observable.
+- Keep the Arm B Web first step narrower than Arm A's actual Web result: one
+  joint only, not all 7 degrees of freedom.
+- Require a fresh control-source audit before touching Arm B Web motion.
+- Require a post-Web dual-arm ROS read-only snapshot before SDK or ROS motion
+  on Arm B.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/current_bringup_status.md`,
+`docs/bringup_checklist.md`, `docs/deployment_log.md`,
+`docs/机器人部署与调试行动路线.md`,
+`docs/s10_5_arm_b_first_motion_plan.md`.
+
+Verification:
+`bash -n scripts/*.sh` passed. Python helper scripts passed `py_compile`.
+S10.5 references were checked across status, checklist, route, agent rules, and
+environment defaults. No Arm B motion has been sent.
+
+Route updates:
+Immediate next step is S10.5 Arm B Web first motion.
+
+Open risks:
+
+- Arm B J1 swept area must be checked independently; do not assume Arm A
+  clearance applies to Arm B.
+- Operator must verify Web is connected to Arm B, not Arm A.
+- Intentional emergency-stop recovery remains deferred.
+
+Next:
+Run the S10.5 pre-motion gate and Web J1 `+2 deg` return test on Arm B.

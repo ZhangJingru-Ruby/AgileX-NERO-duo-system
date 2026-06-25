@@ -39,7 +39,7 @@ Last updated: 2026-06-25
 | S7 SDK 只读 | Complete by operator report | SDK read-only checks passed on `can_arm_a` and `can_arm_b`. |
 | S8 ROS 只读 | Complete; coordinate alignment deferred to S9 | `/arm_a` and `/arm_b` feedback topics publish at about 200 Hz; arm status has `err_status: 0`; RViz follow is normal after the dual ROS read-only driver terminal is started first. |
 | S9 标定与配置 | Complete by operator confirmation and ROS revalidation | Load mode was changed by operator report; Arm A CAN recovered after USB-CAN replug/reactivation; S9.3 snapshot `20260625_054435` has complete A/B feedback, `err_status: 0`, no joint limits, no joint communication errors, and about 200 Hz joint-state feedback. |
-| S10 首次低速运动 | Arm A Web/SDK/ROS ladder and S10.4 closure accepted | Web first motion, SDK J1 motion, and ROS J1 motion passed on Arm A. Post-ROS snapshot `20260625_064243` is clean for A/B with about 200 Hz feedback, `err_status: 0`, no joint limits, and no joint communication errors. Live S10.4 audit `20260625_150438` shows both CAN interfaces UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker container, and no NERO host control process. |
+| S10 首次低速运动 | Arm A Web/SDK/ROS ladder and S10.4 closure accepted; Arm B S10.5 prepared | Web first motion, SDK J1 motion, and ROS J1 motion passed on Arm A. Post-ROS snapshot `20260625_064243` is clean for A/B with about 200 Hz feedback, `err_status: 0`, no joint limits, and no joint communication errors. Live S10.4 audit `20260625_150438` is clean. Arm B Web first-motion replication is prepared in `docs/s10_5_arm_b_first_motion_plan.md`. |
 
 ## S0 Evidence
 
@@ -115,21 +115,21 @@ S2 offline environment result:
 S10.1 Web first motion, S10.2 SDK motion, S10.3 ROS motion, and S10.4
 no-motion control-source closure have passed for Arm A. S10.3 post-ROS snapshot
 `20260625_064243` is clean, and live S10.4 audit `20260625_150438` is clean.
-The immediate next step is Arm B replication of the same minimal Web/SDK/ROS
-ladder, unless we first choose to make a git baseline commit.
+The git baseline commit `fb8a262` exists. The immediate next step is S10.5 Arm B
+Web first-motion replication.
 
 Next checks:
 
-- Do not send more Web motion just to "try more"; preserve the successful state
-  and avoid unnecessary accumulated risk.
+- Do not send more Arm A Web motion just to "try more"; preserve the successful
+  state and avoid unnecessary accumulated risk.
 - Record whether the final Arm A pose is intentionally acceptable or whether it
   should later be returned to a known home/park pose under a separate command.
 - Keep the system in dual-arm read-only validation state unless deliberately
   starting the next controlled test.
 - Do not expand to Cartesian, MoveIt, MIT/JS, dual-arm coordinated motion, or
   dexterous-hand actuation yet.
-- Next recommended decision: make a git baseline commit, then run Arm B through
-  the same minimal Web/SDK/ROS single-joint ladder.
+- Next recommended action: run S10.5 Arm B Web first motion using J1 `+2 deg`
+  and return, then capture a dual-arm ROS read-only snapshot.
 - Actual SDK speed was `10%`, not the planned `5%`; keep future first tests at
   or below `10%`, and prefer `5%` unless observability requires otherwise.
 - Do not use SDK motion, ROS `/control/*`, raw CAN motion, MoveIt execute,
@@ -138,6 +138,8 @@ Next checks:
 - Monitor the state-machine difference: Arm A `arm_status` is now `0` instead
   of the earlier `6`, while `err_status` and all flags remain healthy.
 - S10.4 accepted handoff state is `handoff_to_arm_b`.
+- Read `docs/s10_5_arm_b_first_motion_plan.md` before touching Arm B Web
+  motion controls.
 
 ## S2 Discovery Result
 

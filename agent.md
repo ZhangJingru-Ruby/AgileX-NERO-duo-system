@@ -175,10 +175,10 @@ These are the current deployment assumptions. Update them only when verified.
 | CAN bitrate | `1000000` |
 | Initial TCP offset | `[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]` |
 | Deployment mode | Ubuntu 20.04 host SDK/CAN-only + Docker ROS2 Humble |
-| Current live state | Arm A passed S10 Web/SDK/ROS first-motion ladder and S10.4 no-motion closure; Arm B passed through S9 and is next for motion replication |
+| Current live state | Arm A passed S10 Web/SDK/ROS first-motion ladder and S10.4 no-motion closure; Arm B passed through S9 and S10.5 Web replication is prepared |
 | Observed Web model | `7ax`, interpreted as one NERO 7-axis arm/controller per physical arm |
 | Observed Web footer version | `v1.121`; current SDK firmware selector is `v112` |
-| Current next phase | Git baseline commit, then Arm B Web/SDK/ROS first-motion replication |
+| Current next phase | S10.5 Arm B Web first-motion replication |
 
 Current Web evidence shows one set of joint tabs, `关节1` through `关节7`.
 Treat this as normal for one NERO 7-axis arm/controller. The physical setup has
@@ -222,6 +222,12 @@ host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at
 `docs/s10_4_control_source_audit_live_20260625_150438.txt`. S10.4 is accepted
 with handoff state `handoff_to_arm_b`.
+
+S10.5 prepared path: use `docs/s10_5_arm_b_first_motion_plan.md` for Arm B Web
+first motion. Only Arm B may move, Web is the only motion control source, and
+the first target is Arm B J1 `+2 deg` then return to the original angle. After
+the Web step, capture a dual-arm ROS read-only snapshot before SDK or ROS
+motion on Arm B.
 
 ## Raw CAN Policy
 

@@ -191,6 +191,34 @@
 - [x] 已记录交接状态，推荐为 `handoff_to_arm_b`。
 - [x] S10.4 停止/恢复/安全收束流程通过。
 
+## S10.5 Arm B 首次 Web 运动复刻
+
+- [ ] 已阅读 `docs/s10_5_arm_b_first_motion_plan.md`。
+- [ ] 已确认当前操作对象为 Arm B。
+- [ ] 已连接 Arm B Web：`agx-7ax-armB` / `http://192.168.31.1/`。
+- [ ] 已运行 `bash scripts/s10_control_source_audit.sh` 并确认无 NERO 控制进程。
+- [ ] `can_arm_b` 为 UP、ERROR-ACTIVE、bitrate `1000000`。
+- [ ] Arm B J1 扫掠区域空旷。
+- [ ] Arm A 未被命令。
+- [ ] Web 是唯一运动控制源。
+- [ ] Web 速度已设为最低可用值，优先 `5%` 或更低。
+- [ ] Arm B Web 使能成功。
+- [ ] Arm B J1 `+2 deg` 小角度运动成功。
+- [ ] Arm B J1 已回到原角度。
+- [ ] Web 停止后无主动运动命令。
+- [ ] Arm B Web 动作后 ROS 只读快照已保存。
+- [ ] 动作后 A/B `err_status: 0`，关节限位和通信异常均为 `false`。
+
+## S10.6/S10.7 Arm B SDK/ROS 复刻
+
+- [ ] S10.5 Web 复刻已通过。
+- [ ] Arm B SDK J1 `+2 deg` dry-run 已通过且未运动。
+- [ ] Arm B SDK J1 `+2 deg` 低速运动通过并回原角。
+- [ ] SDK 动作后 ROS 只读快照已保存且正常。
+- [ ] Arm B ROS `joint1 +2 deg` dry-run 已通过且未运动。
+- [ ] Arm B ROS `joint1 +2 deg` 低速运动通过并回原角。
+- [ ] ROS 动作后 ROS 只读快照已保存且正常。
+
 ## S11 末端执行器
 
 - [ ] 末端工具机械固定完成。
