@@ -1,6 +1,7 @@
 # S10.5 Arm B First-Motion Replication Plan
 
-Status: prepared, not executed.
+Status: live pre-motion audit and read-only snapshot are clean. Arm B Web J1
+motion result still needs explicit operator confirmation in the log.
 
 Arm A has passed Web, SDK, and ROS low-speed first motion. S10.4 no-motion
 control-source closure is accepted. S10.5 starts the same ladder on Arm B, but
@@ -147,3 +148,37 @@ If S10.5 passes:
    `joint1 +2 deg`, then return.
 
 Do not start S10.6 until S10.5 has a clean post-Web snapshot.
+
+## S10.5 Live Evidence On 2026-06-25
+
+Pre-motion audit:
+
+- Saved output: `docs/s10_5_control_source_audit_live_20260625_152039.txt`.
+- `can_arm_a`: UP, LOWER_UP, ERROR-ACTIVE, bitrate `1000000`.
+- `can_arm_b`: UP, LOWER_UP, ERROR-ACTIVE, bitrate `1000000`.
+- NERO-related Docker containers: none.
+- NERO-related host processes: none.
+
+Read-only snapshot:
+
+- Path: `docs/s9_ros_snapshots/20260625_072129/`.
+- Failed capture commands: `0`.
+- Topic list includes complete `/arm_a/...` and `/arm_b/...` feedback topics.
+- Arm A joint-state feedback: about `200 Hz`.
+- Arm B joint-state feedback: about `200 Hz`.
+- Arm A `err_status: 0`, all joint limits `false`, all joint communication
+  statuses `false`.
+- Arm B `err_status: 0`, all joint limits `false`, all joint communication
+  statuses `false`.
+- Arm B sampled joint positions in radians:
+  `[0.5724505413616201, 1.3979912775549381, -0.3002140846355446,
+  0.3630110311223006, -1.2374035330789397, 0.37346555334174664,
+  0.16057029118347835]`.
+
+Acceptance note:
+
+- The audit and snapshot are accepted.
+- The chat log still needs one explicit operator statement confirming whether
+  Arm B Web J1 `+2 deg` motion happened, looked normal, and returned to the
+  original angle. Once that is confirmed, S10.5 can be closed and S10.6 SDK
+  dry-run can start.

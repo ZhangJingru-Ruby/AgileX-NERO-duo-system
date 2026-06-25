@@ -223,11 +223,13 @@ desktop-terminal audit then passed on 2026-06-25 and is saved at
 `docs/s10_4_control_source_audit_live_20260625_150438.txt`. S10.4 is accepted
 with handoff state `handoff_to_arm_b`.
 
-S10.5 prepared path: use `docs/s10_5_arm_b_first_motion_plan.md` for Arm B Web
-first motion. Only Arm B may move, Web is the only motion control source, and
-the first target is Arm B J1 `+2 deg` then return to the original angle. After
-the Web step, capture a dual-arm ROS read-only snapshot before SDK or ROS
-motion on Arm B.
+S10.5 Arm B status: pre-motion audit
+`docs/s10_5_control_source_audit_live_20260625_152039.txt` is clean and
+post-Web/read-only snapshot `docs/s9_ros_snapshots/20260625_072129/` is clean.
+Only Arm B may move, Web is the only S10.5 motion control source, and the first
+target is Arm B J1 `+2 deg` then return to the original angle. Before S10.6 SDK,
+obtain an explicit operator statement that the Arm B Web J1 motion actually
+happened, looked normal, and returned to the original angle.
 
 ## Raw CAN Policy
 

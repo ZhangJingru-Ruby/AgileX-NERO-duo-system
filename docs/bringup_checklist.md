@@ -196,8 +196,8 @@
 - [ ] 已阅读 `docs/s10_5_arm_b_first_motion_plan.md`。
 - [ ] 已确认当前操作对象为 Arm B。
 - [ ] 已连接 Arm B Web：`agx-7ax-armB` / `http://192.168.31.1/`。
-- [ ] 已运行 `bash scripts/s10_control_source_audit.sh` 并确认无 NERO 控制进程。
-- [ ] `can_arm_b` 为 UP、ERROR-ACTIVE、bitrate `1000000`。
+- [x] 已运行 `bash scripts/s10_control_source_audit.sh` 并确认无 NERO 控制进程。
+- [x] `can_arm_b` 为 UP、ERROR-ACTIVE、bitrate `1000000`。
 - [ ] Arm B J1 扫掠区域空旷。
 - [ ] Arm A 未被命令。
 - [ ] Web 是唯一运动控制源。
@@ -206,8 +206,8 @@
 - [ ] Arm B J1 `+2 deg` 小角度运动成功。
 - [ ] Arm B J1 已回到原角度。
 - [ ] Web 停止后无主动运动命令。
-- [ ] Arm B Web 动作后 ROS 只读快照已保存。
-- [ ] 动作后 A/B `err_status: 0`，关节限位和通信异常均为 `false`。
+- [x] Arm B Web 动作后 ROS 只读快照已保存：`docs/s9_ros_snapshots/20260625_072129/`。
+- [x] 动作后 A/B `err_status: 0`，关节限位和通信异常均为 `false`。
 
 ## S10.6/S10.7 Arm B SDK/ROS 复刻
 

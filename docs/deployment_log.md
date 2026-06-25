@@ -3233,3 +3233,79 @@ Open risks:
 
 Next:
 Run the S10.5 pre-motion gate and Web J1 `+2 deg` return test on Arm B.
+
+## 2026-06-25 - S10.5 Arm B Audit And Snapshot Clean
+
+Phase: S10 首次低速运动
+
+Goal:
+Record the Arm B S10.5 pre-motion audit and the following read-only validation
+snapshot.
+
+Action:
+Read the operator-provided audit output and ROS read-only snapshot
+`docs/s9_ros_snapshots/20260625_072129/`.
+
+Commands / evidence:
+
+- Pre-motion audit saved to:
+  `docs/s10_5_control_source_audit_live_20260625_152039.txt`.
+- Audit result:
+  - `can_arm_a`: UP, LOWER_UP, ERROR-ACTIVE, bitrate `1000000`.
+  - `can_arm_b`: UP, LOWER_UP, ERROR-ACTIVE, bitrate `1000000`.
+  - NERO-related Docker containers: none.
+  - NERO-related host processes: none.
+- Snapshot:
+  `docs/s9_ros_snapshots/20260625_072129/`.
+- Snapshot `README.md`: `Failed capture commands: 0`.
+- Topic list includes complete `/arm_a/...` and `/arm_b/...` feedback and
+  control topics.
+- Arm A joint-state frequency: about `200 Hz`.
+- Arm B joint-state frequency: about `200 Hz`.
+- Arm A `arm_status`: `err_status: 0`, all joint angle limits `false`, all
+  joint communication statuses `false`.
+- Arm B `arm_status`: `err_status: 0`, all joint angle limits `false`, all
+  joint communication statuses `false`.
+- Arm B sampled joint positions in radians:
+  `[0.5724505413616201, 1.3979912775549381, -0.3002140846355446,
+  0.3630110311223006, -1.2374035330789397, 0.37346555334174664,
+  0.16057029118347835]`.
+
+Result:
+
+- S10.5 audit and read-only validation are clean.
+- S10.5 is not fully accepted yet because the chat log has not explicitly
+  recorded whether Arm B Web J1 `+2 deg` actually moved normally and returned
+  to the original angle.
+
+Deployment choices:
+
+- Do not skip the SDK dry-run just because Arm A passed.
+- It is acceptable to streamline S10.6 by running dry-run and, if the printed
+  target/status are correct, immediately running the execute command manually.
+- Keep post-motion ROS read-only snapshots after each control layer.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/current_bringup_status.md`,
+`docs/bringup_checklist.md`, `docs/deployment_log.md`,
+`docs/机器人部署与调试行动路线.md`,
+`docs/s10_5_arm_b_first_motion_plan.md`,
+`docs/s10_5_control_source_audit_live_20260625_152039.txt`,
+`docs/s9_ros_snapshots/20260625_072129/`.
+
+Verification:
+Snapshot is complete and clean for both arms. Web motion outcome needs one
+operator confirmation before S10.6.
+
+Route updates:
+S10.6 SDK can start after the operator confirms Arm B Web J1 motion and return.
+
+Open risks:
+
+- Moving faster is acceptable only by reducing waiting between gates, not by
+  removing gates.
+- Intentional emergency-stop recovery remains deferred.
+
+Next:
+Confirm Arm B Web J1 `+2 deg` motion and return, then run S10.6 SDK dry-run on
+`can_arm_b`.
