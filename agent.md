@@ -223,13 +223,16 @@ desktop-terminal audit then passed on 2026-06-25 and is saved at
 `docs/s10_4_control_source_audit_live_20260625_150438.txt`. S10.4 is accepted
 with handoff state `handoff_to_arm_b`.
 
-S10.5 Arm B status: pre-motion audit
-`docs/s10_5_control_source_audit_live_20260625_152039.txt` is clean and
-post-Web/read-only snapshot `docs/s9_ros_snapshots/20260625_072129/` is clean.
-Only Arm B may move, Web is the only S10.5 motion control source, and the first
-target is Arm B J1 `+2 deg` then return to the original angle. Before S10.6 SDK,
-obtain an explicit operator statement that the Arm B Web J1 motion actually
-happened, looked normal, and returned to the original angle.
+S10.5 Arm B status: accepted. Pre-motion audit
+`docs/s10_5_control_source_audit_live_20260625_152039.txt` is clean,
+post-Web/read-only snapshot `docs/s9_ros_snapshots/20260625_072129/` is clean,
+and the operator confirmed Arm B Web motion was normal.
+
+S10.6 Arm B status: SDK dry-run accepted. Dry-run used `can_arm_b`, firmware
+`v112`, J1 `+2 deg`, speed `5%`, and target differed only in J1. Read-only
+snapshot `docs/s9_ros_snapshots/20260625_072742/` is clean. Before SDK
+`--execute`, stop the dual-arm read-only driver so SDK is the only motion
+control source.
 
 ## Raw CAN Policy
 

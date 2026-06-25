@@ -1,7 +1,7 @@
 # S10.5 Arm B First-Motion Replication Plan
 
-Status: live pre-motion audit and read-only snapshot are clean. Arm B Web J1
-motion result still needs explicit operator confirmation in the log.
+Status: accepted. Arm B Web J1 motion was confirmed normal by the operator, and
+the read-only snapshot passed.
 
 Arm A has passed Web, SDK, and ROS low-speed first motion. S10.4 no-motion
 control-source closure is accepted. S10.5 starts the same ladder on Arm B, but
@@ -175,10 +175,9 @@ Read-only snapshot:
   0.3630110311223006, -1.2374035330789397, 0.37346555334174664,
   0.16057029118347835]`.
 
-Acceptance note:
+Acceptance:
 
 - The audit and snapshot are accepted.
-- The chat log still needs one explicit operator statement confirming whether
-  Arm B Web J1 `+2 deg` motion happened, looked normal, and returned to the
-  original angle. Once that is confirmed, S10.5 can be closed and S10.6 SDK
-  dry-run can start.
+- Operator confirmed Arm B Web operation was normal.
+- S10.5 is accepted.
+- S10.6 SDK dry-run may start.

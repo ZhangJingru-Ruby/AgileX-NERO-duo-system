@@ -3309,3 +3309,79 @@ Open risks:
 Next:
 Confirm Arm B Web J1 `+2 deg` motion and return, then run S10.6 SDK dry-run on
 `can_arm_b`.
+
+## 2026-06-25 - S10.5 Accepted And S10.6 SDK Dry-Run Accepted
+
+Phase: S10 首次低速运动
+
+Goal:
+Close Arm B Web first motion and accept the Arm B SDK dry-run before SDK
+execution.
+
+Action:
+Recorded operator confirmation that Arm B Web motion was normal, then recorded
+the SDK dry-run output and read-only snapshot `20260625_072742`.
+
+Commands / evidence:
+
+- Operator statement: Arm B Web side was normal.
+- SDK dry-run command:
+  `.venv/nero-sdk/bin/python examples/nero_sdk_single_joint_step.py --channel can_arm_b --firmware v112 --joint 1 --delta-deg 2 --speed-percent 5`
+- SDK dry-run output:
+  - firmware: `{'software_version': '1.121'}`
+  - current degrees:
+    `[32.799, 80.10000000000001, -17.199, 20.799, -70.9, 21.398,
+    9.200000000000001]`
+  - target degrees:
+    `[34.799, 80.10000000000001, -17.199, 20.799, -70.9, 21.398,
+    9.200000000000001]`
+  - `pre_status`: `CAN_CTRL`, `NORMAL`, `MOVE_J`,
+    `REACH_TARGET_POS_SUCCESSFULLY`
+  - dry run only; no SDK motion occurred
+- Read-only snapshot:
+  `docs/s9_ros_snapshots/20260625_072742/`.
+- Snapshot `README.md`: `Failed capture commands: 0`.
+- Arm A joint-state frequency: about `200 Hz`.
+- Arm B joint-state frequency: about `200 Hz`.
+- Arm A and Arm B `err_status: 0`.
+- Arm A and Arm B joint angle limits and joint communication statuses: all
+  `false`.
+
+Result:
+
+- S10.5 Arm B Web first motion is accepted.
+- S10.6 Arm B SDK dry-run is accepted.
+- S10.6 SDK execution is pending.
+
+Deployment choices:
+
+- Proceed faster by chaining the next commands manually, but do not skip gates.
+- Before SDK `--execute`, stop the dual-arm read-only driver that was launched
+  for the snapshot.
+- Keep SDK execution at J1 `+2 deg`, speed `5%`, then return to the original
+  angle.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/current_bringup_status.md`,
+`docs/bringup_checklist.md`, `docs/deployment_log.md`,
+`docs/机器人部署与调试行动路线.md`,
+`docs/s10_5_arm_b_first_motion_plan.md`,
+`docs/s10_6_arm_b_sdk_motion_plan.md`,
+`docs/s9_ros_snapshots/20260625_072742/`.
+
+Verification:
+SDK dry-run target changes only Arm B J1 by `+2 deg`. Read-only snapshot is
+complete and clean for both arms.
+
+Route updates:
+Immediate next step is S10.6 SDK execution on `can_arm_b`.
+
+Open risks:
+
+- Running SDK execute while the dual-arm read-only driver is still active would
+  violate the one-motion-control-source rule. Stop the driver first.
+- Intentional emergency-stop recovery remains deferred.
+
+Next:
+Stop dual-arm read-only, run the S10.6 SDK execute command, then capture a
+post-execute read-only snapshot.

@@ -39,7 +39,7 @@ Last updated: 2026-06-25
 | S7 SDK 只读 | Complete by operator report | SDK read-only checks passed on `can_arm_a` and `can_arm_b`. |
 | S8 ROS 只读 | Complete; coordinate alignment deferred to S9 | `/arm_a` and `/arm_b` feedback topics publish at about 200 Hz; arm status has `err_status: 0`; RViz follow is normal after the dual ROS read-only driver terminal is started first. |
 | S9 标定与配置 | Complete by operator confirmation and ROS revalidation | Load mode was changed by operator report; Arm A CAN recovered after USB-CAN replug/reactivation; S9.3 snapshot `20260625_054435` has complete A/B feedback, `err_status: 0`, no joint limits, no joint communication errors, and about 200 Hz joint-state feedback. |
-| S10 首次低速运动 | Arm A ladder accepted; Arm B S10.5 audit and snapshot clean, Web motion confirmation pending | Web, SDK, and ROS J1 motion passed on Arm A. Live S10.4 audit is clean. Arm B S10.5 pre-motion audit `20260625_152039` is clean and snapshot `20260625_072129` is clean for A/B with about 200 Hz feedback, `err_status: 0`, no joint limits, and no joint communication errors. Need explicit operator confirmation that Arm B Web J1 `+2 deg` moved normally and returned. |
+| S10 首次低速运动 | Arm A ladder accepted; Arm B S10.5 accepted; S10.6 SDK dry-run accepted | Web, SDK, and ROS J1 motion passed on Arm A. Arm B Web motion is confirmed normal and snapshot `20260625_072129` is clean. Arm B SDK dry-run on `can_arm_b` targets only J1 `+2 deg`, status is normal, and dry-run snapshot `20260625_072742` is clean. SDK execute is pending. |
 
 ## S0 Evidence
 
@@ -115,10 +115,9 @@ S2 offline environment result:
 S10.1 Web first motion, S10.2 SDK motion, S10.3 ROS motion, and S10.4
 no-motion control-source closure have passed for Arm A. S10.3 post-ROS snapshot
 `20260625_064243` is clean, and live S10.4 audit `20260625_150438` is clean.
-The git baseline commit `fb8a262` exists. S10.5 Arm B pre-motion audit and
-read-only snapshot are clean. The immediate next step is to confirm whether Arm
-B Web J1 `+2 deg` motion happened normally and returned to the original angle.
-If yes, S10.5 can close and S10.6 SDK dry-run can start.
+The git baseline commit `fb8a262` exists. S10.5 Arm B Web motion is accepted.
+S10.6 Arm B SDK dry-run is accepted. The immediate next step is to stop the
+dual-arm read-only driver, then run S10.6 SDK `--execute` on `can_arm_b`.
 
 Next checks:
 
@@ -130,8 +129,8 @@ Next checks:
   starting the next controlled test.
 - Do not expand to Cartesian, MoveIt, MIT/JS, dual-arm coordinated motion, or
   dexterous-hand actuation yet.
-- Next recommended action: record the Arm B Web J1 motion result. If the motion
-  was normal and returned, proceed to S10.6 SDK dry-run on `can_arm_b`.
+- Next recommended action: stop the dual-arm read-only driver and run S10.6 SDK
+  execute on `can_arm_b`.
 - Actual SDK speed was `10%`, not the planned `5%`; keep future first tests at
   or below `10%`, and prefer `5%` unless observability requires otherwise.
 - Do not use SDK motion, ROS `/control/*`, raw CAN motion, MoveIt execute,
@@ -140,8 +139,7 @@ Next checks:
 - Monitor the state-machine difference: Arm A `arm_status` is now `0` instead
   of the earlier `6`, while `err_status` and all flags remain healthy.
 - S10.4 accepted handoff state is `handoff_to_arm_b`.
-- Read `docs/s10_5_arm_b_first_motion_plan.md` before touching Arm B Web
-  motion controls.
+- Read `docs/s10_6_arm_b_sdk_motion_plan.md` before SDK execution.
 
 ## S2 Discovery Result
 

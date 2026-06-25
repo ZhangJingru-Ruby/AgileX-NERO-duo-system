@@ -1,0 +1,25 @@
+$ ros2 topic echo --once /arm_a/feedback/arm_status
+ctrl_mode: 1
+arm_status: 0
+mode_feedback: 1
+teach_status: 0
+motion_status: 1
+trajectory_num: 0
+err_status: 0
+joint_angle_limit:
+- false
+- false
+- false
+- false
+- false
+- false
+- false
+communication_status_joint:
+- false
+- false
+- false
+- false
+- false
+- false
+- false
+---
