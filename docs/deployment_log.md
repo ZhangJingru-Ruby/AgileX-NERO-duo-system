@@ -3520,3 +3520,83 @@ Open risks:
 
 Next:
 Run the S10.7 `--execute` command if the safety gate remains true.
+
+## 2026-06-25 - S10.7 Arm B ROS Motion Accepted
+
+Phase: S10 首次低速运动
+
+Goal:
+Accept the Arm B ROS single-joint motion and post-motion read-only validation.
+
+Action:
+Recorded the ROS execute output and read post-ROS snapshot
+`docs/s9_ros_snapshots/20260625_074953/`.
+
+Commands / evidence:
+
+- ROS execute command:
+  `NERO_CONTAINER_NAME=nero-humble-s10-ros-tool bash scripts/run_humble_container.sh python3 /workspace/nero/scripts/ros_single_joint_step.py --execute --namespace arm_b --joint joint1 --delta-deg 2`
+- Namespace: `arm_b`.
+- Feedback topic: `/arm_b/feedback/joint_states`.
+- Command topic: `/arm_b/control/move_j`.
+- Current degrees:
+  `[32.798, 80.098, -17.204, 20.798000000000002, -70.9, 21.402, 9.198]`.
+- Target degrees:
+  `[34.798, 80.098, -17.204, 20.798000000000002, -70.9, 21.402, 9.198]`.
+- `pre_status`: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`.
+- `after_step_deg`:
+  `[34.553, 80.09700000000001, -17.209, 20.791, -70.9, 21.402, 9.198]`.
+- `after_return_deg`:
+  `[33.026, 80.096, -17.207, 20.797, -70.9, 21.402, 9.198]`.
+- `final_status`: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`.
+- Script completed with:
+  `S10.3 ROS single-joint step completed.`
+- Post-ROS snapshot:
+  `docs/s9_ros_snapshots/20260625_074953/`.
+- Snapshot `README.md`: `Failed capture commands: 0`.
+- Arm A joint-state frequency: about `200 Hz`.
+- Arm B joint-state frequency: about `200 Hz`.
+- Arm A and Arm B `err_status: 0`.
+- Arm A and Arm B joint angle limits and joint communication statuses: all
+  `false`.
+- Snapshot sampled Arm B J1 is about `32.797 deg`, consistent with settled
+  return to the original angle.
+
+Result:
+
+- S10.7 Arm B ROS single-joint motion is accepted.
+- Arm B has now passed Web, SDK, and ROS low-speed single-joint motion with
+  post-motion read-only validation.
+
+Deployment choices:
+
+- Do not proceed directly to dual-arm coordination, Cartesian, MoveIt, or
+  dexterous-hand motion.
+- Next step is S10.8 closure: stop/account for the Arm B ROS control driver and
+  audit active control sources.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/current_bringup_status.md`,
+`docs/bringup_checklist.md`, `docs/deployment_log.md`,
+`docs/机器人部署与调试行动路线.md`,
+`docs/s10_7_arm_b_ros_motion_plan.md`,
+`docs/s9_ros_snapshots/20260625_074953/`.
+
+Verification:
+ROS execute completed successfully, and post-ROS snapshot is complete and clean
+for both arms.
+
+Route updates:
+S10.7 accepted. S10.8 closure is next.
+
+Open risks:
+
+- Intentional emergency-stop recovery remains deferred.
+- Dual-arm coordinated motion has not been tested.
+- External lab-frame transforms remain unmeasured.
+
+Next:
+Stop/account for Arm B ROS control driver, run the control-source audit, and
+record S10.8 closure before any broader motion phase.

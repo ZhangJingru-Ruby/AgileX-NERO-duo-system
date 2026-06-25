@@ -1,6 +1,7 @@
 # S10.7 Arm B ROS Single-Joint Motion Plan
 
-Status: dry-run accepted; execution pending.
+Status: accepted. ROS execution passed and post-motion read-only snapshot is
+clean.
 
 S10.5 Arm B Web motion and S10.6 Arm B SDK motion have passed. S10.7 tests the
 ROS control layer on Arm B, matching the Arm A S10.3 path.
@@ -112,6 +113,25 @@ Expected:
 - Script prints `S10.3 ROS single-joint step completed.`
 - Final status has no error flags.
 
+Actual execution result on 2026-06-25:
+
+- Namespace: `arm_b`.
+- Feedback topic: `/arm_b/feedback/joint_states`.
+- Command topic: `/arm_b/control/move_j`.
+- Current degrees:
+  `[32.798, 80.098, -17.204, 20.798000000000002, -70.9, 21.402, 9.198]`.
+- Target degrees:
+  `[34.798, 80.098, -17.204, 20.798000000000002, -70.9, 21.402, 9.198]`.
+- `pre_status`: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`.
+- `after_step_deg`:
+  `[34.553, 80.09700000000001, -17.209, 20.791, -70.9, 21.402, 9.198]`.
+- `after_return_deg`:
+  `[33.026, 80.096, -17.207, 20.797, -70.9, 21.402, 9.198]`.
+- `final_status`: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`.
+- Script printed `S10.3 ROS single-joint step completed.`
+
 ## Post-Execute Snapshot
 
 After execution, stop the Arm B ROS control driver, start dual-arm read-only
@@ -128,5 +148,26 @@ NERO_CONTAINER_NAME=nero-humble-s10b-ros-snapshot \
     bash /workspace/nero/scripts/snapshot_ros_readonly_state.sh
 ```
 
-S10.7 passes only if ROS execution succeeds and the post-execute snapshot is
-clean for both arms.
+Actual post-execute snapshot on 2026-06-25:
+
+- Path: `docs/s9_ros_snapshots/20260625_074953/`.
+- Failed capture commands: `0`.
+- Topic list includes complete `/arm_a/...` and `/arm_b/...` feedback topics.
+- Arm A joint-state feedback: about `200 Hz`.
+- Arm B joint-state feedback: about `200 Hz`.
+- Arm A `err_status: 0`, all joint limits `false`, all joint communication
+  statuses `false`.
+- Arm B `err_status: 0`, all joint limits `false`, all joint communication
+  statuses `false`.
+- Arm B sampled joint positions in radians:
+  `[0.5724156347765803, 1.3979563709698983, -0.30026644451310447,
+  0.3629935778297807, -1.2374733462490195, 0.37351791321930644,
+  0.1604830247208786]`.
+- Arm B sampled J1 is about `32.797 deg`, consistent with return to the
+  original angle after settling.
+
+Acceptance:
+
+- S10.7 ROS execution is accepted.
+- Arm B has now passed Web, SDK, and ROS low-speed single-joint motion with
+  post-motion read-only validation.

@@ -1,0 +1,17 @@
+$ ros2 topic echo --once /arm_a/feedback/tcp_pose
+header:
+  stamp:
+    sec: 1782373795
+    nanosec: 679750680
+  frame_id: ''
+pose:
+  position:
+    x: -0.376032
+    y: -0.374639
+    z: 0.161381
+  orientation:
+    x: -0.47400903565792135
+    y: 0.4773843731210512
+    z: -0.6562479777142821
+    w: 0.34169897008973193
+---

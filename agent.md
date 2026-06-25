@@ -241,12 +241,14 @@ dual-arm read-only driver, start only the Arm B ROS control driver with
 `control_enabled:=true`, `speed_percent:=5`, then run the `/arm_b` dry-run
 before any ROS execute.
 
-S10.7 dry-run is accepted. It used namespace `arm_b`, feedback topic
-`/arm_b/feedback/joint_states`, command topic `/arm_b/control/move_j`, changed
-only `joint1` from `32.798 deg` to `34.798 deg`, and reported `ctrl_mode=1`,
-`arm_status=0`, `mode_feedback=1`, `motion_status=0`. Next step is ROS execute
-only if the Arm B ROS control driver is still running and no other control
-source is active.
+S10.7 Arm B status: accepted. ROS execute moved Arm B `joint1` from about
+`32.798 deg` to `34.553 deg`, returned to about `33.026 deg` within script
+tolerance, and final status was `ctrl_mode=1`, `arm_status=0`,
+`mode_feedback=1`, `motion_status=0`. Post-ROS snapshot
+`docs/s9_ros_snapshots/20260625_074953/` is clean; sampled Arm B J1 is about
+`32.797 deg`, consistent with settled return. Next step is S10.8 closure:
+stop/account for Arm B ROS control and audit active control sources before any
+broader motion phase.
 
 ## Raw CAN Policy
 

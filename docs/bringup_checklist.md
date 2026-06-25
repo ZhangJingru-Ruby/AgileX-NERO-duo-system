@@ -220,8 +220,15 @@
 - [x] 双臂只读 driver 已停止。
 - [x] Arm B ROS control driver 已以 `auto_enable:=true control_enabled:=true speed_percent:=5` 启动。
 - [x] Arm B ROS `joint1 +2 deg` dry-run 已通过且未运动。
-- [ ] Arm B ROS `joint1 +2 deg` 低速运动通过并回原角。
-- [ ] ROS 动作后 ROS 只读快照已保存且正常。
+- [x] Arm B ROS `joint1 +2 deg` 低速运动通过并回原角。
+- [x] ROS 动作后 ROS 只读快照已保存且正常：`docs/s9_ros_snapshots/20260625_074953/`。
+
+## S10.8 双臂首次运动收束
+
+- [ ] Arm B ROS control driver 已停止或确认未运行。
+- [ ] 已运行 `bash scripts/s10_control_source_audit.sh`。
+- [ ] 已确认无 Web/SDK/ROS motion 脚本运行。
+- [ ] 已记录下一阶段选择。
 
 ## S11 末端执行器
 
