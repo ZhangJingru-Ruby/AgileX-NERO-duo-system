@@ -1,0 +1,4 @@
+$ ros2 topic echo --once /arm_a/feedback/joint_states
+WARNING: topic [/arm_a/feedback/joint_states] does not appear to be published yet
+Could not determine the type for the passed topic
+Command failed: ros2 topic echo --once /arm_a/feedback/joint_states

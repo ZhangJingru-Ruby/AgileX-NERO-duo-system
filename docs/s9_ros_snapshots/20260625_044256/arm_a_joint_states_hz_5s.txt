@@ -1,0 +1,9 @@
+$ timeout 5s ros2 topic hz /arm_a/feedback/joint_states
+average rate: 199.980
+	min: 0.005s max: 0.005s std dev: 0.00008s window: 202
+average rate: 199.979
+	min: 0.004s max: 0.006s std dev: 0.00009s window: 402
+average rate: 200.000
+	min: 0.004s max: 0.006s std dev: 0.00008s window: 603
+failed to initialize wait set: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/wait.c:130
+Command ended by timeout after the requested sample window.

@@ -1,0 +1,10 @@
+$ timeout 5s ros2 topic hz /arm_a/feedback/joint_states
+average rate: 199.593
+	min: 0.004s max: 0.007s std dev: 0.00053s window: 201
+average rate: 199.913
+	min: 0.004s max: 0.007s std dev: 0.00051s window: 402
+average rate: 199.948
+	min: 0.004s max: 0.007s std dev: 0.00051s window: 603
+average rate: 199.952
+	min: 0.004s max: 0.007s std dev: 0.00049s window: 803
+Command failed: timeout 5s ros2 topic hz /arm_a/feedback/joint_states

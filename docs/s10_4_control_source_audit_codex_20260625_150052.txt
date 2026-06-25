@@ -1,0 +1,19 @@
+S10.4 control-source audit
+Timestamp: 2026-06-25T15:00:52+08:00
+
+CAN interfaces:
+  can_arm_a: not visible
+  can_arm_b: not visible
+
+NERO-related Docker containers:
+  docker ps unavailable without interactive sudo
+
+NERO-related host processes:
+  none
+
+Expected S10.4 handoff state before Arm B motion:
+  - no Arm A ROS control container running
+  - no SDK motion script running
+  - no Web motion command active
+  - CAN interfaces may remain UP
+  - dual read-only driver may run only for monitoring; stop it before Arm B Web/SDK/ROS motion
