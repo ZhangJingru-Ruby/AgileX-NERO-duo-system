@@ -73,6 +73,18 @@ ros2 run tf2_ros static_transform_publisher \
 4. Open RViz and verify that the two arms appear in the same relative layout as
    the physical installation.
 
+   Preferred S11 model-view wrapper:
+
+   ```bash
+   NERO_CONTAINER_NAME=nero-humble-s11-rviz \
+     bash scripts/run_humble_container.sh --allow-xhost \
+       bash /workspace/nero/scripts/launch_s11_dual_model_view.sh
+   ```
+
+   This starts two `robot_state_publisher` processes, one for `/arm_a` and one
+   for `/arm_b`, and opens RViz with fixed frame `lab_world`. It subscribes to
+   feedback joint states only and does not publish control commands.
+
 5. Capture the post-TF read-only snapshot:
 
    ```bash

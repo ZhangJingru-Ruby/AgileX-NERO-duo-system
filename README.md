@@ -92,6 +92,14 @@ bash scripts/build_humble_container.sh
 bash scripts/run_humble_container.sh
 ```
 
+S11 双臂 RViz 验证使用：
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s11-rviz \
+  bash scripts/run_humble_container.sh --allow-xhost \
+    bash /workspace/nero/scripts/launch_s11_dual_model_view.sh
+```
+
 如果容器构建后 `~/agx_arm_ws/build`、`install`、`log` 在主机上权限异常：
 
 ```bash

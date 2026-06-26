@@ -4038,3 +4038,62 @@ Open risks:
 Next:
 Stop terminal 2 if it is still running, restart the static TF wrapper, verify
 `tf2_echo lab_world arm_b/world`, then launch/display the two robot models.
+
+## 2026-06-26 - S11 Dual RViz Model View Prepared
+
+Phase: S11 双臂实验基线与坐标闭环
+
+Goal:
+Prepare a one-command RViz validation path that displays both NERO arms in the
+shared `lab_world` frame.
+
+Action:
+Added an S11 RViz config with two RobotModel displays and a wrapper script that
+starts two `robot_state_publisher` instances from the current NERO URDF.
+
+Commands / evidence:
+
+- RViz config: `rviz/s11_dual_arm.rviz`.
+- Wrapper script: `scripts/launch_s11_dual_model_view.sh`.
+- The script remaps:
+  - Arm A `joint_states` to `/arm_a/feedback/joint_states`.
+  - Arm B `joint_states` to `/arm_b/feedback/joint_states`.
+- The script uses frame prefixes:
+  - `arm_a/`
+  - `arm_b/`
+
+Result:
+The operator can validate both arms in one RViz scene with fixed frame
+`lab_world`, while keeping terminal 1 as the read-only driver and terminal 2 as
+the static TF publisher.
+
+Deployment choices:
+
+- The wrapper does not publish control commands.
+- RViz contains two RobotModel displays reading `/arm_a/robot_description` and
+  `/arm_b/robot_description`.
+- This avoids launching two separate RViz windows via the upstream single-arm
+  `display.launch.py`.
+
+Files changed:
+`docs/deployment_log.md`, `docs/s11_static_tf_plan.md`,
+`rviz/s11_dual_arm.rviz`, `scripts/launch_s11_dual_model_view.sh`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile examples/nero_read_state.py examples/nero_sdk_single_joint_step.py scripts/ros_single_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S11 now has a dedicated dual-arm RViz validation tool.
+
+Open risks:
+
+- The candidate Arm B yaw still needs visual acceptance in RViz.
+- X11 access must be explicitly allowed and revoked after RViz use.
+
+Next:
+Run terminal 4:
+`NERO_CONTAINER_NAME=nero-humble-s11-rviz bash scripts/run_humble_container.sh --allow-xhost bash /workspace/nero/scripts/launch_s11_dual_model_view.sh`
