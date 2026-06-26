@@ -4097,3 +4097,57 @@ Open risks:
 Next:
 Run terminal 4:
 `NERO_CONTAINER_NAME=nero-humble-s11-rviz bash scripts/run_humble_container.sh --allow-xhost bash /workspace/nero/scripts/launch_s11_dual_model_view.sh`
+
+## 2026-06-26 - S11 RViz Wrapper Parameter Match Fixed
+
+Phase: S11 双臂实验基线与坐标闭环
+
+Goal:
+Fix the S11 RViz wrapper after `robot_state_publisher` failed to receive
+`robot_description`.
+
+Action:
+Operator ran `scripts/launch_s11_dual_model_view.sh`. RViz started, but both
+namespaced `robot_state_publisher` processes aborted because their
+`robot_description` parameter was empty.
+
+Commands / evidence:
+
+- Command:
+  `NERO_CONTAINER_NAME=nero-humble-s11-rviz bash scripts/run_humble_container.sh --allow-xhost bash /workspace/nero/scripts/launch_s11_dual_model_view.sh`
+- Error:
+  `robot_description parameter must not be empty`.
+
+Result:
+The wrapper's generated parameter files used the relative node key
+`robot_state_publisher`, which did not reliably match namespaced nodes. The
+script now writes fully qualified keys:
+
+- `/arm_a/robot_state_publisher`
+- `/arm_b/robot_state_publisher`
+
+Deployment choices:
+
+- Keep the wrapper approach.
+- Print the temporary parameter file paths so future parameter-loading failures
+  can be inspected directly.
+
+Files changed:
+`docs/deployment_log.md`, `scripts/launch_s11_dual_model_view.sh`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile examples/nero_read_state.py examples/nero_sdk_single_joint_step.py scripts/ros_single_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S11 remains in RViz visual validation.
+
+Open risks:
+
+- RViz visual acceptance has not yet been performed.
+
+Next:
+Rerun terminal 4 with the same wrapper command after local checks pass.

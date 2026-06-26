@@ -46,11 +46,12 @@ trap cleanup EXIT INT TERM
 robot_description="$(xacro "$model_path")"
 
 write_rsp_params() {
-  local frame_prefix="$1"
-  local out_file="$2"
+  local node_fqn="$1"
+  local frame_prefix="$2"
+  local out_file="$3"
 
   {
-    echo "robot_state_publisher:"
+    echo "${node_fqn}:"
     echo "  ros__parameters:"
     echo "    frame_prefix: \"${frame_prefix}\""
     echo "    robot_description: |"
@@ -60,14 +61,16 @@ write_rsp_params() {
 
 params_a="${tmp_dir}/arm_a_rsp.yaml"
 params_b="${tmp_dir}/arm_b_rsp.yaml"
-write_rsp_params "arm_a/" "$params_a"
-write_rsp_params "arm_b/" "$params_b"
+write_rsp_params "/arm_a/robot_state_publisher" "arm_a/" "$params_a"
+write_rsp_params "/arm_b/robot_state_publisher" "arm_b/" "$params_b"
 
 echo "Starting S11 dual model view."
 echo "Subscribing arm_a model to /arm_a/feedback/joint_states"
 echo "Subscribing arm_b model to /arm_b/feedback/joint_states"
 echo "RViz fixed frame: lab_world"
 echo "This script does not publish control commands."
+echo "Arm A robot_state_publisher params: $params_a"
+echo "Arm B robot_state_publisher params: $params_b"
 
 ros2 run robot_state_publisher robot_state_publisher \
   --ros-args \
