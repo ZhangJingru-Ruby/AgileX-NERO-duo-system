@@ -16,6 +16,8 @@ fi
 
 arm_a_tf="${NERO_S11_ARM_A_BASE_TF_CANDIDATE:-0.000,0.000,0.000,0,0,0}"
 arm_b_tf="${NERO_S11_ARM_B_BASE_TF_CANDIDATE:-0.260,0.000,0.000,0,0,3.1415926}"
+arm_a_child="${NERO_S11_ARM_A_STATIC_TF_CHILD_FRAME:-arm_a/world}"
+arm_b_child="${NERO_S11_ARM_B_STATIC_TF_CHILD_FRAME:-arm_b/world}"
 
 parse_tf() {
   local raw="$1"
@@ -33,8 +35,8 @@ parse_tf "$arm_a_tf" arm_a
 parse_tf "$arm_b_tf" arm_b
 
 echo "Publishing S11 static TF candidates."
-echo "lab_world -> arm_a/base_link: ${arm_a[*]}"
-echo "lab_world -> arm_b/base_link: ${arm_b[*]}"
+echo "lab_world -> $arm_a_child: ${arm_a[*]}"
+echo "lab_world -> $arm_b_child: ${arm_b[*]}"
 echo "Press Ctrl-C to stop the static TF publishers."
 
 cleanup() {
@@ -48,14 +50,14 @@ ros2 run tf2_ros static_transform_publisher \
   --x "${arm_a[0]}" --y "${arm_a[1]}" --z "${arm_a[2]}" \
   --roll "${arm_a[3]}" --pitch "${arm_a[4]}" --yaw "${arm_a[5]}" \
   --frame-id lab_world \
-  --child-frame-id arm_a/base_link &
+  --child-frame-id "$arm_a_child" &
 pid_a=$!
 
 ros2 run tf2_ros static_transform_publisher \
   --x "${arm_b[0]}" --y "${arm_b[1]}" --z "${arm_b[2]}" \
   --roll "${arm_b[3]}" --pitch "${arm_b[4]}" --yaw "${arm_b[5]}" \
   --frame-id lab_world \
-  --child-frame-id arm_b/base_link &
+  --child-frame-id "$arm_b_child" &
 pid_b=$!
 
 wait -n "$pid_a" "$pid_b"

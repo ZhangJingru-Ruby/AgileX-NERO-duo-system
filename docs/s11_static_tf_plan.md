@@ -9,8 +9,14 @@ S11. Do not put placeholder values into runtime scripts.
 
 | Parent frame | Child frame | Source |
 | --- | --- | --- |
-| `lab_world` | `arm_a/base_link` | `docs/s11_measurement_notes.md` |
-| `lab_world` | `arm_b/base_link` | `docs/s11_measurement_notes.md` |
+| `lab_world` | `arm_a/world` | `docs/s11_measurement_notes.md` |
+| `lab_world` | `arm_b/world` | `docs/s11_measurement_notes.md` |
+
+The measured values describe each base pose. For RViz/model validation, publish
+the external static transform to each namespaced URDF root frame
+`arm_*/world`, because the NERO URDF already contains a fixed
+`world -> base_link` joint. Publishing directly to `arm_*/base_link` can create
+a duplicate parent once `robot_state_publisher` is running.
 
 ## Command Shape
 
@@ -23,7 +29,7 @@ ros2 run tf2_ros static_transform_publisher \
   --x <arm_a_x_m> --y <arm_a_y_m> --z <arm_a_z_m> \
   --roll <arm_a_roll> --pitch <arm_a_pitch> --yaw <arm_a_yaw> \
   --frame-id lab_world \
-  --child-frame-id arm_a/base_link
+  --child-frame-id arm_a/world
 ```
 
 Arm B:
@@ -33,7 +39,7 @@ ros2 run tf2_ros static_transform_publisher \
   --x <arm_b_x_m> --y <arm_b_y_m> --z <arm_b_z_m> \
   --roll <arm_b_roll> --pitch <arm_b_pitch> --yaw <arm_b_yaw> \
   --frame-id lab_world \
-  --child-frame-id arm_b/base_link
+  --child-frame-id arm_b/world
 ```
 
 ## Validation Procedure
@@ -58,6 +64,8 @@ ros2 run tf2_ros static_transform_publisher \
 3. Verify TF:
 
    ```bash
+   ros2 run tf2_ros tf2_echo lab_world arm_a/world
+   ros2 run tf2_ros tf2_echo lab_world arm_b/world
    ros2 run tf2_ros tf2_echo lab_world arm_a/base_link
    ros2 run tf2_ros tf2_echo lab_world arm_b/base_link
    ```
@@ -86,10 +94,10 @@ ros2 run tf2_ros static_transform_publisher \
 Candidate values for the first RViz validation:
 
 ```text
-lab_world -> arm_a/base_link:
+lab_world -> arm_a/world:
   x=0.000, y=0.000, z=0.000, roll=0, pitch=0, yaw=0
 
-lab_world -> arm_b/base_link:
+lab_world -> arm_b/world:
   x=0.260, y=0.000, z=0.000, roll=0, pitch=0, yaw=3.1415926
 ```
 
@@ -110,7 +118,7 @@ ros2 run tf2_ros static_transform_publisher \
   --x 0.000 --y 0.000 --z 0.000 \
   --roll 0 --pitch 0 --yaw 0 \
   --frame-id lab_world \
-  --child-frame-id arm_a/base_link
+  --child-frame-id arm_a/world
 ```
 
 ```bash
@@ -118,7 +126,7 @@ ros2 run tf2_ros static_transform_publisher \
   --x 0.260 --y 0.000 --z 0.000 \
   --roll 0 --pitch 0 --yaw 3.1415926 \
   --frame-id lab_world \
-  --child-frame-id arm_b/base_link
+  --child-frame-id arm_b/world
 ```
 
 The Arm B yaw is a candidate inferred from the operator's Web-frame observation.
@@ -127,12 +135,12 @@ correct this value and record the correction in `docs/s11_measurement_notes.md`.
 
 Avoid splitting an option from its value or child frame when copy/pasting manual
 commands. For example, `--yaw 3.1415926` and
-`--child-frame-id arm_b/base_link` must remain intact; otherwise
+`--child-frame-id arm_b/world` must remain intact; otherwise
 `static_transform_publisher` will fail before publishing TF.
 
 Accepted values, to be filled only after RViz validation:
 
 ```text
-lab_world -> arm_a/base_link: TBD
-lab_world -> arm_b/base_link: TBD
+lab_world -> arm_a/world: TBD
+lab_world -> arm_b/world: TBD
 ```

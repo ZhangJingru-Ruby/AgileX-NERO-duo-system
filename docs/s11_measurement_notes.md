@@ -35,7 +35,10 @@ Recommended default:
 
 ## Arm A Transform
 
-Transform: `lab_world -> arm_a/base_link`
+Measured transform: `lab_world -> arm_a/base_link`
+
+Runtime static TF target for RViz/model validation: `lab_world -> arm_a/world`,
+because the NERO URDF already contains a fixed `world -> base_link` joint.
 
 | Field | Value | Unit / note |
 | --- | --- | --- |
@@ -51,7 +54,10 @@ Transform: `lab_world -> arm_a/base_link`
 
 ## Arm B Transform
 
-Transform: `lab_world -> arm_b/base_link`
+Measured transform: `lab_world -> arm_b/base_link`
+
+Runtime static TF target for RViz/model validation: `lab_world -> arm_b/world`,
+using the same numeric values as the measured base pose.
 
 | Field | Value | Unit / note |
 | --- | --- | --- |

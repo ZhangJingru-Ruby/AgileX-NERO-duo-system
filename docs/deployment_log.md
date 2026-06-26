@@ -3970,3 +3970,71 @@ Open risks:
 Next:
 Run:
 `NERO_CONTAINER_NAME=nero-humble-s11-static-tf bash scripts/run_humble_container.sh bash /workspace/nero/scripts/publish_s11_static_tf_candidate.sh`
+
+## 2026-06-26 - S11 Static TF Echo Passed And Runtime Target Corrected
+
+Phase: S11 双臂实验基线与坐标闭环
+
+Goal:
+Validate that the S11 candidate static TF is publishable, then prepare for RViz
+RobotModel validation.
+
+Action:
+Operator ran `tf2_echo` and confirmed the candidate transform was available:
+translation `[0.260, 0.000, 0.000]` and yaw `180 deg`.
+
+While preparing the RViz step, the local NERO URDF and `display.launch.py` were
+reviewed. The URDF contains a fixed `world -> base_link` joint, and
+`display.launch.py` prefixes frames as `arm_a/world`, `arm_a/base_link`, etc.
+Therefore the runtime external static TF target was corrected from
+`arm_*/base_link` to `arm_*/world` to avoid duplicate TF parents after
+`robot_state_publisher` starts.
+
+Commands / evidence:
+
+- `tf2_echo lab_world arm_b/base_link` output:
+  - translation `[0.260, 0.000, 0.000]`
+  - RPY degree `[0.000, -0.000, 180.000]`
+- URDF evidence:
+  `upstream/agx_arm_ros/src/agx_arm_description/agx_arm_urdf/nero/urdf/nero_description.urdf`
+  has fixed joint `world_to_base_link`.
+- Launch evidence:
+  `display.launch.py` applies `frame_prefix` for namespaced multi-arm TF.
+
+Result:
+
+- Static TF numeric candidate is confirmed publishable.
+- Runtime TF target is corrected to:
+  - `lab_world -> arm_a/world`
+  - `lab_world -> arm_b/world`
+
+Deployment choices:
+
+- Keep the measured base values unchanged.
+- Publish to namespaced URDF root frames for RViz/model validation.
+- Continue treating Arm B yaw `pi` as a candidate until RViz confirms physical
+  layout.
+
+Files changed:
+`config/nero.env`, `docs/deployment_log.md`, `docs/s11_measurement_notes.md`,
+`docs/s11_static_tf_plan.md`, `scripts/publish_s11_static_tf_candidate.sh`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile examples/nero_read_state.py examples/nero_sdk_single_joint_step.py scripts/ros_single_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S11 static TF target is corrected for the actual URDF structure.
+
+Open risks:
+
+- Existing terminal 2 may still be publishing the old `base_link` target and
+  should be stopped before restarting the wrapper.
+- RViz visual validation remains pending.
+
+Next:
+Stop terminal 2 if it is still running, restart the static TF wrapper, verify
+`tf2_echo lab_world arm_b/world`, then launch/display the two robot models.
