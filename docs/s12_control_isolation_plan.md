@@ -133,6 +133,17 @@ NERO_CONTAINER_NAME=nero-humble-s12-tool \
       --delta-deg 30
 ```
 
+Actual execution result on 2026-06-26:
+
+- Operator reported the observed Arm A motion matched the expected direction.
+- Arm B did not visibly move.
+- Arm A target: `joint1 1.109 deg -> 31.109 deg`.
+- Arm A after step: `joint1 30.490 deg`, target error about `0.619 deg`.
+- Arm A after return: `joint1 1.704 deg`, return error about `0.595 deg`.
+- Passive Arm B maximum deviation: `0.005 deg`.
+- Final A/B `err_status: 0`.
+- Post-motion read-only snapshot is still pending.
+
 ## S12.2 Arm B Procedure
 
 Stop the Arm A active driver terminal first. Then audit if anything looks
