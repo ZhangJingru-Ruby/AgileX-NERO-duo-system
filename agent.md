@@ -292,6 +292,14 @@ S13 corrected direction-sign dry-run is accepted. The no-execute run used Arm A
 `hold_max_dev_deg` was about `0.008 deg` for Arm A and `0.006 deg` for Arm B.
 Next gate is corrected `--execute` with the same signs after fresh operator
 safety confirmation.
+
+S13 corrected direction-sign execution core is accepted, but S13 is not closed
+until its post-motion read-only snapshot is accepted. The accepted execution
+used Arm A `joint1 +30 deg` and Arm B `joint1 +30 deg`; operator observation
+confirmed the visible direction matched expectation. After-step J1 values were
+Arm A `30.459 deg` and Arm B `27.318 deg`; after-return J1 values were Arm A
+`1.737 deg` and Arm B `-1.394 deg`; final A/B `err_status: 0`; non-target
+deviations were about `0.006 deg` and `0.007 deg`.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

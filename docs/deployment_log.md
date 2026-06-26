@@ -5276,3 +5276,87 @@ Open risks:
 
 - Corrected execution has not been attempted.
 - Operator-visible direction still must be confirmed during real motion.
+
+## 2026-06-26 - S13 Corrected Direction-Sign Execution Accepted
+
+Phase: S13 低风险双臂协同原语
+
+Goal:
+Execute the corrected simultaneous J1 primitive and verify that both numeric
+feedback and operator-visible direction semantics match the intended S13
+low-risk dual-arm primitive.
+
+Action:
+Operator ran the S13 dual-arm joint-space step script with `--execute`, using
+Arm A `joint1 +30 deg` and Arm B `joint1 +30 deg`.
+
+Command:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s13-tool \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s13_dual_joint_step.py \
+      --execute \
+      --joint joint1 \
+      --arm-a-delta-deg 30 \
+      --arm-b-delta-deg 30
+```
+
+Key output:
+
+- Arm A current:
+  `[1.112, 90.344, 92.984, 11.602, 7.705, 43.153, 50.514]`.
+- Arm A target:
+  `[31.112, 90.344, 92.984, 11.602, 7.705, 43.153, 50.514]`.
+- Arm B current:
+  `[-1.988, 89.862, -39.006, 5.703, 26.175, -10.306, 25.694]`.
+- Arm B target:
+  `[28.012, 89.862, -39.006, 5.703, 26.175, -10.306, 25.694]`.
+- `hold_max_dev_deg={'arm_a': 0.00500000000000605, 'arm_b': 0.0}`.
+- After step: Arm A `joint1=30.459 deg`, Arm B `joint1=27.318 deg`.
+- After return: Arm A `joint1=1.737 deg`, Arm B `joint1=-1.394 deg`.
+- `max_non_target_dev_total_deg={'arm_a': 0.006000000000000263, 'arm_b': 0.007000000000000837}`.
+- Final Arm A status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- Final Arm B status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+
+Operator observation:
+The corrected simultaneous movement matched the expected visible direction.
+
+Result:
+Corrected S13 execution core is accepted. The original local-sign assumption
+was wrong, but the corrected sign pair now satisfies both numeric and
+operator-visible criteria. S13 is not closed until a corrected-execution
+post-motion read-only snapshot is captured and accepted.
+
+Deployment choices:
+
+- Keep the accepted S13 J1 primitive signs as Arm A `joint1 +30 deg`, Arm B
+  `joint1 +30 deg`.
+- Treat the original Arm A `+30 deg` / Arm B `-30 deg` sign pair as a rejected
+  world-direction primitive, despite numeric control success.
+- Require post-motion read-only snapshot before closing S13.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s13_low_risk_dual_arm_primitives_plan.md`,
+`docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s13_dual_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S13 moves from corrected execution gate to corrected-execution post-motion
+snapshot gate.
+
+Open risks:
+
+- Corrected-execution post-motion snapshot is still pending.
+- Do not expand to Cartesian, MoveIt, manipulation, contact, handoff, or
+  dexterous-hand actuation before S13 closure.
