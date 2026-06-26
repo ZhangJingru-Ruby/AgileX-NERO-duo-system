@@ -41,6 +41,7 @@ Last updated: 2026-06-26
 | S9 标定与配置 | Complete by operator confirmation and ROS revalidation | Load mode was changed by operator report; Arm A CAN recovered after USB-CAN replug/reactivation; S9.3 snapshot `20260625_054435` has complete A/B feedback, `err_status: 0`, no joint limits, no joint communication errors, and about 200 Hz joint-state feedback. |
 | S10 首次低速运动 | Complete for both arms | Web, SDK, and ROS J1 motion passed on Arm A and Arm B. Final S10.8 audit `20260625_155538` shows both CAN interfaces UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker container, and no NERO host process. |
 | S11 双臂实验基线 | Complete / accepted | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Accepted static TF values are `lab_world -> arm_a/world: x=0, y=0, z=0, roll=0, pitch=-1.5707963, yaw=0` and `lab_world -> arm_b/world: x=0.260, y=0, z=0, roll=3.1415926, pitch=-1.5707963, yaw=0`. Operator reports RViz matches the physical layout and follows both arms when they move. Post-TF snapshot `20260626_055339` is clean, and X11 access was restored to local-user only. |
+| S12 控制隔离与日志闭环 | Prepared, not executed | Plan `docs/s12_control_isolation_plan.md` defines target-arm control plus passive-arm read-only monitoring. Operator requested visible J1 `30 deg` motion toward `lab_world -Y`; inferred signs are Arm A `joint1 +30 deg` and Arm B `joint1 -30 deg`, with dry-run and optional `5 deg` sign gate before execution. |
 
 ## S0 Evidence
 
@@ -124,6 +125,9 @@ The immediate next step is S12 control isolation and logging closure. The S12
 acceptance view is: a small command to Arm A must not move Arm B, a small
 command to Arm B must not move Arm A, and each test must leave command,
 feedback, status, snapshot/rosbag, and git evidence that is unambiguous.
+Because the operator requested visible motion for reporting, S12 is prepared
+with a bounded J1 `30 deg` target at `speed_percent=5`; this remains one active
+arm at a time, with the other arm read-only monitored.
 
 Next checks:
 

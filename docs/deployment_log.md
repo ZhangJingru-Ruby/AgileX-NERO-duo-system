@@ -4343,3 +4343,70 @@ Open risks:
 Next:
 Run local checks, commit S11 closure, then prepare S12 tests for control
 isolation and logging.
+
+## 2026-06-26 - S12 Visible J1 Isolation Plan Prepared
+
+Phase: S12 控制隔离与日志闭环
+
+Goal:
+Prepare a field-executable S12 test that uses a visible J1 motion while still
+verifying one-arm-at-a-time control isolation.
+
+Action:
+Added an S12 plan and two helper scripts. The driver wrapper starts one arm as
+the active control target and the other arm as read-only monitoring. The test
+script publishes only the target arm `move_j` command and monitors both arms'
+joint feedback so passive-arm movement is detected quantitatively.
+
+Commands / evidence:
+
+- URDF evidence: NERO `joint1` axis is local `Z`.
+- S11 TF evidence:
+  - Arm A local `Z` maps approximately to `lab_world -X`.
+  - Arm B local `Z` maps approximately to `lab_world +X`.
+- Inferred S12 signs for an intended `lab_world -Y` sweep:
+  - Arm A: `joint1 +30 deg`.
+  - Arm B: `joint1 -30 deg`.
+- Operator reported the surrounding workspace is clear and requested a visible
+  `30 deg` J1 motion for observation/reporting.
+
+Result:
+S12 is prepared but not executed.
+
+Deployment choices:
+
+- Keep `speed_percent=5` for the first S12 visible-motion tests.
+- Use `30 deg` as the bounded visible J1 amplitude, with optional `5 deg` sign
+  gate if the operator wants to confirm direction before the full motion.
+- Keep S12 as one active arm at a time; this is not dual-arm coordination.
+- Accept passive-arm movement tolerance of `1.0 deg` and target-arm tolerance
+  of `0.7 deg` for this first S12 field test.
+
+Files changed:
+`README.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s12_control_isolation_plan.md`,
+`docs/机器人部署与调试行动路线.md`,
+`scripts/launch_s12_isolation_pair.sh`, `scripts/ros_s12_isolation_step.py`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile examples/nero_read_state.py examples/nero_sdk_single_joint_step.py scripts/ros_single_joint_step.py scripts/ros_s12_isolation_step.py`
+- `git diff --check`
+
+Route updates:
+S12 now has explicit test commands, target signs, motion limits, and acceptance
+thresholds.
+
+Open risks:
+
+- The `-Y` direction sign is inferred from URDF and S11 TF; if visual direction
+  disagrees, stop and reverse the sign before the `30 deg` acceptance move.
+- `30 deg` is larger than S10 first-motion steps, so cable slack and swept area
+  must be checked again immediately before execution.
+
+Next:
+Run local checks, commit the S12 preparation, then execute S12.1 Arm A dry-run
+and, after operator confirmation, execution.

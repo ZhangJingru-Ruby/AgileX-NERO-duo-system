@@ -25,6 +25,7 @@ Use sources in this order:
    - `docs/s2_hybrid_host_container_plan.md`
    - `docs/s9_configuration_review.md`
    - `docs/s11_dual_arm_experiment_baseline.md`
+   - `docs/s12_control_isolation_plan.md`
    - `docs/nero 用户手册.md`
    - `docs/机械臂通信协议V1.2.1.xlsx`
    - `docs/pics/`
@@ -221,6 +222,15 @@ vice versa; namespace, CAN interface, command logs, feedback logs, snapshots,
 and git commit linkage must be unambiguous. Do not run Cartesian, MoveIt,
 MIT/JS, raw CAN motion, dexterous-hand actuation, or dual-arm coordinated
 motion until their later gates are explicitly accepted.
+
+S12 prepared path: use `docs/s12_control_isolation_plan.md`.
+For visible field observation, the current S12 test target is a bounded J1
+`30 deg` move at `speed_percent=5`, still one active arm at a time. The inferred
+signs for a `lab_world -Y` sweep are Arm A `joint1 +30 deg` and Arm B
+`joint1 -30 deg`. Treat the sign as inferred from URDF/S11 TF until dry-run and
+operator observation confirm it. If direction is uncertain, run the optional
+`5 deg` sign gate before the `30 deg` acceptance move. Passive arm tolerance is
+`1.0 deg`; target return tolerance is `0.7 deg`.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

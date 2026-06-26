@@ -245,8 +245,12 @@
 
 ## S12 控制隔离与日志闭环
 
-- [ ] 向 Arm A 下发小命令时 Arm B 不动。
-- [ ] 向 Arm B 下发小命令时 Arm A 不动。
+- [x] S12 控制隔离计划已建立：`docs/s12_control_isolation_plan.md`。
+- [x] S12 目标动作已定义为可见 J1 `30 deg`，仍然单臂轮流执行。
+- [ ] Arm A `joint1 +30 deg` dry-run 目标正确。
+- [ ] Arm A `joint1 +30 deg` 执行时 Arm B 不动。
+- [ ] Arm B `joint1 -30 deg` dry-run 目标正确。
+- [ ] Arm B `joint1 -30 deg` 执行时 Arm A 不动。
 - [ ] 同时启动两个控制 driver 时 namespace、CAN、日志互不混淆。
 - [ ] 每次实验均记录命令、反馈、状态、rosbag、快照和 git commit。
 - [ ] 异常停止和恢复记录格式已确定。

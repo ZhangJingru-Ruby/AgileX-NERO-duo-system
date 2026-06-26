@@ -12,6 +12,7 @@
 - [S2 混合部署方案](docs/s2_hybrid_host_container_plan.md)：共享 Ubuntu 20.04 主机 + Docker ROS2 Humble 的执行方案。
 - [S11 双臂实验基线](docs/s11_dual_arm_experiment_baseline.md)：`lab_world`、双臂 base TF、TCP 和日志/rosbag 规则。
 - [S11 post-TF 快照](docs/s9_ros_snapshots/20260626_055339/README.md)：S11 关闭用双臂只读反馈证据。
+- [S12 控制隔离计划](docs/s12_control_isolation_plan.md)：单臂轮流控制、另一臂只读监控和日志验收。
 - [Setup Framework](docs/setup_framework.md)：工程分层、关键事实、配置边界。
 - [Bring-Up Checklist](docs/bringup_checklist.md)：现场逐项检查表。
 - [NERO 用户手册](docs/nero%20用户手册.md)：语雀导出的用户手册文本。
