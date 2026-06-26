@@ -231,6 +231,14 @@ signs for a `lab_world -Y` sweep are Arm A `joint1 +30 deg` and Arm B
 operator observation confirm it. If direction is uncertain, run the optional
 `5 deg` sign gate before the `30 deg` acceptance move. Passive arm tolerance is
 `1.0 deg`; target return tolerance is `0.7 deg`.
+
+S12.1 Arm A is accepted and closed. Evidence: dry-run accepted in commit
+`c6a92eb`, execution core recorded in commit `3e4e2a0`, and post-motion
+snapshot `docs/s9_ros_snapshots/20260626_080809/` is clean. Arm A
+`joint1 +30 deg` matched the intended visible direction, Arm B did not visibly
+move, max passive deviation was `0.005 deg`, and A/B post-motion read-only
+status had `err_status: 0` with no joint-limit or joint-communication flags.
+Next S12 gate is Arm B `joint1 -30 deg` dry-run.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

@@ -249,7 +249,7 @@
 - [x] S12 目标动作已定义为可见 J1 `30 deg`，仍然单臂轮流执行。
 - [x] Arm A `joint1 +30 deg` dry-run 目标正确。
 - [x] Arm A `joint1 +30 deg` 执行时 Arm B 不动，最大被动偏差 `0.005 deg`。
-- [ ] Arm A `joint1 +30 deg` post-motion 双臂只读快照通过。
+- [x] Arm A `joint1 +30 deg` post-motion 双臂只读快照通过：`docs/s9_ros_snapshots/20260626_080809/`。
 - [ ] Arm B `joint1 -30 deg` dry-run 目标正确。
 - [ ] Arm B `joint1 -30 deg` 执行时 Arm A 不动。
 - [ ] 同时启动两个控制 driver 时 namespace、CAN、日志互不混淆。

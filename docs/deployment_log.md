@@ -4618,3 +4618,68 @@ Open risks:
 Next:
 Stop the S12 driver pair, start the dual-arm read-only driver, capture a
 post-motion snapshot, and evaluate it before closing S12.1.
+
+## 2026-06-26 - S12.1 Arm A Post-Snapshot Accepted
+
+Phase: S12 控制隔离与日志闭环
+
+Goal:
+Close S12.1 by validating the post-motion dual-arm read-only snapshot after Arm
+A `joint1 +30 deg` isolation execution.
+
+Action:
+Operator stopped the S12 control driver pair, returned to the dual-arm
+read-only driver, and captured a read-only snapshot.
+
+Commands / evidence:
+
+- Snapshot: `docs/s9_ros_snapshots/20260626_080809/`.
+- Snapshot README: `Failed capture commands: 0`.
+- Arm A joint-state frequency: about `200 Hz`
+  (`200.039`, `200.006`, `200.009`, `200.006`).
+- Arm B joint-state frequency: about `200 Hz`
+  (`200.036`, `200.027`, `200.014`, `200.008`).
+- Arm A status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- Arm B status: `ctrl_mode=1`, `arm_status=6`, `mode_feedback=1`,
+  `motion_status=1`, `err_status=0`.
+- A/B joint-limit flags: all `false`.
+- A/B joint-communication flags: all `false`.
+
+Result:
+S12.1 Arm A control-isolation test is accepted and closed. It now has dry-run
+evidence, execution evidence, operator observation, quantitative passive-arm
+monitoring, and a clean post-motion dual-arm read-only snapshot.
+
+Deployment choices:
+
+- Keep Arm A `joint1 +30 deg` as the accepted sign and amplitude for this
+  visible S12 isolation motion.
+- Proceed next to S12.2 Arm B `joint1 -30 deg` dry-run after stopping any
+  unnecessary read-only/control terminals and confirming the workspace again.
+
+Files changed:
+`config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s12_control_isolation_plan.md`,
+`docs/机器人部署与调试行动路线.md`,
+`docs/s9_ros_snapshots/20260626_080809/`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s12_isolation_step.py`
+- `git diff --check`
+
+Route updates:
+S12.1 is closed. S12.2 Arm B isolation is the next S12 gate.
+
+Open risks:
+
+- S12.2 Arm B isolation has not started.
+- S12 as a whole is not complete until Arm B isolation and final logging
+  closure pass.
+
+Next:
+Run local checks, commit the S12.1 closure, then start S12.2 Arm B dry-run.

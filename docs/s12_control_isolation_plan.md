@@ -142,7 +142,12 @@ Actual execution result on 2026-06-26:
 - Arm A after return: `joint1 1.704 deg`, return error about `0.595 deg`.
 - Passive Arm B maximum deviation: `0.005 deg`.
 - Final A/B `err_status: 0`.
-- Post-motion read-only snapshot is still pending.
+- Post-motion read-only snapshot:
+  `docs/s9_ros_snapshots/20260626_080809/`.
+- Snapshot result: `Failed capture commands: 0`, A/B joint-state feedback
+  about `200 Hz`, A/B `err_status: 0`, all joint-limit flags `false`, and all
+  joint-communication flags `false`.
+- S12.1 Arm A is accepted.
 
 ## S12.2 Arm B Procedure
 
