@@ -47,6 +47,14 @@ ros2 run tf2_ros static_transform_publisher \
 
 2. Publish the two static transforms in the ROS environment.
 
+   Preferred wrapper, used to avoid copy/paste line-break errors:
+
+   ```bash
+   NERO_CONTAINER_NAME=nero-humble-s11-static-tf \
+     bash scripts/run_humble_container.sh \
+       bash /workspace/nero/scripts/publish_s11_static_tf_candidate.sh
+   ```
+
 3. Verify TF:
 
    ```bash
@@ -87,6 +95,16 @@ lab_world -> arm_b/base_link:
 
 Candidate commands:
 
+Preferred:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s11-static-tf \
+  bash scripts/run_humble_container.sh \
+    bash /workspace/nero/scripts/publish_s11_static_tf_candidate.sh
+```
+
+Manual commands, if running directly inside a ROS environment:
+
 ```bash
 ros2 run tf2_ros static_transform_publisher \
   --x 0.000 --y 0.000 --z 0.000 \
@@ -106,6 +124,11 @@ ros2 run tf2_ros static_transform_publisher \
 The Arm B yaw is a candidate inferred from the operator's Web-frame observation.
 If RViz shows the two arms with a 180 deg error or another clear mismatch,
 correct this value and record the correction in `docs/s11_measurement_notes.md`.
+
+Avoid splitting an option from its value or child frame when copy/pasting manual
+commands. For example, `--yaw 3.1415926` and
+`--child-frame-id arm_b/base_link` must remain intact; otherwise
+`static_transform_publisher` will fail before publishing TF.
 
 Accepted values, to be filled only after RViz validation:
 

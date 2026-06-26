@@ -3911,3 +3911,62 @@ Open risks:
 Next:
 Check `can_arm_a` interface state and raw frames, then replug/reactivate the Arm
 A USB-CAN module if needed. Do not use Web/SDK/ROS motion during this recovery.
+
+## 2026-06-26 - S11 Static TF Command Line Split Error
+
+Phase: S11 双臂实验基线与坐标闭环
+
+Goal:
+Publish the S11 candidate static transforms after the dual read-only driver is
+running.
+
+Action:
+Operator reported that terminal 1 is now running normally. Terminal 2 failed
+while running the static TF command because the shell command was split across
+newlines inside the quoted `bash -lc` string.
+
+Commands / evidence:
+
+- First static TF command failed with:
+  `Child frame id must not be empty`.
+- The next line then ran as a shell command:
+  `--child-frame-id: command not found`.
+- The Arm B command failed with:
+  `Not enough arguments for --yaw`.
+- The next line then ran as:
+  `3.1415926: command not found`.
+
+Result:
+
+- This was a command-line quoting/newline issue, not a robot enable issue and
+  not a TF-value issue.
+- Added `scripts/publish_s11_static_tf_candidate.sh` so S11 static TF can be
+  published without long inline shell quoting.
+
+Deployment choices:
+
+- Continue using the candidate values from `config/nero.env`.
+- Use the wrapper script as the preferred static TF publisher.
+
+Files changed:
+`docs/deployment_log.md`, `docs/s11_static_tf_plan.md`,
+`scripts/publish_s11_static_tf_candidate.sh`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile examples/nero_read_state.py examples/nero_sdk_single_joint_step.py scripts/ros_single_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S11 remains in TF validation. The next action is to rerun terminal 2 with the
+wrapper script.
+
+Open risks:
+
+- Candidate yaw still needs RViz validation after TF is successfully published.
+
+Next:
+Run:
+`NERO_CONTAINER_NAME=nero-humble-s11-static-tf bash scripts/run_humble_container.sh bash /workspace/nero/scripts/publish_s11_static_tf_candidate.sh`
