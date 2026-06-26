@@ -40,7 +40,7 @@ Last updated: 2026-06-25
 | S8 ROS 只读 | Complete; coordinate alignment deferred to S9 | `/arm_a` and `/arm_b` feedback topics publish at about 200 Hz; arm status has `err_status: 0`; RViz follow is normal after the dual ROS read-only driver terminal is started first. |
 | S9 标定与配置 | Complete by operator confirmation and ROS revalidation | Load mode was changed by operator report; Arm A CAN recovered after USB-CAN replug/reactivation; S9.3 snapshot `20260625_054435` has complete A/B feedback, `err_status: 0`, no joint limits, no joint communication errors, and about 200 Hz joint-state feedback. |
 | S10 首次低速运动 | Complete for both arms | Web, SDK, and ROS J1 motion passed on Arm A and Arm B. Final S10.8 audit `20260625_155538` shows both CAN interfaces UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker container, and no NERO host process. |
-| S11 双臂实验基线 | Partially measured; TF validation in progress | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Arm B translation is recorded as `x=0.260 m, y=0, z=0`. The first pure-yaw RViz candidate did not match physical natural hanging posture. Revised root rotation candidates are Arm A `(roll=0, pitch=-1.5707963, yaw=0)` and Arm B `(roll=3.1415926, pitch=-1.5707963, yaw=0)`, pending RViz validation. |
+| S11 双臂实验基线 | RViz visual validation accepted; post-TF snapshot pending | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Accepted static TF values are `lab_world -> arm_a/world: x=0, y=0, z=0, roll=0, pitch=-1.5707963, yaw=0` and `lab_world -> arm_b/world: x=0.260, y=0, z=0, roll=3.1415926, pitch=-1.5707963, yaw=0`. Operator reports RViz now matches the physical layout and follows both arms when they move. |
 
 ## S0 Evidence
 

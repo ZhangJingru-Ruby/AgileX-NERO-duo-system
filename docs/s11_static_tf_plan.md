@@ -1,6 +1,6 @@
 # S11 Static TF Plan
 
-Status: revised candidate values prepared; awaiting ROS/RViz validation.
+Status: static TF values accepted by RViz visual validation; final post-TF snapshot pending.
 
 This document records how to publish the measured dual-arm base transforms for
 S11. Do not put placeholder values into runtime scripts.
@@ -95,11 +95,11 @@ ros2 run tf2_ros static_transform_publisher \
 
 ## Acceptance
 
-- [ ] Static TF uses measured values, not placeholders.
-- [ ] `tf2_echo` returns both transforms.
-- [ ] RViz relative layout matches the physical base relationship.
+- [x] Static TF uses measured values, not placeholders.
+- [x] `tf2_echo` returns the static transform values.
+- [x] RViz relative layout matches the physical base relationship by operator report.
 - [ ] Post-TF read-only snapshot is clean for both arms.
-- [ ] Transform values are copied back into this document after acceptance.
+- [x] Transform values are copied back into this document after acceptance.
 
 ## Accepted Values
 
@@ -152,9 +152,12 @@ commands. For example, `--pitch -1.5707963` and
 `--child-frame-id arm_b/world` must remain intact; otherwise
 `static_transform_publisher` will fail before publishing TF.
 
-Accepted values, to be filled only after RViz validation:
+Accepted S11 values:
 
 ```text
-lab_world -> arm_a/world: TBD
-lab_world -> arm_b/world: TBD
+lab_world -> arm_a/world:
+  x=0.000, y=0.000, z=0.000, roll=0, pitch=-1.5707963, yaw=0
+
+lab_world -> arm_b/world:
+  x=0.260, y=0.000, z=0.000, roll=3.1415926, pitch=-1.5707963, yaw=0
 ```

@@ -4210,3 +4210,62 @@ Open risks:
 Next:
 Restart the static TF publisher with the revised candidate and rerun the S11
 dual-arm RViz view.
+
+## 2026-06-26 - S11 Revised RViz Layout Accepted
+
+Phase: S11 双臂实验基线与坐标闭环
+
+Goal:
+Validate the revised 3D root-frame static TF candidate in RViz.
+
+Action:
+Operator restarted the static TF publisher with the revised candidate and
+opened the S11 dual-arm RViz model view.
+
+Commands / evidence:
+
+- Revised accepted static TF values:
+  - `lab_world -> arm_a/world`: `x=0`, `y=0`, `z=0`, `roll=0`,
+    `pitch=-1.5707963`, `yaw=0`.
+  - `lab_world -> arm_b/world`: `x=0.260`, `y=0`, `z=0`,
+    `roll=3.1415926`, `pitch=-1.5707963`, `yaw=0`.
+- Operator report:
+  - RViz layout now matches the real dual-arm layout.
+  - Moving each arm is followed by the RViz model.
+
+Result:
+S11 RViz visual validation is accepted. Final S11 closure still needs a
+post-TF read-only snapshot and normal cleanup.
+
+Deployment choices:
+
+- Accept the revised 3D root rotations for the S11 baseline.
+- Keep using `lab_world -> arm_*/world`, not `lab_world -> arm_*/base_link`,
+  because the URDF already provides `world -> base_link`.
+
+Files changed:
+`config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s11_measurement_notes.md`, `docs/s11_static_tf_plan.md`,
+`docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile examples/nero_read_state.py examples/nero_sdk_single_joint_step.py scripts/ros_single_joint_step.py`
+- `git diff --check`
+
+Post-TF snapshot is still pending.
+
+Route updates:
+S11 visual TF validation is accepted. Next action is S11 closure evidence.
+
+Open risks:
+
+- Measurement tool and exact uncertainty remain unreported.
+- Post-TF read-only snapshot is not yet captured.
+
+Next:
+Capture a post-TF read-only snapshot, save/confirm final RViz screenshot if
+needed, stop temporary terminals, and revoke X11 root access.
