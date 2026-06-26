@@ -5134,3 +5134,69 @@ Open risks:
   but not yet accepted for simultaneous world-frame direction semantics.
 - No Cartesian, MoveIt, manipulation, contact, handoff, or dexterous-hand
   motion is authorized.
+
+## 2026-06-26 - S13 Post-Motion Snapshot Accepted After Direction Mismatch
+
+Phase: S13 低风险双臂协同原语
+
+Goal:
+Validate hardware and ROS feedback health after the first S13 execution, which
+was numerically healthy but failed the intended world-direction semantics.
+
+Action:
+Operator stopped the S13 active control context, returned to the dual-arm
+read-only snapshot flow, and captured a post-motion snapshot.
+
+Evidence:
+
+- Snapshot directory: `docs/s9_ros_snapshots/20260626_090214/`.
+- `Failed capture commands: 0`.
+- Arm A joint-state frequency: about `200 Hz`.
+- Arm B joint-state frequency: about `200 Hz`.
+- Arm A status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- Arm B status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- Arm A joint-limit flags: all `false`.
+- Arm B joint-limit flags: all `false`.
+- Arm A joint-communication flags: all `false`.
+- Arm B joint-communication flags: all `false`.
+
+Result:
+The snapshot is accepted as clean post-motion health evidence. It confirms that
+the failed direction semantics did not leave the arms or ROS feedback chain in
+an error state. It does not accept Arm A `+30 deg` / Arm B `-30 deg` as the
+intended S13 world-direction primitive.
+
+Deployment choices:
+
+- Keep S13 active but do not close it.
+- Move the next gate from post-motion snapshot to corrected J1 direction-sign
+  dry-run.
+- Current dry-run hypothesis: Arm A `joint1 +30 deg`, Arm B `joint1 +30 deg`.
+- Do not execute the corrected sign hypothesis until its dry-run and safety gate
+  are accepted.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s13_low_risk_dual_arm_primitives_plan.md`,
+`docs/s9_ros_snapshots/20260626_090214/`,
+`docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s13_dual_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S13 first execution now has clean post-motion health evidence. Direction-sign
+correction remains open.
+
+Open risks:
+
+- The corrected sign hypothesis has not been dry-run.
+- No additional motion should be executed until the corrected dry-run and safety
+  gate are accepted.

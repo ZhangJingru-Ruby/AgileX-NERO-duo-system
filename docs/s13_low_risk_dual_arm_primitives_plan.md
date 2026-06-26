@@ -1,6 +1,6 @@
 # S13 Low-Risk Dual-Arm Primitives Plan
 
-Status: first execution numeric pass, world-direction semantics failed; post-motion snapshot pending.
+Status: first execution numeric pass, world-direction semantics failed; post-motion snapshot accepted.
 
 S13 starts the minimum dual-arm primitive layer after S12 proved control
 isolation. This phase still does not authorize Cartesian motion, MoveIt
@@ -176,6 +176,43 @@ Acceptance:
 - A/B `err_status: 0`.
 - A/B joint-limit flags are all `false`.
 - A/B joint-communication flags are all `false`.
+
+Actual post-motion snapshot result on 2026-06-26:
+
+- Snapshot: `docs/s9_ros_snapshots/20260626_090214/`.
+- `Failed capture commands: 0`.
+- Arm A joint-state feedback: about `200 Hz`.
+- Arm B joint-state feedback: about `200 Hz`.
+- A/B status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- A/B joint-limit flags: all `false`.
+- A/B joint-communication flags: all `false`.
+
+This snapshot accepts the hardware/ROS health after the failed direction
+semantics run. It does not accept the original sign pair as the intended S13
+primitive.
+
+## Corrected Direction-Sign Gate
+
+Next dry-run hypothesis:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s13-tool \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s13_dual_joint_step.py \
+      --joint joint1 \
+      --arm-a-delta-deg 30 \
+      --arm-b-delta-deg 30
+```
+
+Expected dry-run:
+
+- No motion command is published.
+- Only Arm A `joint1` target changes by `+30 deg`.
+- Only Arm B `joint1` target changes by `+30 deg`.
+- Hold check remains within tolerance.
+- Execute only after the operator accepts this corrected target and reconfirms
+  swept areas, cable slack, and emergency stop.
 
 ## Stop Conditions
 

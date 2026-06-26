@@ -265,7 +265,7 @@
 - [x] A/B 同时 J1 dry-run 目标正确：Arm A `+30 deg`，Arm B `-30 deg`。
 - [x] A/B 同时 `30 deg` joint-space 动作已安全执行并回原位；A/B `err_status=0`，非目标关节偏差小于 `1.0 deg`。
 - [ ] S13 世界方向语义通过：当前 Arm A `+30 deg` / Arm B `-30 deg` 被现场观察为同向运动，不是预期反向，需重新校准 Arm B J1 符号。
-- [ ] S13 post-motion 双臂只读快照通过。
+- [x] S13 post-motion 双臂只读快照通过：`docs/s9_ros_snapshots/20260626_090214/`。
 - [ ] 未进入笛卡尔、MoveIt 或 manipulation primitive 之前已完成快照验收。
 
 ## S14 末端执行器

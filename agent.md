@@ -276,6 +276,14 @@ dual-arm joint-space control-chain test but a failed S13 world-direction
 primitive. Next gate is a post-motion read-only snapshot, then corrected J1
 direction-sign dry-run; do not repeat Arm A `+30 deg` / Arm B `-30 deg` as an
 "opposite direction" primitive.
+
+S13 post-motion read-only snapshot after the direction-semantics mismatch is
+accepted: `docs/s9_ros_snapshots/20260626_090214/` has `Failed capture
+commands: 0`, A/B joint-state feedback at about `200 Hz`, A/B `err_status: 0`,
+all joint-limit flags `false`, and all joint-communication flags `false`. The
+next S13 gate is corrected direction-sign dry-run only, with the current
+hypothesis Arm A `joint1 +30 deg` and Arm B `joint1 +30 deg`; execution still
+requires a fresh operator safety gate.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at
