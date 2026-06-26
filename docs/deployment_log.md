@@ -4410,3 +4410,58 @@ Open risks:
 Next:
 Run local checks, commit the S12 preparation, then execute S12.1 Arm A dry-run
 and, after operator confirmation, execution.
+
+## 2026-06-26 - S12.1 Dry-Run Script Attribute Fix
+
+Phase: S12 控制隔离与日志闭环
+
+Goal:
+Diagnose and fix the S12.1 Arm A dry-run failure before any motion command.
+
+Action:
+Operator ran the S12 dry-run command for Arm A `joint1 +30 deg`. The script
+failed during node initialization with:
+
+```text
+AttributeError: can't set attribute 'publishers'
+```
+
+No motion command was published because the failure occurred before the target
+publisher was created and before dry-run output was printed.
+
+Commands / evidence:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s12-tool \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s12_isolation_step.py \
+      --target arm_a \
+      --joint joint1 \
+      --delta-deg 30
+```
+
+Result:
+The root cause is a script naming conflict: `rclpy.node.Node` already exposes a
+read-only `publishers` property, so assigning `self.publishers = {}` is invalid.
+
+Deployment choices:
+
+- Rename the script's target command publisher map to
+  `self.command_publishers`.
+- Keep the S12 procedure unchanged; rerun dry-run after local checks pass.
+
+Files changed:
+`docs/deployment_log.md`, `scripts/ros_s12_isolation_step.py`.
+
+Verification:
+Pending local checks.
+
+Route updates:
+No phase-status change. S12.1 remains at dry-run gate.
+
+Open risks:
+
+- The dry-run has not yet been rerun after the fix.
+
+Next:
+Run local checks, commit the fix, then rerun the S12.1 Arm A dry-run command.

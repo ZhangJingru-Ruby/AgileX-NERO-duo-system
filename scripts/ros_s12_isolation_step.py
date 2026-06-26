@@ -48,7 +48,7 @@ class S12IsolationStep(Node):
         self.samples: dict[str, Optional[Sample]] = {"arm_a": None, "arm_b": None}
         self.statuses: dict[str, object] = {"arm_a": None, "arm_b": None}
 
-        self.publishers = {}
+        self.command_publishers = {}
         self.estop_clients = {}
 
         for arm, ns in self.namespaces.items():
@@ -68,7 +68,7 @@ class S12IsolationStep(Node):
                 )
             self.estop_clients[arm] = self.create_client(Empty, f"{prefix}/emergency_stop")
             if arm == self.target:
-                self.publishers[arm] = self.create_publisher(
+                self.command_publishers[arm] = self.create_publisher(
                     JointState, f"{prefix}/control/move_j", 1
                 )
 
@@ -103,7 +103,7 @@ class S12IsolationStep(Node):
         msg = JointState()
         msg.name = names
         msg.position = positions
-        pub = self.publishers[self.target]
+        pub = self.command_publishers[self.target]
         for _ in range(max(1, repeats)):
             msg.header.stamp = self.get_clock().now().to_msg()
             pub.publish(msg)
