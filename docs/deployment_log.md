@@ -4754,3 +4754,83 @@ Open risks:
 Next:
 Run local checks, commit the dry-run record, then execute Arm B S12.2 only if
 the operator confirms the safety gate.
+
+## 2026-06-26 - S12.2 Arm B Execution Core Passed
+
+Phase: S12 控制隔离与日志闭环
+
+Goal:
+Execute Arm B `joint1 -30 deg` while monitoring Arm A as the passive arm, then
+verify that the target arm moves and returns while the passive arm remains
+still.
+
+Action:
+Operator executed the S12.2 Arm B control-isolation command after dry-run
+acceptance and safety-gate confirmation.
+
+Commands / evidence:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s12-tool \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s12_isolation_step.py \
+      --execute \
+      --target arm_b \
+      --joint joint1 \
+      --delta-deg -30
+```
+
+Key output:
+
+- `target=arm_b passive=arm_a execute=True`.
+- `target_current_deg=[-1.988, 89.862, -39.0, 5.704, 26.172, -10.311, 25.698]`.
+- `target_goal_deg=[-31.988, 89.862, -39.0, 5.704, 26.172, -10.311, 25.698]`.
+- `passive_current_deg=[1.109, 90.348, 92.986, 11.602, 7.709, 43.152, 50.518]`.
+- `after_step_target_deg=[-31.398, 89.861, -39.0, 5.698, 26.172, -10.311, 25.698]`.
+- `after_step_passive_deg=[1.110, 90.349, 92.986, 11.602, 7.709, 43.151, 50.515]`.
+- `max_passive_dev_deg=0.007`.
+- `after_return_target_deg=[-2.583, 89.861, -39.0, 5.704, 26.170, -10.310, 25.697]`.
+- `after_return_passive_deg=[1.109, 90.347, 92.986, 11.602, 7.710, 43.151, 50.515]`.
+- `max_passive_dev_total_deg=0.008`.
+- Final target status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- Final passive status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- Operator observation: motion matched expectation, and Arm A did not visibly
+  move.
+
+Result:
+S12.2 Arm B execution core passes. Arm B reached and returned within the
+`0.7 deg` tolerance, and Arm A passive deviation stayed far below the `1.0 deg`
+tolerance.
+
+Deployment choices:
+
+- Treat Arm B `joint1 -30 deg` as the correct sign for the intended visible
+  sweep.
+- Do not close S12.2 until a post-motion dual-arm read-only snapshot is
+  captured and checked.
+
+Files changed:
+`config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s12_control_isolation_plan.md`, `docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s12_isolation_step.py`
+- `git diff --check`
+
+Route updates:
+S12.2 advances from execution gate to post-motion snapshot gate.
+
+Open risks:
+
+- Post-motion read-only snapshot is not yet captured.
+- S12 final closure is still pending.
+
+Next:
+Stop the S12 driver pair, start the dual-arm read-only driver, capture a
+post-motion snapshot, and evaluate it before closing S12.2/S12.

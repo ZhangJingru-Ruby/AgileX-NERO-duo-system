@@ -186,6 +186,17 @@ Actual dry-run result on 2026-06-26:
   `motion_status=0`, `err_status=0`.
 - S12.2 Arm B dry-run is accepted; execution is pending.
 
+Actual execution result on 2026-06-26:
+
+- Operator reported the observed Arm B motion matched expectation.
+- Arm A did not visibly move.
+- Arm B target: `joint1 -1.988 deg -> -31.988 deg`.
+- Arm B after step: `joint1 -31.398 deg`, target error about `0.590 deg`.
+- Arm B after return: `joint1 -2.583 deg`, return error about `0.595 deg`.
+- Passive Arm A maximum deviation: `0.008 deg`.
+- Final A/B `err_status: 0`.
+- Post-motion read-only snapshot is still pending.
+
 Execute only after the dry-run target and direction are accepted:
 
 ```bash
