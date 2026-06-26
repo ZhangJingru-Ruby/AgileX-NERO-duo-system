@@ -5360,3 +5360,66 @@ Open risks:
 - Corrected-execution post-motion snapshot is still pending.
 - Do not expand to Cartesian, MoveIt, manipulation, contact, handoff, or
   dexterous-hand actuation before S13 closure.
+
+## 2026-06-26 - S13 Final Snapshot Attempt Not Accepted
+
+Phase: S13 低风险双臂协同原语
+
+Goal:
+Validate final post-motion ROS read-only health after the corrected S13
+execution.
+
+Action:
+Operator captured a dual-arm read-only snapshot after the corrected execution.
+
+Evidence:
+
+- Snapshot directory: `docs/s9_ros_snapshots/20260626_093414/`.
+- `Failed capture commands: 0`.
+- Arm A status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- Arm B status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- Arm A joint-limit flags: all `false`.
+- Arm B joint-limit flags: all `false`.
+- Arm A joint-communication flags: all `false`.
+- Arm B joint-communication flags: all `false`.
+- Arm A joint-state frequency: about `400 Hz`.
+- Arm B joint-state frequency: about `400 Hz`.
+
+Result:
+The snapshot is not accepted for S13 closure. The robot state is healthy, but
+the observed feedback rate is about double the established read-only baseline
+of about `200 Hz`. This most likely means duplicate publishers, such as the S13
+active driver still running while the read-only driver was launched.
+
+Deployment choices:
+
+- Do not close S13 on this snapshot.
+- Keep the corrected execution core accepted.
+- Stop extra ROS driver containers/terminals and rerun a clean final read-only
+  snapshot.
+- Treat about `200 Hz` single-source feedback as the expected final evidence.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s13_low_risk_dual_arm_primitives_plan.md`,
+`docs/s9_ros_snapshots/20260626_093414/`,
+`docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s13_dual_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S13 remains open at the final snapshot gate.
+
+Open risks:
+
+- Running duplicate feedback publishers can hide whether the snapshot reflects a
+  clean deployment topology.
+- No next-phase motion should start until S13 has a clean final snapshot.

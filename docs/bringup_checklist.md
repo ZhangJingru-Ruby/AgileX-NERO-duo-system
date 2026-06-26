@@ -269,6 +269,7 @@
 - [x] S13 修正符号 dry-run 通过：Arm A `joint1 +30 deg`，Arm B `joint1 +30 deg`，A/B `err_status=0`，hold 偏差小于 `1.0 deg`。
 - [x] S13 修正符号执行通过：Arm A `joint1 +30 deg`，Arm B `joint1 +30 deg`，操作者确认可见方向符合预期，A/B final `err_status=0`。
 - [ ] S13 修正符号执行后双臂只读快照通过。
+- [ ] `docs/s9_ros_snapshots/20260626_093414/` 已捕获但暂不验收：A/B 状态健康、`Failed capture commands: 0`，但 joint-state 约 `400 Hz`，需排除重复 publisher 后重跑快照。
 - [ ] 未进入笛卡尔、MoveIt 或 manipulation primitive 之前已完成快照验收。
 
 ## S14 末端执行器

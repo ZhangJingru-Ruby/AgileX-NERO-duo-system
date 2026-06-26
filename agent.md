@@ -300,6 +300,14 @@ confirmed the visible direction matched expectation. After-step J1 values were
 Arm A `30.459 deg` and Arm B `27.318 deg`; after-return J1 values were Arm A
 `1.737 deg` and Arm B `-1.394 deg`; final A/B `err_status: 0`; non-target
 deviations were about `0.006 deg` and `0.007 deg`.
+
+S13 final snapshot attempt `docs/s9_ros_snapshots/20260626_093414/` is not
+accepted for closure. It has `Failed capture commands: 0`, A/B `err_status: 0`,
+no joint-limit flags, and no joint-communication flags, but A/B joint-state
+frequency is about `400 Hz`, not the expected about `200 Hz`. Treat this as a
+likely duplicate-publisher state caused by an extra ROS driver/container still
+running. Next gate: stop extra ROS drivers, verify a single feedback source, and
+rerun the corrected-execution final read-only snapshot.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

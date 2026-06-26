@@ -1,6 +1,6 @@
 # S13 Low-Risk Dual-Arm Primitives Plan
 
-Status: corrected direction-sign execution accepted; post-motion snapshot pending.
+Status: corrected direction-sign execution accepted; final snapshot frequency anomaly; rerun pending.
 
 S13 starts the minimum dual-arm primitive layer after S12 proved control
 isolation. This phase still does not authorize Cartesian motion, MoveIt
@@ -256,6 +256,26 @@ Result:
 - Corrected S13 execution core is accepted.
 - Do not close S13 until the corrected-execution post-motion read-only snapshot
   is captured and accepted.
+
+Final snapshot attempt after corrected execution on 2026-06-26:
+
+- Snapshot: `docs/s9_ros_snapshots/20260626_093414/`.
+- `Failed capture commands: 0`.
+- A/B status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- A/B joint-limit flags: all `false`.
+- A/B joint-communication flags: all `false`.
+- Arm A joint-state frequency: about `400 Hz`.
+- Arm B joint-state frequency: about `400 Hz`.
+
+Result:
+
+- The snapshot is not accepted for S13 closure because the feedback frequency is
+  about double the expected read-only baseline of about `200 Hz`.
+- The most likely explanation is duplicate publishers, for example an active
+  S13 driver still running while the read-only driver was launched.
+- Stop extra ROS driver containers/terminals, verify the feedback source is
+  single, then rerun the final post-motion snapshot.
 
 ## Stop Conditions
 
