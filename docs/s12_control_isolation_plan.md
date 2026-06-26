@@ -173,6 +173,19 @@ NERO_CONTAINER_NAME=nero-humble-s12-tool \
       --delta-deg -30
 ```
 
+Actual dry-run result on 2026-06-26:
+
+- Target arm: Arm B.
+- Passive arm: Arm A.
+- `execute=False`, so no motion command was published.
+- Arm B target: `joint1 -1.988 deg -> -31.988 deg`.
+- Arm A passive current joint vector was printed for monitoring.
+- Target status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=1`, `err_status=0`.
+- Passive status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- S12.2 Arm B dry-run is accepted; execution is pending.
+
 Execute only after the dry-run target and direction are accepted:
 
 ```bash

@@ -238,7 +238,9 @@ snapshot `docs/s9_ros_snapshots/20260626_080809/` is clean. Arm A
 `joint1 +30 deg` matched the intended visible direction, Arm B did not visibly
 move, max passive deviation was `0.005 deg`, and A/B post-motion read-only
 status had `err_status: 0` with no joint-limit or joint-communication flags.
-Next S12 gate is Arm B `joint1 -30 deg` dry-run.
+S12.2 Arm B dry-run is accepted: target changes only Arm B `joint1` from
+`-1.988 deg` to `-31.988 deg`, Arm A is passive read-only, and both statuses
+had `err_status: 0`. Next S12 gate is Arm B `joint1 -30 deg` execution.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

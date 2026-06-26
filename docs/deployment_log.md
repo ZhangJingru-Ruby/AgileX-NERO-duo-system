@@ -4683,3 +4683,74 @@ Open risks:
 
 Next:
 Run local checks, commit the S12.1 closure, then start S12.2 Arm B dry-run.
+
+## 2026-06-26 - S12.2 Arm B Dry-Run Accepted
+
+Phase: S12 控制隔离与日志闭环
+
+Goal:
+Validate the Arm B `joint1 -30 deg` S12 dry-run target before any real motion.
+
+Action:
+Operator ran the S12.2 Arm B dry-run with Arm B as target and Arm A as passive
+monitoring.
+
+Commands / evidence:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s12-tool \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s12_isolation_step.py \
+      --target arm_b \
+      --joint joint1 \
+      --delta-deg -30
+```
+
+Key output:
+
+- `target=arm_b passive=arm_a execute=False`
+- `joint=joint1 delta_deg=-30.0`
+- `target_current_deg=[-1.988, 89.862, -39.0, 5.704, 26.172, -10.311, 25.698]`
+- `target_goal_deg=[-31.988, 89.862, -39.0, 5.704, 26.172, -10.311, 25.698]`
+- `passive_current_deg=[1.109, 90.347, 92.985, 11.602, 7.712, 43.151, 50.515]`
+- Target status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=1`, `err_status=0`.
+- Passive status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+
+Result:
+S12.2 Arm B dry-run is accepted. The target vector changes only Arm B `joint1`
+by `-30 deg`; Arm A is read-only passive feedback. No motion command was
+published because `execute=False`.
+
+Deployment choices:
+
+- Keep the planned Arm B execution target as `joint1 -30 deg`.
+- Keep passive-arm tolerance at `1.0 deg`.
+- Execute only after the operator reconfirms the full Arm B J1 swept area,
+  cable slack, and emergency-stop/power-cutoff assignment.
+
+Files changed:
+`config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s12_control_isolation_plan.md`, `docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s12_isolation_step.py`
+- `git diff --check`
+
+Route updates:
+S12.2 advances from dry-run gate to execution gate.
+
+Open risks:
+
+- The inferred `lab_world -Y` direction for Arm B is still unverified by actual
+  motion. If the observed direction is wrong, stop and reverse the sign before
+  continuing.
+
+Next:
+Run local checks, commit the dry-run record, then execute Arm B S12.2 only if
+the operator confirms the safety gate.
