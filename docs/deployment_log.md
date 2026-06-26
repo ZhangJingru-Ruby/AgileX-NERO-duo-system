@@ -5047,3 +5047,90 @@ Open risks:
 Next:
 Run local checks, commit the dry-run record, then execute S13 only if the
 operator confirms the safety gate.
+
+## 2026-06-26 - S13 First Execution Direction Semantics Failed
+
+Phase: S13 低风险双臂协同原语
+
+Goal:
+Execute the first simultaneous low-risk dual-arm J1 primitive after dry-run and
+hold acceptance, and verify both numeric feedback and operator-visible motion
+semantics.
+
+Action:
+Operator ran the S13 dual-arm joint-space step script with `--execute`.
+
+Command:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s13-tool \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s13_dual_joint_step.py \
+      --execute \
+      --joint joint1 \
+      --arm-a-delta-deg 30 \
+      --arm-b-delta-deg -30
+```
+
+Key output:
+
+- Arm A target: `joint1 1.111 deg -> 31.111 deg`.
+- Arm B target: `joint1 -1.988 deg -> -31.988 deg`.
+- Hold before motion remained stable:
+  `hold_max_dev_deg={'arm_a': 0.0, 'arm_b': 0.006000000000000263}`.
+- After step: Arm A `joint1=30.513 deg`, Arm B `joint1=-31.441 deg`.
+- After return: Arm A `joint1=1.753 deg`, Arm B `joint1=-2.660 deg`.
+- `max_non_target_dev_total_deg={'arm_a': 0.01299999999999951, 'arm_b': 0.00800000000000141}`.
+- Final Arm A status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- Final Arm B status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+
+Operator observation:
+Arm B did not rotate in the expected opposite visible direction. Both arms
+appeared to rotate in the same visible direction.
+
+Result:
+The ROS/CAN joint-space control chain passed numerically: both commands were
+accepted, both arms moved and returned, final statuses were healthy, and
+non-target joint deviations stayed well inside tolerance. The intended
+world-direction semantics failed, so this run does not close S13 and must not be
+accepted as the intended dual-arm primitive.
+
+Deployment choices:
+
+- Treat local joint sign as different from lab-world visible direction.
+- Do not infer future dual-arm primitive direction from isolated S12 signs
+  without simultaneous operator-visible validation.
+- Do not repeat Arm A `+30 deg` / Arm B `-30 deg` as an "opposite direction"
+  primitive.
+- Before any further simultaneous motion, capture a post-motion read-only
+  snapshot.
+- After the snapshot, run a corrected direction-sign dry-run. The likely next
+  hypothesis is to keep Arm A `joint1 +30 deg` and change Arm B to
+  `joint1 +30 deg`, but execution requires a fresh dry-run and safety gate.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s13_low_risk_dual_arm_primitives_plan.md`,
+`docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s13_dual_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S13 remains active. The first execution is classified as numeric pass /
+world-direction semantic fail. Post-motion snapshot and corrected sign dry-run
+are now the next gates.
+
+Open risks:
+
+- The current `joint1` sign convention is calibrated for isolated arm motion
+  but not yet accepted for simultaneous world-frame direction semantics.
+- No Cartesian, MoveIt, manipulation, contact, handoff, or dexterous-hand
+  motion is authorized.

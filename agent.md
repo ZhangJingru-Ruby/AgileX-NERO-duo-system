@@ -180,7 +180,7 @@ These are the current deployment assumptions. Update them only when verified.
 | Current live state | S11 accepted/closed: `lab_world` static TF baseline is accepted by RViz visual validation and post-TF ROS snapshot |
 | Observed Web model | `7ax`, interpreted as one NERO 7-axis arm/controller per physical arm |
 | Observed Web footer version | `v1.121`; current SDK firmware selector is `v112` |
-| Current next phase | S13 low-risk dual-arm primitives |
+| Current next phase | S13 low-risk dual-arm primitives, direction-sign correction active |
 
 Current Web evidence shows one set of joint tabs, `关节1` through `关节7`.
 Treat this as normal for one NERO 7-axis arm/controller. The physical setup has
@@ -267,8 +267,15 @@ bimanual tasks, or dexterous-hand actuation.
 S13 dry-run and hold gate is accepted. Dry-run target changed only Arm A
 `joint1` from `1.111 deg` to `31.111 deg` and Arm B `joint1` from `-1.988 deg`
 to `-31.988 deg`; A/B statuses had `err_status: 0`; hold max deviation was
-`0.0 deg` for both arms. Next gate is S13 dual-arm `--execute` with the same
-targets, followed by a post-motion read-only snapshot.
+`0.0 deg` for both arms. The first S13 execution with those same signs completed
+numerically and returned safely, with A/B final `err_status: 0` and non-target
+joint deviations below `1.0 deg`. Operator observation did not accept the
+world-direction semantics: Arm B appeared to move in the same visible direction
+as Arm A instead of the expected opposite direction. Treat this as a successful
+dual-arm joint-space control-chain test but a failed S13 world-direction
+primitive. Next gate is a post-motion read-only snapshot, then corrected J1
+direction-sign dry-run; do not repeat Arm A `+30 deg` / Arm B `-30 deg` as an
+"opposite direction" primitive.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

@@ -1,6 +1,6 @@
 # S13 Low-Risk Dual-Arm Primitives Plan
 
-Status: prepared for field execution.
+Status: first execution numeric pass, world-direction semantics failed; post-motion snapshot pending.
 
 S13 starts the minimum dual-arm primitive layer after S12 proved control
 isolation. This phase still does not authorize Cartesian motion, MoveIt
@@ -21,15 +21,19 @@ An evaluator should be able to answer:
 ## First Primitive
 
 Use the same visible J1 magnitude requested by the operator and accepted in
-S12:
+S12. The first S13 command intentionally tested the local joint-space signs from
+S12 under simultaneous control:
 
 | Arm | Joint | Delta | Rationale |
 | --- | --- | --- | --- |
 | Arm A | `joint1` | `+30 deg` | Accepted in S12; visible direction matched expectation |
 | Arm B | `joint1` | `-30 deg` | Accepted in S12; visible direction matched expectation |
 
-The intended first primitive is a low-risk, non-contact, same-direction
-world-frame sweep. The two arms are not commanded to approach each other.
+The intended first primitive is a low-risk, non-contact sweep with an
+operator-visible world-frame direction criterion. The two arms are not
+commanded to approach each other. Local joint signs do not by themselves prove
+the visible world-frame direction; the direction must be accepted by operator
+observation.
 
 ## Safety Gate
 
@@ -121,6 +125,31 @@ Expected execution:
 - A/B final `err_status: 0`.
 - Operator reports no cable tension, abnormal sound, Web warning, or physical
   interference.
+
+Actual execution result on 2026-06-26:
+
+- Command: Arm A `joint1 +30 deg`, Arm B `joint1 -30 deg`.
+- Hold before motion remained stable:
+  `hold_max_dev_deg={'arm_a': 0.0, 'arm_b': 0.006000000000000263}`.
+- Arm A after step: `joint1=30.513 deg`; after return:
+  `joint1=1.753 deg`.
+- Arm B after step: `joint1=-31.441 deg`; after return:
+  `joint1=-2.660 deg`.
+- Non-target deviations remained inside tolerance:
+  `max_non_target_dev_total_deg={'arm_a': 0.01299999999999951, 'arm_b': 0.00800000000000141}`.
+- Final status was healthy on both arms: A/B `ctrl_mode=1`,
+  `arm_status=0`, `mode_feedback=1`, `motion_status=0`, `err_status=0`.
+- Operator observation: Arm B did not move in the expected opposite visible
+  direction; both arms appeared to rotate in the same visible direction.
+
+Result:
+
+- Numeric ROS/CAN joint-space execution passed.
+- The intended world-direction semantics did not pass.
+- Do not close S13 on this run.
+- Do not repeat this exact sign pair as an "opposite direction" primitive.
+- Next gate is post-motion read-only snapshot, then a corrected direction-sign
+  dry-run before any further simultaneous motion.
 
 ## Post-Motion Snapshot
 
