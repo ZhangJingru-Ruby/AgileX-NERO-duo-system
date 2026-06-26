@@ -4454,14 +4454,87 @@ Files changed:
 `docs/deployment_log.md`, `scripts/ros_s12_isolation_step.py`.
 
 Verification:
-Pending local checks.
+Local checks passed before commit `a992d67`:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s12_isolation_step.py`
+- `git diff --check`
 
 Route updates:
 No phase-status change. S12.1 remains at dry-run gate.
 
 Open risks:
 
-- The dry-run has not yet been rerun after the fix.
+- Resolved by the follow-up dry-run on 2026-06-26.
 
 Next:
 Run local checks, commit the fix, then rerun the S12.1 Arm A dry-run command.
+
+## 2026-06-26 - S12.1 Arm A Dry-Run Accepted
+
+Phase: S12 控制隔离与日志闭环
+
+Goal:
+Validate the Arm A `joint1 +30 deg` S12 dry-run target before any real motion.
+
+Action:
+Operator reran the S12 dry-run after the publisher-map script fix.
+
+Commands / evidence:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s12-tool \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s12_isolation_step.py \
+      --target arm_a \
+      --joint joint1 \
+      --delta-deg 30
+```
+
+Key output:
+
+- `target=arm_a passive=arm_b execute=False`
+- `joint=joint1 delta_deg=30.0`
+- `target_current_deg=[1.109, 90.348, 92.988, 11.602, 7.709, 43.151, 50.516]`
+- `target_goal_deg=[31.109, 90.348, 92.988, 11.602, 7.709, 43.151, 50.516]`
+- `passive_current_deg=[-1.989, 89.862, -39.0, 5.704, 26.172, -10.311, 25.698]`
+- Target status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=1`, `err_status=0`.
+- Passive status: `ctrl_mode=1`, `arm_status=6`, `mode_feedback=1`,
+  `motion_status=1`, `err_status=0`.
+
+Result:
+S12.1 Arm A dry-run is accepted. The target vector changes only Arm A
+`joint1` by `+30 deg`; Arm B is read-only passive feedback. No motion command
+was published because `execute=False`.
+
+Deployment choices:
+
+- Keep the planned Arm A execution target as `joint1 +30 deg`.
+- Keep passive-arm tolerance at `1.0 deg`.
+- Execute only after the operator reconfirms the full J1 swept area, cable
+  slack, and emergency-stop/power-cutoff assignment.
+
+Files changed:
+`docs/bringup_checklist.md`, `docs/current_bringup_status.md`,
+`docs/deployment_log.md`, `docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s12_isolation_step.py`
+- `git diff --check`
+
+Route updates:
+S12.1 advances from dry-run gate to execution gate.
+
+Open risks:
+
+- The inferred `lab_world -Y` direction is still unverified by actual motion.
+  If the first observed motion direction is wrong, stop and reverse the sign
+  before continuing.
+
+Next:
+Run local checks, commit the dry-run record, then execute Arm A S12.1 only if
+the operator confirms the safety gate.

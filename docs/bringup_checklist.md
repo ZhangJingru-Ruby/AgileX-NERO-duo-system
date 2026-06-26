@@ -247,7 +247,7 @@
 
 - [x] S12 控制隔离计划已建立：`docs/s12_control_isolation_plan.md`。
 - [x] S12 目标动作已定义为可见 J1 `30 deg`，仍然单臂轮流执行。
-- [ ] Arm A `joint1 +30 deg` dry-run 目标正确。
+- [x] Arm A `joint1 +30 deg` dry-run 目标正确。
 - [ ] Arm A `joint1 +30 deg` 执行时 Arm B 不动。
 - [ ] Arm B `joint1 -30 deg` dry-run 目标正确。
 - [ ] Arm B `joint1 -30 deg` 执行时 Arm A 不动。
