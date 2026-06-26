@@ -1,6 +1,6 @@
 # NERO Agent Operating Rules
 
-Last updated: 2026-06-25
+Last updated: 2026-06-26
 
 This file defines how any agent, operator, or collaborator should continue the
 NERO arm deployment work in this repository.
@@ -176,10 +176,10 @@ These are the current deployment assumptions. Update them only when verified.
 | CAN bitrate | `1000000` |
 | Initial TCP offset | `[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]` |
 | Deployment mode | Ubuntu 20.04 host SDK/CAN-only + Docker ROS2 Humble |
-| Current live state | S11 partially measured: Arm B translation is `x=0.260 m, y=0, z=0`; yaw candidate `pi` is pending RViz validation |
+| Current live state | S11 accepted/closed: `lab_world` static TF baseline is accepted by RViz visual validation and post-TF ROS snapshot |
 | Observed Web model | `7ax`, interpreted as one NERO 7-axis arm/controller per physical arm |
 | Observed Web footer version | `v1.121`; current SDK firmware selector is `v112` |
-| Current next phase | S11 dual-arm experiment baseline and coordinate closure |
+| Current next phase | S12 control isolation and logging closure |
 
 Current Web evidence shows one set of joint tabs, `关节1` through `关节7`.
 Treat this as normal for one NERO 7-axis arm/controller. The physical setup has
@@ -192,32 +192,35 @@ completed. For ROS read-only launches, explicitly use `auto_enable:=false` and
 `control_enabled:=false`, because the upstream single-arm launch defaults both
 to `true`.
 
-S10.1 Web first motion passed on Arm A by operator report. Actual Web scope was
-all 7 Arm A degrees of freedom, which exceeded the original J7-only plan but
-was followed by a clean ROS read-only snapshot. Do not use this to skip staged
-gates: SDK/ROS/raw-CAN motion, Cartesian motion, MoveIt execute, and dual-arm
-motion still require separate procedures and confirmation.
+S10 dual-arm first motion is accepted and closed. Arm A and Arm B both passed
+the staged Web, SDK, and ROS low-speed single-joint checks. Final S10.8 audit
+`docs/s10_8_control_source_audit_live_20260625_155538.txt` reported both CAN
+interfaces UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker container, and no NERO host
+process.
 
-S10.2 prepared path: use `examples/nero_sdk_single_joint_step.py` with SDK
-dry-run first, then optional `--execute` only after operator confirmation. J7
-dry-run passed, but the execution candidate was revised to J1 for visual
-observability. J1 `+1 deg` dry-run also passed, and the operator confirmed the
-J1 swept area is clear. S10.2 SDK motion passed on Arm A: J1 `+2 deg` then
-return, actual speed `10%`, final status NORMAL/reached target. Post-SDK ROS
-read-only snapshot `docs/s9_ros_snapshots/20260625_062910/` passed.
+S11 dual-arm experiment baseline is accepted and closed. The accepted shared
+frame is `lab_world`: origin at Arm A base center projection, `+X` from Arm A
+to Arm B, `+Y` left when facing `+X`, and `+Z` up. Accepted runtime static TF
+values are:
 
-S10.3 ROS `joint1 +2 deg` execution completed on Arm A and returned within
-script tolerance; operator visually confirmed motion and return. Post-motion
-dual-arm read-only snapshot `docs/s9_ros_snapshots/20260625_064243/` passed, so
-S10.3 is accepted. Next preferred phase is S10.4 stop/recovery and
-control-source closure. Do not run Cartesian, MoveIt, MIT/JS, raw CAN,
-dexterous hand, or dual-arm coordinated motion yet.
+- `lab_world -> arm_a/world`: `x=0.000`, `y=0.000`, `z=0.000`,
+  `roll=0`, `pitch=-1.5707963`, `yaw=0`.
+- `lab_world -> arm_b/world`: `x=0.260`, `y=0.000`, `z=0.000`,
+  `roll=3.1415926`, `pitch=-1.5707963`, `yaw=0`.
 
-S10.4 prepared path: use `docs/s10_4_stop_recovery_closure.md` and
-`scripts/s10_control_source_audit.sh` to confirm no Arm A ROS control driver,
-SDK motion script, or Web motion command remains active before repeating the
-minimal first-motion ladder on Arm B. This closure is intentionally no-motion:
-intentional emergency-stop and power-cut recovery tests remain deferred.
+S11 evidence: successful RViz screenshot
+`docs/pics/S11_RViz_accepted_dual_arm_layout.png`; post-TF read-only snapshot
+`docs/s9_ros_snapshots/20260626_055339/` with `Failed capture commands: 0`,
+A/B joint-state feedback at about 200 Hz, A/B `err_status: 0`, no joint-limit
+flags, and no joint communication flags. X11 cleanup was confirmed by `xhost`
+showing access control enabled and only `SI:localuser:lv-robotics`.
+
+S12 should verify control isolation and logging before any coordinated
+manipulation: when Arm A receives a small command, Arm B must remain still and
+vice versa; namespace, CAN interface, command logs, feedback logs, snapshots,
+and git commit linkage must be unambiguous. Do not run Cartesian, MoveIt,
+MIT/JS, raw CAN motion, dexterous-hand actuation, or dual-arm coordinated
+motion until their later gates are explicitly accepted.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

@@ -1,6 +1,6 @@
 # NERO Current Bring-Up Status
 
-Last updated: 2026-06-25
+Last updated: 2026-06-26
 
 ## Confirmed Configuration
 
@@ -40,7 +40,7 @@ Last updated: 2026-06-25
 | S8 ROS 只读 | Complete; coordinate alignment deferred to S9 | `/arm_a` and `/arm_b` feedback topics publish at about 200 Hz; arm status has `err_status: 0`; RViz follow is normal after the dual ROS read-only driver terminal is started first. |
 | S9 标定与配置 | Complete by operator confirmation and ROS revalidation | Load mode was changed by operator report; Arm A CAN recovered after USB-CAN replug/reactivation; S9.3 snapshot `20260625_054435` has complete A/B feedback, `err_status: 0`, no joint limits, no joint communication errors, and about 200 Hz joint-state feedback. |
 | S10 首次低速运动 | Complete for both arms | Web, SDK, and ROS J1 motion passed on Arm A and Arm B. Final S10.8 audit `20260625_155538` shows both CAN interfaces UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker container, and no NERO host process. |
-| S11 双臂实验基线 | RViz visual validation accepted; post-TF snapshot pending | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Accepted static TF values are `lab_world -> arm_a/world: x=0, y=0, z=0, roll=0, pitch=-1.5707963, yaw=0` and `lab_world -> arm_b/world: x=0.260, y=0, z=0, roll=3.1415926, pitch=-1.5707963, yaw=0`. Operator reports RViz now matches the physical layout and follows both arms when they move. |
+| S11 双臂实验基线 | Complete / accepted | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Accepted static TF values are `lab_world -> arm_a/world: x=0, y=0, z=0, roll=0, pitch=-1.5707963, yaw=0` and `lab_world -> arm_b/world: x=0.260, y=0, z=0, roll=3.1415926, pitch=-1.5707963, yaw=0`. Operator reports RViz matches the physical layout and follows both arms when they move. Post-TF snapshot `20260626_055339` is clean, and X11 access was restored to local-user only. |
 
 ## S0 Evidence
 
@@ -113,13 +113,17 @@ S2 offline environment result:
 
 ## Immediate Next Step
 
-S10.1 Web first motion, S10.2 SDK motion, S10.3 ROS motion, and S10.4
-no-motion control-source closure have passed for Arm A. S10.3 post-ROS snapshot
-`20260625_064243` is clean, and live S10.4 audit `20260625_150438` is clean.
-The git baseline commit `fb8a262` exists. S10 is complete for both arms:
-Arm A and Arm B both passed Web, SDK, and ROS low-speed single-joint motion.
-Final S10.8 audit `20260625_155538` is clean. The immediate next step is S11
-dual-arm experiment baseline and coordinate closure.
+S10 is complete for both arms: Arm A and Arm B both passed Web, SDK, and ROS
+low-speed single-joint motion. Final S10.8 audit `20260625_155538` is clean.
+S11 is complete: RViz visual layout matches the physical dual-arm layout, both
+arms follow real feedback in RViz, post-TF snapshot `20260626_055339` is clean,
+and the accepted screenshot is
+`docs/pics/S11_RViz_accepted_dual_arm_layout.png`.
+
+The immediate next step is S12 control isolation and logging closure. The S12
+acceptance view is: a small command to Arm A must not move Arm B, a small
+command to Arm B must not move Arm A, and each test must leave command,
+feedback, status, snapshot/rosbag, and git evidence that is unambiguous.
 
 Next checks:
 
@@ -127,12 +131,12 @@ Next checks:
   state and avoid unnecessary accumulated risk.
 - Record whether the final Arm A pose is intentionally acceptable or whether it
   should later be returned to a known home/park pose under a separate command.
-- Keep the system in dual-arm read-only validation state unless deliberately
-  starting the next controlled test.
+- Stop temporary S11 RViz/static-TF terminals unless deliberately revalidating
+  S11.
+- Before S12 motion, run the control-source audit again and confirm only the
+  intended control path is active.
 - Do not expand to Cartesian, MoveIt, MIT/JS, dual-arm coordinated motion, or
   dexterous-hand actuation yet.
-- Next recommended action: start S11 by defining `lab_world`, measuring the two
-  base transforms, and creating a static TF/logging baseline.
 - Actual SDK speed was `10%`, not the planned `5%`; keep future first tests at
   or below `10%`, and prefer `5%` unless observability requires otherwise.
 - Do not use SDK motion, ROS `/control/*`, raw CAN motion, MoveIt execute,
@@ -140,9 +144,8 @@ Next checks:
   dexterous-hand actuation outside the documented S10.3 ROS procedure.
 - Monitor the state-machine difference: Arm A `arm_status` is now `0` instead
   of the earlier `6`, while `err_status` and all flags remain healthy.
-- S10.4 accepted handoff state is `handoff_to_arm_b`.
 - Do not move into dual-arm coordination, Cartesian, MoveIt, or dexterous-hand
-  motion until S11/S12 baselines are accepted.
+  motion until S12/S13 baselines are accepted.
 
 ## S2 Discovery Result
 

@@ -1,6 +1,6 @@
 # NERO Arm 部署与调试工作区
 
-这个目录用于沉淀 NERO 七自由度双臂系统的本地部署、调试、验收与注意事项。当前 S10 双臂首次低速运动已关闭通过，下一目标是建立 S11 双臂实验坐标、TF 和日志基线。
+这个目录用于沉淀 NERO 七自由度双臂系统的本地部署、调试、验收与注意事项。当前 S11 双臂实验坐标、TF 和日志基线已关闭通过，下一目标是 S12 控制隔离与日志闭环。
 
 ## 必读入口
 
@@ -11,6 +11,7 @@
 - [上游仓库分析](docs/upstream_repo_analysis.md)：本地 clone 的 AgileX ROS/SDK/URDF 仓库证据与 ROS 版本决策。
 - [S2 混合部署方案](docs/s2_hybrid_host_container_plan.md)：共享 Ubuntu 20.04 主机 + Docker ROS2 Humble 的执行方案。
 - [S11 双臂实验基线](docs/s11_dual_arm_experiment_baseline.md)：`lab_world`、双臂 base TF、TCP 和日志/rosbag 规则。
+- [S11 post-TF 快照](docs/s9_ros_snapshots/20260626_055339/README.md)：S11 关闭用双臂只读反馈证据。
 - [Setup Framework](docs/setup_framework.md)：工程分层、关键事实、配置边界。
 - [Bring-Up Checklist](docs/bringup_checklist.md)：现场逐项检查表。
 - [NERO 用户手册](docs/nero%20用户手册.md)：语雀导出的用户手册文本。
@@ -92,7 +93,7 @@ bash scripts/build_humble_container.sh
 bash scripts/run_humble_container.sh
 ```
 
-S11 双臂 RViz 验证使用：
+S11 双臂 RViz 基线已通过。需要复验时使用：
 
 ```bash
 NERO_CONTAINER_NAME=nero-humble-s11-rviz \

@@ -149,7 +149,7 @@
 - CAN bitrate：`1000000`
 - ROS arm type：`nero`
 - 默认末端：`none`
-- 计划末端：灵巧手，S11 后再启用
+- 计划末端：灵巧手，S14 末端执行器阶段再启用
 - 初始 TCP offset：`[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]`
 - SDK 固件 selector：先用 Web 读实际固件，再选择 `default`、`v111`、`v112`、`v120`
 - Noetic：不作为默认路线；仅在硬性 legacy ROS1 要求下单独验证。

@@ -1,6 +1,7 @@
 # S11 Operator Guide
 
-Status: prepared for field execution.
+Status: prepared for field execution; S11 accepted values are recorded in
+`docs/s11_measurement_notes.md` and `docs/s11_static_tf_plan.md`.
 
 This guide explains S11 in operator terms. S11 is a measurement and validation
 phase. It is not a motion phase.
@@ -58,13 +59,17 @@ This makes Arm A easy to record:
 
 ```text
 lab_world -> arm_a/base_link:
-x=0, y=0, z=0, roll=0, pitch=0, yaw=0
+x=0, y=0, z=0, orientation to be verified in RViz
 ```
 
 This is acceptable for the first dual-arm baseline because the critical fact is
 Arm B's measured pose relative to Arm A. If the project later adds external
 cameras, fixtures, calibration boards, or object workcells, define a new
 table/fixture `lab_world` and redo S11.
+
+For the accepted S11 runtime TF, use the values in
+`docs/s11_static_tf_plan.md`. The final RViz-valid transform is published to
+`arm_*/world`, not directly to `arm_*/base_link`.
 
 ## 4. How To Identify Base Centers
 

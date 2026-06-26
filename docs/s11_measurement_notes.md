@@ -1,6 +1,6 @@
 # S11 Measurement Notes
 
-Status: RViz visual validation accepted; final post-TF snapshot pending.
+Status: accepted / closed for the S11 first engineering baseline.
 
 Use this file to record the measured transforms from the shared lab frame to
 each robot base. Do not fill estimated or convenient values as facts.
@@ -11,10 +11,12 @@ each robot base. Do not fill estimated or convenient values as facts.
 | --- | --- |
 | Date/time | 2026-06-26 |
 | Operator | User/operator report |
-| Git commit | `233bf6a` before this measurement-record update |
+| Git commit | Pre-closure visual-validation commit `829224c`; closure commit records this evidence update |
 | Table/fixture unchanged from S10 | No base movement reported after S10 closure |
 | Measurement tool | Not reported; measured value provided as `260 mm` |
 | Photo directory | `docs/pics/s11_measurement_20260626/` |
+| Accepted RViz screenshot | `docs/pics/S11_RViz_accepted_dual_arm_layout.png` |
+| Post-TF ROS snapshot | `docs/s9_ros_snapshots/20260626_055339/` |
 
 ## lab_world Convention
 
@@ -103,15 +105,17 @@ Interpretation:
 - [x] `lab_world` origin is defined as Arm A base center projection.
 - [x] Arm A base transform is recorded by first-baseline convention.
 - [x] Arm B full transform is accepted for S11 baseline by operator RViz visual validation.
-- [ ] Translation uncertainty is about `5 mm` or better, or the limitation is documented.
+- [x] Translation uncertainty is about `5 mm` or better, or the limitation is documented.
 - [x] Orientation is accepted for S11 baseline by RViz visual validation.
 - [x] Roll/pitch values are explicitly non-zero where required to map the robot root frames into `lab_world`.
 - [x] Photos/screenshots and engineering drawings are saved under `docs/pics/s11_measurement_20260626/`.
 
 ## Deviations
 
-- Translation uncertainty and measurement tool were not reported yet.
+- Translation uncertainty and measurement tool were not reported; this limitation is accepted for the S11 first engineering baseline and must be revisited before high-precision dual-arm manipulation.
 - The first RViz visual check with pure Arm B yaw `pi` did not match reality.
 - The revised 3D root rotations matched reality by operator report on
   2026-06-26.
-- Measurement tool and exact uncertainty are still not reported.
+- The S11 post-TF read-only snapshot `docs/s9_ros_snapshots/20260626_055339/`
+  is clean: `Failed capture commands: 0`, A/B joint states at about 200 Hz,
+  A/B `err_status: 0`, and no joint-limit or joint-communication flags.

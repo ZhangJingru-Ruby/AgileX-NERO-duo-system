@@ -1,6 +1,6 @@
 # S11 ROS Bag And Experiment Logging Plan
 
-Status: template, awaiting first logged run.
+Status: logging rules accepted for S11; first rosbag motion run deferred to S12.
 
 S11 defines the directory and topic rules that later S12/S13 motion tests must
 use. The goal is that a failed manipulation experiment can be traced back to
@@ -84,8 +84,10 @@ repository before acceptance.
 
 ## Acceptance
 
-- [ ] First S11 run directory exists.
-- [ ] Run README records git commit and commands.
-- [ ] Read-only snapshot is saved or linked.
-- [ ] ROS bag is saved for tests that require it.
-- [ ] Deviations are recorded in `notes.md`.
+- [x] Directory pattern is defined.
+- [x] Run README fields are defined.
+- [x] Minimum ROS topics are defined for later motion tests.
+- [x] S11 read-only snapshot is saved:
+  `docs/s9_ros_snapshots/20260626_055339/`.
+- [ ] First full experiment run directory with rosbag is deferred to S12, where
+  motion/control-isolation tests require it.

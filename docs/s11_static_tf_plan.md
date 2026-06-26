@@ -1,6 +1,6 @@
 # S11 Static TF Plan
 
-Status: static TF values accepted by RViz visual validation; final post-TF snapshot pending.
+Status: accepted / closed for the S11 first engineering baseline.
 
 This document records how to publish the measured dual-arm base transforms for
 S11. Do not put placeholder values into runtime scripts.
@@ -98,7 +98,8 @@ ros2 run tf2_ros static_transform_publisher \
 - [x] Static TF uses measured values, not placeholders.
 - [x] `tf2_echo` returns the static transform values.
 - [x] RViz relative layout matches the physical base relationship by operator report.
-- [ ] Post-TF read-only snapshot is clean for both arms.
+- [x] Post-TF read-only snapshot is clean for both arms:
+  `docs/s9_ros_snapshots/20260626_055339/`.
 - [x] Transform values are copied back into this document after acceptance.
 
 ## Accepted Values
@@ -161,3 +162,12 @@ lab_world -> arm_a/world:
 lab_world -> arm_b/world:
   x=0.260, y=0.000, z=0.000, roll=3.1415926, pitch=-1.5707963, yaw=0
 ```
+
+Closure evidence:
+
+- RViz accepted screenshot:
+  `docs/pics/S11_RViz_accepted_dual_arm_layout.png`.
+- Post-TF read-only snapshot:
+  `docs/s9_ros_snapshots/20260626_055339/`.
+- X11 cleanup after RViz: `xhost` reported access control enabled and only
+  `SI:localuser:lv-robotics`.

@@ -4269,3 +4269,77 @@ Open risks:
 Next:
 Capture a post-TF read-only snapshot, save/confirm final RViz screenshot if
 needed, stop temporary terminals, and revoke X11 root access.
+
+## 2026-06-26 - S11 Dual-Arm Baseline Closed
+
+Phase: S11 双臂实验基线与坐标闭环
+
+Goal:
+Close S11 after RViz visual acceptance by recording the post-TF ROS snapshot,
+accepted screenshot, and X11 cleanup state.
+
+Action:
+Operator captured the post-TF read-only snapshot, saved the successful RViz
+layout screenshot, and confirmed `xhost` cleanup after RViz.
+
+Commands / evidence:
+
+- Snapshot: `docs/s9_ros_snapshots/20260626_055339/`.
+- Snapshot README: `Failed capture commands: 0`.
+- Arm A joint-state frequency: about `200 Hz`.
+- Arm B joint-state frequency: about `200 Hz`.
+- A/B arm status: `ctrl_mode: 1`, `arm_status: 6`, `mode_feedback: 1`,
+  `motion_status: 1`, `err_status: 0`.
+- A/B `joint_angle_limit`: all `false`.
+- A/B `communication_status_joint`: all `false`.
+- RViz accepted screenshot:
+  `docs/pics/S11_RViz_accepted_dual_arm_layout.png`.
+- X11 cleanup: `xhost` reported access control enabled and only
+  `SI:localuser:lv-robotics`.
+
+Result:
+S11 is accepted and closed. The machine has a documented first engineering
+dual-arm `lab_world` baseline, accepted static TF values, RViz feedback follow,
+and a clean post-TF read-only snapshot.
+
+Deployment choices:
+
+- Keep the accepted runtime static TF targets as `lab_world -> arm_a/world` and
+  `lab_world -> arm_b/world`, because the URDF already contains fixed
+  `world -> base_link`.
+- Accept the current coordinate baseline as an engineering baseline. The exact
+  measurement tool and uncertainty were not quantified, so high-precision
+  dual-arm manipulation must remeasure or refine the extrinsics later.
+- Move the immediate next phase to S12 control isolation and logging closure.
+
+Files changed:
+`README.md`, `agent.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s11_dual_arm_experiment_baseline.md`, `docs/s11_measurement_notes.md`,
+`docs/s11_operator_guide.md`, `docs/s11_rosbag_logging_plan.md`,
+`docs/s11_static_tf_plan.md`, `docs/setup_framework.md`,
+`docs/机器人部署与调试行动路线.md`,
+`docs/pics/S11_RViz_accepted_dual_arm_layout.png`,
+`docs/s9_ros_snapshots/20260626_055339/`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile examples/nero_read_state.py examples/nero_sdk_single_joint_step.py scripts/ros_single_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S11 is no longer pending post-TF evidence. The route now enters S12 before any
+dual-arm coordination, Cartesian motion, MoveIt execution, or dexterous-hand
+actuation.
+
+Open risks:
+
+- Measurement tool and exact uncertainty remain unreported.
+- Current TF baseline is accepted by RViz/operator validation, not by external
+  metrology.
+
+Next:
+Run local checks, commit S11 closure, then prepare S12 tests for control
+isolation and logging.
