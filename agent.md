@@ -180,7 +180,7 @@ These are the current deployment assumptions. Update them only when verified.
 | Current live state | S11 accepted/closed: `lab_world` static TF baseline is accepted by RViz visual validation and post-TF ROS snapshot |
 | Observed Web model | `7ax`, interpreted as one NERO 7-axis arm/controller per physical arm |
 | Observed Web footer version | `v1.121`; current SDK firmware selector is `v112` |
-| Current next phase | S12 control isolation and logging closure |
+| Current next phase | S13 low-risk dual-arm primitives |
 
 Current Web evidence shows one set of joint tabs, `关节1` through `关节7`.
 Treat this as normal for one NERO 7-axis arm/controller. The physical setup has
@@ -243,7 +243,17 @@ S12.2 Arm B dry-run is accepted: target changes only Arm B `joint1` from
 had `err_status: 0`. S12.2 Arm B execution core also passed: Arm B
 `joint1 -30 deg` matched the expected direction, Arm A did not visibly move,
 max passive deviation was `0.008 deg`, and A/B final statuses had
-`err_status: 0`. Next S12 gate is the Arm B post-motion read-only snapshot.
+`err_status: 0`. Post-motion snapshot
+`docs/s9_ros_snapshots/20260626_083210/` is clean.
+
+S12 is accepted and closed. Arm A isolation evidence is in commits `c6a92eb`,
+`3e4e2a0`, and snapshot `docs/s9_ros_snapshots/20260626_080809/`. Arm B
+isolation evidence is in commits `19e007e`, `64fe5a4`, and snapshot
+`docs/s9_ros_snapshots/20260626_083210/`. S12 accepted script output and
+read-only snapshots as equivalent logging evidence; no rosbag was recorded in
+S12. Intentional emergency-stop testing was not performed. Next phase is S13:
+simultaneous read-only stability, enable/hold, and very small non-contact
+joint-space dual-arm primitives only.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

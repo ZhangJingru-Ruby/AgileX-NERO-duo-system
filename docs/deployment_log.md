@@ -4834,3 +4834,74 @@ Open risks:
 Next:
 Stop the S12 driver pair, start the dual-arm read-only driver, capture a
 post-motion snapshot, and evaluate it before closing S12.2/S12.
+
+## 2026-06-26 - S12 Control Isolation Closed
+
+Phase: S12 控制隔离与日志闭环
+
+Goal:
+Close S12 by validating the post-motion dual-arm read-only snapshot after Arm B
+`joint1 -30 deg` isolation execution, then summarize the accepted S12 evidence.
+
+Action:
+Operator stopped the S12 control driver pair, returned to the dual-arm
+read-only driver, and captured the Arm B post-motion snapshot.
+
+Commands / evidence:
+
+- Snapshot: `docs/s9_ros_snapshots/20260626_083210/`.
+- Snapshot README: `Failed capture commands: 0`.
+- Arm A joint-state frequency: about `200 Hz`
+  (`200.016`, `199.993`, `200.006`, `200.002`).
+- Arm B joint-state frequency: about `200 Hz`
+  (`200.006`, `200.013`, `200.010`, `200.007`).
+- Arm A status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- Arm B status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- A/B joint-limit flags: all `false`.
+- A/B joint-communication flags: all `false`.
+
+Result:
+S12 is accepted and closed. Arm A and Arm B each passed visible `30 deg` J1
+control-isolation tests, returned to the original joint angle within tolerance,
+and kept the passive arm within tolerance.
+
+Deployment choices:
+
+- Accept the S12 logging evidence set as script terminal output recorded in
+  deployment logs, read-only snapshots, configuration records, and git commits.
+  No rosbag was recorded in S12.
+- Do not treat S12 as authorization for Cartesian motion, MoveIt execution,
+  dexterous-hand actuation, contact, handoff, or close-proximity bimanual
+  manipulation.
+- Move next to S13 low-risk dual-arm primitives.
+
+Files changed:
+`README.md`, `agent.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s12_control_isolation_plan.md`,
+`docs/机器人部署与调试行动路线.md`,
+`docs/s9_ros_snapshots/20260626_083210/`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s12_isolation_step.py`
+- `git diff --check`
+
+Route updates:
+S12 is closed. S13 is now the active next phase.
+
+Open risks:
+
+- S13 has not been planned or executed yet.
+- Intentional emergency-stop testing remains deferred.
+- No rosbag was recorded during S12; future motion phases should decide whether
+  rosbag is required or whether structured script output plus snapshots are
+  sufficient.
+
+Next:
+Run local checks, commit the S12 closure, then prepare the S13 low-risk
+dual-arm primitive plan.

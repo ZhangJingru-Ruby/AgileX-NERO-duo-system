@@ -1,6 +1,6 @@
 # S12 Control Isolation And Logging Plan
 
-Status: prepared for field execution.
+Status: accepted / closed on 2026-06-26.
 
 S12 verifies that the two NERO arms can be controlled independently without
 cross-control. This is still not dual-arm coordination: only one arm receives a
@@ -184,7 +184,8 @@ Actual dry-run result on 2026-06-26:
   `motion_status=1`, `err_status=0`.
 - Passive status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
   `motion_status=0`, `err_status=0`.
-- S12.2 Arm B dry-run is accepted; execution is pending.
+- S12.2 Arm B dry-run was accepted; the later execution and post-motion
+  snapshot also passed.
 
 Actual execution result on 2026-06-26:
 
@@ -195,7 +196,12 @@ Actual execution result on 2026-06-26:
 - Arm B after return: `joint1 -2.583 deg`, return error about `0.595 deg`.
 - Passive Arm A maximum deviation: `0.008 deg`.
 - Final A/B `err_status: 0`.
-- Post-motion read-only snapshot is still pending.
+- Post-motion read-only snapshot:
+  `docs/s9_ros_snapshots/20260626_083210/`.
+- Snapshot result: `Failed capture commands: 0`, A/B joint-state feedback
+  about `200 Hz`, A/B `err_status: 0`, all joint-limit flags `false`, and all
+  joint-communication flags `false`.
+- S12.2 Arm B is accepted.
 
 Execute only after the dry-run target and direction are accepted:
 
@@ -264,6 +270,22 @@ S12.1 or S12.2 passes only if:
 - Post-test read-only snapshot has `Failed capture commands: 0`.
 - Operator reports no abnormal sound, cable tension, Web warning, or physical
   interference.
+
+## Accepted Evidence
+
+- Arm A dry-run commit: `c6a92eb`.
+- Arm A execution commit: `3e4e2a0`.
+- Arm A post-motion snapshot:
+  `docs/s9_ros_snapshots/20260626_080809/`.
+- Arm B dry-run commit: `19e007e`.
+- Arm B execution commit: `64fe5a4`.
+- Arm B post-motion snapshot:
+  `docs/s9_ros_snapshots/20260626_083210/`.
+- S12 did not record rosbag files. The accepted evidence set is terminal output
+  captured in `docs/deployment_log.md`, read-only snapshots, configuration
+  records, and git commits.
+- Intentional emergency-stop testing was not performed in S12; stop-condition
+  and recovery-record formats are documented here for future tests.
 
 ## Stop Conditions
 

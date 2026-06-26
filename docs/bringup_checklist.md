@@ -252,10 +252,10 @@
 - [x] Arm A `joint1 +30 deg` post-motion 双臂只读快照通过：`docs/s9_ros_snapshots/20260626_080809/`。
 - [x] Arm B `joint1 -30 deg` dry-run 目标正确。
 - [x] Arm B `joint1 -30 deg` 执行时 Arm A 不动，最大被动偏差 `0.008 deg`。
-- [ ] Arm B `joint1 -30 deg` post-motion 双臂只读快照通过。
-- [ ] 同时启动两个控制 driver 时 namespace、CAN、日志互不混淆。
-- [ ] 每次实验均记录命令、反馈、状态、rosbag、快照和 git commit。
-- [ ] 异常停止和恢复记录格式已确定。
+- [x] Arm B `joint1 -30 deg` post-motion 双臂只读快照通过：`docs/s9_ros_snapshots/20260626_083210/`。
+- [x] 同时启动两个 driver 时 namespace、CAN、日志互不混淆；每次仅目标臂 `control_enabled=true`。
+- [x] 每次实验均记录命令、反馈、状态、快照/等价日志和 git commit；S12 未录 rosbag，按脚本输出与快照作为等价验收证据。
+- [x] 异常停止和恢复记录格式已确定；未执行 intentional emergency-stop 测试。
 
 ## S13 低风险双臂协同原语
 

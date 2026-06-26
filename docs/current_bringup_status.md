@@ -41,7 +41,7 @@ Last updated: 2026-06-26
 | S9 标定与配置 | Complete by operator confirmation and ROS revalidation | Load mode was changed by operator report; Arm A CAN recovered after USB-CAN replug/reactivation; S9.3 snapshot `20260625_054435` has complete A/B feedback, `err_status: 0`, no joint limits, no joint communication errors, and about 200 Hz joint-state feedback. |
 | S10 首次低速运动 | Complete for both arms | Web, SDK, and ROS J1 motion passed on Arm A and Arm B. Final S10.8 audit `20260625_155538` shows both CAN interfaces UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker container, and no NERO host process. |
 | S11 双臂实验基线 | Complete / accepted | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Accepted static TF values are `lab_world -> arm_a/world: x=0, y=0, z=0, roll=0, pitch=-1.5707963, yaw=0` and `lab_world -> arm_b/world: x=0.260, y=0, z=0, roll=3.1415926, pitch=-1.5707963, yaw=0`. Operator reports RViz matches the physical layout and follows both arms when they move. Post-TF snapshot `20260626_055339` is clean, and X11 access was restored to local-user only. |
-| S12 控制隔离与日志闭环 | S12.2 Arm B execution core passed; post-motion snapshot pending | S12.1 Arm A is accepted and closed. Arm B `joint1 -30 deg` executed and returned. Operator observed the motion direction matched expectation; Arm A did not visibly move. Script reported max passive deviation `0.008 deg`, target reach error about `0.590 deg`, return error about `0.595 deg`, and A/B final `err_status: 0`. A post-motion dual-arm read-only snapshot is still required before closing S12.2. |
+| S12 控制隔离与日志闭环 | Complete / accepted | Arm A `joint1 +30 deg` and Arm B `joint1 -30 deg` isolation tests both passed and returned. Passive-arm deviations were `0.005 deg` for Arm B during Arm A motion and `0.008 deg` for Arm A during Arm B motion. Post-motion snapshots `20260626_080809` and `20260626_083210` are clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
 
 ## S0 Evidence
 
@@ -121,13 +121,15 @@ arms follow real feedback in RViz, post-TF snapshot `20260626_055339` is clean,
 and the accepted screenshot is
 `docs/pics/S11_RViz_accepted_dual_arm_layout.png`.
 
-The immediate next step is S12 control isolation and logging closure. The S12
-acceptance view is: a small command to Arm A must not move Arm B, a small
-command to Arm B must not move Arm A, and each test must leave command,
-feedback, status, snapshot/rosbag, and git evidence that is unambiguous.
-Because the operator requested visible motion for reporting, S12 is prepared
-with a bounded J1 `30 deg` target at `speed_percent=5`; this remains one active
-arm at a time, with the other arm read-only monitored.
+S12 is complete: a visible `30 deg` J1 command to Arm A did not move Arm B, and
+a visible `30 deg` J1 command to Arm B did not move Arm A. Both tests have
+command output, passive-arm deviation measurements, post-motion read-only
+snapshots, and git commits.
+
+The immediate next step is S13 low-risk dual-arm primitives. S13 may begin with
+simultaneous read-only stability and enable/hold checks, then only very small,
+non-contact, joint-space dual-arm primitives. Do not enter Cartesian, MoveIt,
+manipulation, contact, hand actuation, or close-proximity bimanual tasks yet.
 
 Next checks:
 
@@ -137,8 +139,8 @@ Next checks:
   should later be returned to a known home/park pose under a separate command.
 - Stop temporary S11 RViz/static-TF terminals unless deliberately revalidating
   S11.
-- Before S12 motion, run the control-source audit again and confirm only the
-  intended control path is active.
+- Before S13 motion, run the control-source audit again and confirm only the
+  intended control paths are active.
 - Do not expand to Cartesian, MoveIt, MIT/JS, dual-arm coordinated motion, or
   dexterous-hand actuation yet.
 - Actual SDK speed was `10%`, not the planned `5%`; keep future first tests at
@@ -148,8 +150,9 @@ Next checks:
   dexterous-hand actuation outside the documented S10.3 ROS procedure.
 - Monitor the state-machine difference: Arm A `arm_status` is now `0` instead
   of the earlier `6`, while `err_status` and all flags remain healthy.
-- Do not move into dual-arm coordination, Cartesian, MoveIt, or dexterous-hand
-  motion until S12/S13 baselines are accepted.
+- Do not move into Cartesian, MoveIt, dexterous-hand, contact, handoff, or
+  manipulation motion until S13 and later application-specific gates are
+  accepted.
 
 ## S2 Discovery Result
 
