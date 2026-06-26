@@ -259,11 +259,12 @@
 
 ## S13 低风险双臂协同原语
 
-- [ ] 双臂同时只读运行稳定。
-- [ ] 双臂同时 enable / hold，无位移。
-- [ ] A 小动、B 保持通过。
-- [ ] B 小动、A 保持通过。
-- [ ] A/B 同时小幅、互不接近 joint-space 动作通过。
+- [x] S13 低风险双臂原语计划已建立：`docs/s13_low_risk_dual_arm_primitives_plan.md`。
+- [ ] 双臂同时 active driver 启动稳定。
+- [ ] 双臂同时 enable / hold，无位移，`hold_max_dev_deg <= 1.0`。
+- [ ] A/B 同时 J1 dry-run 目标正确：Arm A `+30 deg`，Arm B `-30 deg`。
+- [ ] A/B 同时 `30 deg` joint-space 动作通过并回原位。
+- [ ] S13 post-motion 双臂只读快照通过。
 - [ ] 未进入笛卡尔、MoveIt 或 manipulation primitive 之前已完成快照验收。
 
 ## S14 末端执行器

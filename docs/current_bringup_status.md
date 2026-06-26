@@ -42,6 +42,7 @@ Last updated: 2026-06-26
 | S10 首次低速运动 | Complete for both arms | Web, SDK, and ROS J1 motion passed on Arm A and Arm B. Final S10.8 audit `20260625_155538` shows both CAN interfaces UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker container, and no NERO host process. |
 | S11 双臂实验基线 | Complete / accepted | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Accepted static TF values are `lab_world -> arm_a/world: x=0, y=0, z=0, roll=0, pitch=-1.5707963, yaw=0` and `lab_world -> arm_b/world: x=0.260, y=0, z=0, roll=3.1415926, pitch=-1.5707963, yaw=0`. Operator reports RViz matches the physical layout and follows both arms when they move. Post-TF snapshot `20260626_055339` is clean, and X11 access was restored to local-user only. |
 | S12 控制隔离与日志闭环 | Complete / accepted | Arm A `joint1 +30 deg` and Arm B `joint1 -30 deg` isolation tests both passed and returned. Passive-arm deviations were `0.005 deg` for Arm B during Arm A motion and `0.008 deg` for Arm A during Arm B motion. Post-motion snapshots `20260626_080809` and `20260626_083210` are clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
+| S13 低风险双臂协同原语 | Prepared, not executed | Plan `docs/s13_low_risk_dual_arm_primitives_plan.md` defines the first dual-active primitive. It starts both arms with `auto_enable=true` and `control_enabled=true`, performs a dry-run plus `3 s` hold check, then optionally executes Arm A `joint1 +30 deg` and Arm B `joint1 -30 deg` together at `speed_percent=5`. |
 
 ## S0 Evidence
 
@@ -126,10 +127,10 @@ a visible `30 deg` J1 command to Arm B did not move Arm A. Both tests have
 command output, passive-arm deviation measurements, post-motion read-only
 snapshots, and git commits.
 
-The immediate next step is S13 low-risk dual-arm primitives. S13 may begin with
-simultaneous read-only stability and enable/hold checks, then only very small,
-non-contact, joint-space dual-arm primitives. Do not enter Cartesian, MoveIt,
-manipulation, contact, hand actuation, or close-proximity bimanual tasks yet.
+The immediate next step is S13.0/S13.1 dry-run and hold validation: start both
+control drivers active, run the S13 dual joint-step dry-run, and accept it only
+if both target vectors are correct and both arms hold within tolerance before
+any motion command.
 
 Next checks:
 

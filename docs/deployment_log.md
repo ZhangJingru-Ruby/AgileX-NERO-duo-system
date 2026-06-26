@@ -4905,3 +4905,67 @@ Open risks:
 Next:
 Run local checks, commit the S12 closure, then prepare the S13 low-risk
 dual-arm primitive plan.
+
+## 2026-06-26 - S13 Low-Risk Dual-Arm Primitive Plan Prepared
+
+Phase: S13 低风险双臂协同原语
+
+Goal:
+Prepare the first low-risk dual-active joint-space primitive using the same
+visible `30 deg` J1 motion amplitude requested by the operator.
+
+Action:
+Added an S13 plan and two helper scripts. The driver wrapper starts both arms
+with active control gates. The step script performs a dry-run, monitors a hold
+period with both drivers active, and can then execute simultaneous J1 targets
+and return both arms to the start angles.
+
+Commands / evidence:
+
+- New plan: `docs/s13_low_risk_dual_arm_primitives_plan.md`.
+- New driver wrapper: `scripts/launch_s13_dual_active_pair.sh`.
+- New test script: `scripts/ros_s13_dual_joint_step.py`.
+- Planned first primitive:
+  - Arm A `joint1 +30 deg`.
+  - Arm B `joint1 -30 deg`.
+  - `speed_percent=5`.
+  - `hold_seconds=3`.
+
+Result:
+S13 is prepared but not executed.
+
+Deployment choices:
+
+- Reuse the S12-validated J1 signs and `30 deg` magnitude.
+- Treat S13's first primitive as simultaneous joint-space control only, not
+  manipulation.
+- Require dry-run and hold acceptance before any `--execute`.
+- Keep target tolerance at `0.7 deg`, hold/non-target tolerance at `1.0 deg`.
+
+Files changed:
+`README.md`, `agent.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s13_low_risk_dual_arm_primitives_plan.md`,
+`docs/机器人部署与调试行动路线.md`,
+`scripts/launch_s13_dual_active_pair.sh`, `scripts/ros_s13_dual_joint_step.py`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s12_isolation_step.py scripts/ros_s13_dual_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S13 now has explicit startup commands, dry-run/hold gates, execution command,
+and stop conditions.
+
+Open risks:
+
+- S13 has not been dry-run yet.
+- Simultaneous `30 deg` motion has higher combined swept-area risk than S12,
+  so both arm swept areas and cables must be checked together before execution.
+
+Next:
+Run local checks, commit the S13 preparation, then start S13 dual-active driver
+and dry-run/hold validation.

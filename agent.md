@@ -254,6 +254,15 @@ read-only snapshots as equivalent logging evidence; no rosbag was recorded in
 S12. Intentional emergency-stop testing was not performed. Next phase is S13:
 simultaneous read-only stability, enable/hold, and very small non-contact
 joint-space dual-arm primitives only.
+
+S13 prepared path: use `docs/s13_low_risk_dual_arm_primitives_plan.md`.
+The first planned primitive keeps the same visible J1 amplitude from S12:
+Arm A `joint1 +30 deg`, Arm B `joint1 -30 deg`, `speed_percent=5`. The S13
+driver pair sets both arms `auto_enable=true` and `control_enabled=true`, but
+the first command must be a dry-run plus `3 s` hold check. Execution requires
+operator confirmation that both swept areas and cables are clear. S13 still
+does not authorize Cartesian motion, MoveIt, contact, handoff, close-proximity
+bimanual tasks, or dexterous-hand actuation.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at
