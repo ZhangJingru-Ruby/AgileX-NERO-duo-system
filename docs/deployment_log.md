@@ -3856,3 +3856,58 @@ Open risks:
 Next:
 Run the candidate static TF commands, check `tf2_echo`, inspect RViz, and save a
 post-TF read-only snapshot if the layout is correct.
+
+## 2026-06-26 - S11 Read-Only Launch Blocked By Arm A CAN Response
+
+Phase: S11 双臂实验基线与坐标闭环
+
+Goal:
+Start the dual-arm ROS read-only driver before static-TF validation.
+
+Action:
+Operator launched `scripts/launch_dual_ros_readonly.sh` inside the Humble
+container. Arm B initialized successfully, but Arm A failed while reading the
+firmware version.
+
+Commands / evidence:
+
+- Command:
+  `bash scripts/run_humble_container.sh bash /workspace/nero/scripts/launch_dual_ros_readonly.sh`
+- Launch safety settings:
+  `auto_enable=false`, `control_enabled=false`.
+- Arm B:
+  firmware version `1.121`; feedback became ready.
+- Arm A:
+  `Failed to get firmware version`; node exited with code `1`.
+
+Result:
+S11 TF validation is blocked until Arm A CAN read-only communication is
+restored.
+
+Deployment choices:
+
+- Do not enable either arm to fix this issue. Firmware read and feedback read
+  do not require joint enable.
+- Treat this as a CAN/USB-CAN/interface/robot-response issue, similar to the
+  earlier Arm A condition that recovered after USB-CAN replug and CAN interface
+  reactivation.
+
+Files changed:
+`docs/deployment_log.md`.
+
+Verification:
+Pending operator CAN checks.
+
+Route updates:
+No route phase change. S11 remains partially measured and pending read-only
+ROS/TF validation.
+
+Open risks:
+
+- Arm A may not be producing CAN frames on `can_arm_a`.
+- USB-CAN bus mapping may have changed after unplug/replug.
+- A stale interface state may require reactivation.
+
+Next:
+Check `can_arm_a` interface state and raw frames, then replug/reactivate the Arm
+A USB-CAN module if needed. Do not use Web/SDK/ROS motion during this recovery.
