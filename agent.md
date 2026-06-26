@@ -284,6 +284,14 @@ all joint-limit flags `false`, and all joint-communication flags `false`. The
 next S13 gate is corrected direction-sign dry-run only, with the current
 hypothesis Arm A `joint1 +30 deg` and Arm B `joint1 +30 deg`; execution still
 requires a fresh operator safety gate.
+
+S13 corrected direction-sign dry-run is accepted. The no-execute run used Arm A
+`joint1 +30 deg` and Arm B `joint1 +30 deg`: Arm A target changed from
+`1.110 deg` to `31.110 deg`, Arm B target changed from `-1.988 deg` to
+`28.012 deg`, only `joint1` changed on each arm, A/B `err_status: 0`, and
+`hold_max_dev_deg` was about `0.008 deg` for Arm A and `0.006 deg` for Arm B.
+Next gate is corrected `--execute` with the same signs after fresh operator
+safety confirmation.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

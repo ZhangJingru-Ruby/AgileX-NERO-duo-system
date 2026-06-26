@@ -5200,3 +5200,79 @@ Open risks:
 - The corrected sign hypothesis has not been dry-run.
 - No additional motion should be executed until the corrected dry-run and safety
   gate are accepted.
+
+## 2026-06-26 - S13 Corrected Direction-Sign Dry-Run Accepted
+
+Phase: S13 低风险双臂协同原语
+
+Goal:
+Validate the corrected J1 sign hypothesis after the first S13 execution proved
+that Arm A `+30 deg` / Arm B `-30 deg` did not match the intended
+operator-visible direction semantics.
+
+Action:
+Operator ran the S13 dual-arm joint-space step script without `--execute`,
+using Arm A `joint1 +30 deg` and Arm B `joint1 +30 deg`.
+
+Command:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s13-tool \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s13_dual_joint_step.py \
+      --joint joint1 \
+      --arm-a-delta-deg 30 \
+      --arm-b-delta-deg 30
+```
+
+Key output:
+
+- `execute=False`.
+- Arm A current:
+  `[1.11, 90.348, 92.984, 11.604, 7.706, 43.15, 50.514]`.
+- Arm A target:
+  `[31.11, 90.348, 92.984, 11.604, 7.706, 43.15, 50.514]`.
+- Arm A status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- Arm B current:
+  `[-1.988, 89.863, -39.008, 5.703, 26.171, -10.31, 25.696]`.
+- Arm B target:
+  `[28.012, 89.863, -39.008, 5.703, 26.171, -10.31, 25.696]`.
+- Arm B status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- `hold_max_dev_deg={'arm_a': 0.00799999999999823, 'arm_b': 0.005999999999997082}`.
+
+Result:
+Corrected direction-sign dry-run is accepted. The target vectors change only
+each arm's `joint1`, both statuses are healthy, and hold drift is well below
+the `1.0 deg` threshold.
+
+Deployment choices:
+
+- Keep corrected execution signs as Arm A `joint1 +30 deg`, Arm B
+  `joint1 +30 deg`.
+- Keep speed at the existing S13 active-driver value of `5%`.
+- Execute only after the operator reconfirms simultaneous swept areas, cable
+  slack, and emergency stop/power cutoff.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s13_low_risk_dual_arm_primitives_plan.md`,
+`docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s13_dual_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S13 moves from corrected direction-sign dry-run gate to corrected execution
+gate.
+
+Open risks:
+
+- Corrected execution has not been attempted.
+- Operator-visible direction still must be confirmed during real motion.

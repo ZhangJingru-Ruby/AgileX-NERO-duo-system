@@ -1,6 +1,6 @@
 # S13 Low-Risk Dual-Arm Primitives Plan
 
-Status: first execution numeric pass, world-direction semantics failed; post-motion snapshot accepted.
+Status: corrected direction-sign dry-run accepted; corrected execution pending.
 
 S13 starts the minimum dual-arm primitive layer after S12 proved control
 isolation. This phase still does not authorize Cartesian motion, MoveIt
@@ -213,6 +213,26 @@ Expected dry-run:
 - Hold check remains within tolerance.
 - Execute only after the operator accepts this corrected target and reconfirms
   swept areas, cable slack, and emergency stop.
+
+Actual corrected dry-run result on 2026-06-26:
+
+- `execute=False`, so no motion command was published.
+- Command hypothesis: Arm A `joint1 +30 deg`, Arm B `joint1 +30 deg`.
+- Arm A current: `joint1=1.110 deg`.
+- Arm A target: `joint1=31.110 deg`; only `joint1` changes by `+30 deg`.
+- Arm B current: `joint1=-1.988 deg`.
+- Arm B target: `joint1=28.012 deg`; only `joint1` changes by `+30 deg`.
+- Arm A status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- Arm B status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- `hold_max_dev_deg={'arm_a': 0.00799999999999823, 'arm_b': 0.005999999999997082}`.
+
+Result:
+
+- Corrected direction-sign dry-run is accepted.
+- The next gate is corrected execution with the same signs, only after the
+  operator reconfirms simultaneous swept areas, cable slack, and emergency stop.
 
 ## Stop Conditions
 
