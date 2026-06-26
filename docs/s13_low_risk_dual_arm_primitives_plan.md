@@ -85,6 +85,20 @@ Expected dry-run:
 - `hold_max_dev_deg` stays within `1.0 deg` for both arms.
 - No motion command is published.
 
+Actual dry-run and hold result on 2026-06-26:
+
+- `execute=False`, so no motion command was published.
+- Arm A current: `joint1=1.111 deg`.
+- Arm A target: `joint1=31.111 deg`; only `joint1` changes by `+30 deg`.
+- Arm B current: `joint1=-1.988 deg`.
+- Arm B target: `joint1=-31.988 deg`; only `joint1` changes by `-30 deg`.
+- Arm A status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- Arm B status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- `hold_max_dev_deg={'arm_a': 0.0, 'arm_b': 0.0}`.
+- S13 dry-run and hold gate is accepted; execution is pending.
+
 ## Execution
 
 Execute only after dry-run and hold check are accepted:

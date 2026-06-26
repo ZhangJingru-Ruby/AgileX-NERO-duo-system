@@ -263,6 +263,12 @@ the first command must be a dry-run plus `3 s` hold check. Execution requires
 operator confirmation that both swept areas and cables are clear. S13 still
 does not authorize Cartesian motion, MoveIt, contact, handoff, close-proximity
 bimanual tasks, or dexterous-hand actuation.
+
+S13 dry-run and hold gate is accepted. Dry-run target changed only Arm A
+`joint1` from `1.111 deg` to `31.111 deg` and Arm B `joint1` from `-1.988 deg`
+to `-31.988 deg`; A/B statuses had `err_status: 0`; hold max deviation was
+`0.0 deg` for both arms. Next gate is S13 dual-arm `--execute` with the same
+targets, followed by a post-motion read-only snapshot.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

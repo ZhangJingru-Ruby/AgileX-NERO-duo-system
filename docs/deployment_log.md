@@ -4969,3 +4969,81 @@ Open risks:
 Next:
 Run local checks, commit the S13 preparation, then start S13 dual-active driver
 and dry-run/hold validation.
+
+## 2026-06-26 - S13 Dry-Run And Hold Accepted
+
+Phase: S13 低风险双臂协同原语
+
+Goal:
+Validate the first S13 dual-active dry-run and hold check before any
+simultaneous dual-arm motion command.
+
+Action:
+Operator ran the S13 dual-arm joint-space step script without `--execute` while
+the dual-active driver pair was running.
+
+Commands / evidence:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s13-tool \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s13_dual_joint_step.py \
+      --joint joint1 \
+      --arm-a-delta-deg 30 \
+      --arm-b-delta-deg -30
+```
+
+Key output:
+
+- `execute=False`.
+- Arm A current:
+  `[1.111, 90.348, 92.985, 11.602, 7.707, 43.151, 50.516]`.
+- Arm A target:
+  `[31.111, 90.348, 92.985, 11.602, 7.707, 43.151, 50.516]`.
+- Arm A status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- Arm B current:
+  `[-1.988, 89.864, -39.005, 5.703, 26.172, -10.311, 25.697]`.
+- Arm B target:
+  `[-31.988, 89.864, -39.005, 5.703, 26.172, -10.311, 25.697]`.
+- Arm B status: `ctrl_mode=1`, `arm_status=0`, `mode_feedback=1`,
+  `motion_status=0`, `err_status=0`.
+- `hold_max_dev_deg={'arm_a': 0.0, 'arm_b': 0.0}`.
+
+Result:
+S13 dry-run and hold gate is accepted. The target vectors change only each
+arm's `joint1`, both active drivers held position for the dry-run hold period,
+and no motion command was published.
+
+Deployment choices:
+
+- Keep the planned S13 execution command as Arm A `joint1 +30 deg` and Arm B
+  `joint1 -30 deg`.
+- Keep `speed_percent=5`.
+- Execute only after the operator reconfirms both arms' simultaneous swept
+  areas, cable slack, and emergency-stop/power-cutoff assignment.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s13_low_risk_dual_arm_primitives_plan.md`,
+`docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s13_dual_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S13 advances from preparation to execution gate.
+
+Open risks:
+
+- Simultaneous S13 execution has not yet been attempted.
+- Post-motion snapshot will still be required after execution.
+
+Next:
+Run local checks, commit the dry-run record, then execute S13 only if the
+operator confirms the safety gate.
