@@ -40,7 +40,7 @@ Last updated: 2026-06-25
 | S8 ROS 只读 | Complete; coordinate alignment deferred to S9 | `/arm_a` and `/arm_b` feedback topics publish at about 200 Hz; arm status has `err_status: 0`; RViz follow is normal after the dual ROS read-only driver terminal is started first. |
 | S9 标定与配置 | Complete by operator confirmation and ROS revalidation | Load mode was changed by operator report; Arm A CAN recovered after USB-CAN replug/reactivation; S9.3 snapshot `20260625_054435` has complete A/B feedback, `err_status: 0`, no joint limits, no joint communication errors, and about 200 Hz joint-state feedback. |
 | S10 首次低速运动 | Complete for both arms | Web, SDK, and ROS J1 motion passed on Arm A and Arm B. Final S10.8 audit `20260625_155538` shows both CAN interfaces UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker container, and no NERO host process. |
-| S11 双臂实验基线 | Prepared as next phase | Plan and templates exist for `lab_world`, A/B base measurements, static TF, and rosbag/logging. Physical measurements and TF validation have not been executed yet. |
+| S11 双臂实验基线 | Prepared as next phase | Plan, operator guide, and templates exist for `lab_world`, A/B base measurements, static TF, and rosbag/logging. Physical measurements and TF validation have not been executed yet. |
 
 ## S0 Evidence
 

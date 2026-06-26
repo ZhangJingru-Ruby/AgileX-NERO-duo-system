@@ -3726,3 +3726,61 @@ Open risks:
 Next:
 Run document and script checks, commit the S11 plan, then execute S11
 measurement and TF validation.
+
+## 2026-06-26 - S11 Operator Guidance Prepared
+
+Phase: S11 双臂实验基线与坐标闭环
+
+Goal:
+Make the S11 coordinate-measurement task executable for an operator who is not
+yet familiar with TF frames.
+
+Action:
+Added a Chinese-facing operator guide that explains `lab_world`, `base_link`,
+translation, yaw, measurement tools, base-center marking, photo evidence, and
+what values must be returned for TF review.
+
+Commands / evidence:
+
+- Local URDF evidence: `world_to_base_link` is fixed at zero in the current
+  NERO URDF.
+- Local mesh inspection: `base_link` mesh spans approximately `z=0..0.086 m`;
+  `joint1` is at `z=0.138 m` relative to `base_link`.
+- Operator guide: `docs/s11_operator_guide.md`.
+
+Result:
+S11 can start with a pragmatic first baseline: use Arm A base center projection
+as `lab_world` origin unless an external table/fixture coordinate frame is
+required.
+
+Deployment choices:
+
+- Treat the base mounting-hole center / J1-axis projection as the practical
+  x/y measurement proxy for `base_link` in the first S11 baseline.
+- Record this as a measurement convention, not a new factory specification.
+- Do not run motion during this measurement step.
+
+Files changed:
+`config/nero.env`, `docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s11_dual_arm_experiment_baseline.md`, `docs/s11_operator_guide.md`,
+`docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile examples/nero_read_state.py examples/nero_sdk_single_joint_step.py scripts/ros_single_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S11 now has an operator-facing execution guide before physical measurement.
+
+Open risks:
+
+- Physical base centers and yaw have not yet been measured.
+- RViz has not yet validated whether the chosen physical yaw reference matches
+  the URDF base orientation.
+
+Next:
+Operator marks `lab_world`, measures A/B base transforms, saves photos, and
+reports the values for static TF review.

@@ -42,12 +42,14 @@ Create or update these artifacts during S11:
 - `docs/s11_measurement_notes.md`
 - `docs/s11_static_tf_plan.md`
 - `docs/s11_rosbag_logging_plan.md`
+- `docs/s11_operator_guide.md`
 - A photo set showing the physical base relationship and measurement reference.
 - A read-only ROS snapshot after static TF is published.
 - A git commit after S11 acceptance.
 
-The three S11 execution templates exist, but they still contain `TBD` fields
-until physical measurements and ROS validation are performed.
+The S11 execution templates and operator guide exist, but the templates still
+contain `TBD` fields until physical measurements and ROS validation are
+performed.
 
 ## Coordinate Convention
 
