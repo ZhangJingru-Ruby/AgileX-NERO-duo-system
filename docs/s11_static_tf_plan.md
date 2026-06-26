@@ -1,6 +1,6 @@
 # S11 Static TF Plan
 
-Status: candidate values prepared; awaiting ROS/RViz validation.
+Status: revised candidate values prepared; awaiting ROS/RViz validation.
 
 This document records how to publish the measured dual-arm base transforms for
 S11. Do not put placeholder values into runtime scripts.
@@ -107,10 +107,10 @@ Candidate values for the first RViz validation:
 
 ```text
 lab_world -> arm_a/world:
-  x=0.000, y=0.000, z=0.000, roll=0, pitch=0, yaw=0
+  x=0.000, y=0.000, z=0.000, roll=0, pitch=-1.5707963, yaw=0
 
 lab_world -> arm_b/world:
-  x=0.260, y=0.000, z=0.000, roll=0, pitch=0, yaw=3.1415926
+  x=0.260, y=0.000, z=0.000, roll=3.1415926, pitch=-1.5707963, yaw=0
 ```
 
 Candidate commands:
@@ -128,7 +128,7 @@ Manual commands, if running directly inside a ROS environment:
 ```bash
 ros2 run tf2_ros static_transform_publisher \
   --x 0.000 --y 0.000 --z 0.000 \
-  --roll 0 --pitch 0 --yaw 0 \
+  --roll 0 --pitch -1.5707963 --yaw 0 \
   --frame-id lab_world \
   --child-frame-id arm_a/world
 ```
@@ -136,17 +136,19 @@ ros2 run tf2_ros static_transform_publisher \
 ```bash
 ros2 run tf2_ros static_transform_publisher \
   --x 0.260 --y 0.000 --z 0.000 \
-  --roll 0 --pitch 0 --yaw 3.1415926 \
+  --roll 3.1415926 --pitch -1.5707963 --yaw 0 \
   --frame-id lab_world \
   --child-frame-id arm_b/world
 ```
 
-The Arm B yaw is a candidate inferred from the operator's Web-frame observation.
-If RViz shows the two arms with a 180 deg error or another clear mismatch,
-correct this value and record the correction in `docs/s11_measurement_notes.md`.
+The first pure-yaw candidate published successfully but did not match the
+physical layout in RViz. The revised candidate uses the operator's Web-frame
+axis observation to rotate both arm roots into `lab_world`. If RViz still shows
+a clear mismatch, correct these root rotations and record the correction in
+`docs/s11_measurement_notes.md`.
 
 Avoid splitting an option from its value or child frame when copy/pasting manual
-commands. For example, `--yaw 3.1415926` and
+commands. For example, `--pitch -1.5707963` and
 `--child-frame-id arm_b/world` must remain intact; otherwise
 `static_transform_publisher` will fail before publishing TF.
 

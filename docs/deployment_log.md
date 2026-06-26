@@ -4151,3 +4151,62 @@ Open risks:
 
 Next:
 Rerun terminal 4 with the same wrapper command after local checks pass.
+
+## 2026-06-26 - S11 First RViz Layout Rejected
+
+Phase: S11 双臂实验基线与坐标闭环
+
+Goal:
+Evaluate the first RViz layout from the pure-yaw candidate transform.
+
+Action:
+Operator opened RViz successfully and saved the screenshot
+`docs/pics/Rviz世界坐标系.png`. The two models appeared horizontally in the RViz
+XY plane and did not match the real natural hanging posture.
+
+Commands / evidence:
+
+- Screenshot: `docs/pics/Rviz世界坐标系.png`.
+- Previous candidate:
+  - Arm A: `roll=0`, `pitch=0`, `yaw=0`.
+  - Arm B: `roll=0`, `pitch=0`, `yaw=3.1415926`.
+- Operator observation from Web axes:
+  - Arm A: `+x_web = +Z`, `+y_web = +Y`, `+z_web = -X`.
+  - Arm B: `+x_web = +Z`, `+y_web = -Y`, `+z_web = +X`.
+
+Result:
+The pure-yaw candidate is rejected for S11 RViz acceptance.
+
+Deployment choices:
+
+- Keep measured translation: Arm B `x=0.260 m`, `y=0`, `z=0`.
+- Use the operator's Web-axis observation to derive revised 3D root rotations:
+  - Arm A: `roll=0`, `pitch=-1.5707963`, `yaw=0`.
+  - Arm B: `roll=3.1415926`, `pitch=-1.5707963`, `yaw=0`.
+- Continue treating the revised rotations as candidates until RViz confirms the
+  physical layout.
+
+Files changed:
+`config/nero.env`, `docs/current_bringup_status.md`,
+`docs/deployment_log.md`, `docs/s11_measurement_notes.md`,
+`docs/s11_static_tf_plan.md`, `docs/pics/Rviz世界坐标系.png`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile examples/nero_read_state.py examples/nero_sdk_single_joint_step.py scripts/ros_single_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S11 remains in RViz visual validation; static TF candidate changed from pure
+yaw to full 3D root rotations.
+
+Open risks:
+
+- Web-frame axes may still differ from ROS root frame axes.
+- Revised candidate must be validated visually in RViz.
+
+Next:
+Restart the static TF publisher with the revised candidate and rerun the S11
+dual-arm RViz view.

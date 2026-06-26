@@ -45,9 +45,9 @@ because the NERO URDF already contains a fixed `world -> base_link` joint.
 | x | `0.000` | meters; by `lab_world` origin convention |
 | y | `0.000` | meters; by `lab_world` origin convention |
 | z | `0.000` | meters; same tabletop/base reference plane assumed |
-| roll | `0` | rad; tabletop upright assumption |
-| pitch | `0` | rad; tabletop upright assumption |
-| yaw | `0` | rad; Arm A is the reference orientation candidate |
+| roll | `0` candidate | rad; inferred from Web-frame observation |
+| pitch | `-1.5707963` candidate | rad; maps observed Arm A local `+X` to `lab_world +Z` |
+| yaw | `0` candidate | rad; inferred from Web-frame observation |
 | Translation uncertainty | Not quantified | physical center projection convention |
 | Rotation uncertainty | Pending | yaw reference still requires RViz validation |
 | Reference points used | Arm A base center projection; `docs/pics/s11_measurement_20260626/` |
@@ -64,9 +64,9 @@ using the same numeric values as the measured base pose.
 | x | `0.260` | meters; user measured `260 mm` from Arm A center toward Arm B center |
 | y | `0.000` | meters; user reported `y_b = 0` |
 | z | `0.000` | meters; user reported `z_b = 0`, same tabletop/base reference plane assumed |
-| roll | `0` | rad; tabletop upright assumption |
-| pitch | `0` | rad; tabletop upright assumption |
-| yaw | `3.1415926` candidate | rad; inferred from A/B Web-frame observation as a 180 deg vertical-axis difference; requires RViz validation |
+| roll | `3.1415926` candidate | rad; inferred from Web-frame observation |
+| pitch | `-1.5707963` candidate | rad; maps observed Arm B local `+X` to `lab_world +Z` |
+| yaw | `0` candidate | rad; inferred from Web-frame observation |
 | Translation uncertainty | Not quantified | measured value reported; exact tool/uncertainty not yet recorded |
 | Rotation uncertainty | Pending | yaw candidate must be validated in RViz |
 | Reference points used | Arm A and Arm B base center projections; `docs/pics/s11_measurement_20260626/` |
@@ -87,9 +87,13 @@ Reported mapping from Web axes to `lab_world` axes:
 Interpretation:
 
 - The Web-frame observations imply Arm A and Arm B differ by approximately
-  `180 deg` around the vertical `lab_world +Z` axis.
-- This supports the first static-TF candidate `arm_b/base_link yaw = pi`
-  relative to Arm A.
+  `180 deg`, but the difference is not represented correctly by a pure
+  `lab_world +Z` yaw once RViz/ROS root frames are considered.
+- The first pure-yaw RViz candidate placed the two models horizontally in the
+  table plane and did not match the physical natural hanging posture.
+- The revised candidate maps the reported Web axes into `lab_world`:
+  - Arm A: `roll=0`, `pitch=-1.5707963`, `yaw=0`.
+  - Arm B: `roll=3.1415926`, `pitch=-1.5707963`, `yaw=0`.
 - Because Web coordinate axes may not be identical to ROS `base_link`, this is
   a validation candidate, not final acceptance evidence.
 
@@ -97,7 +101,7 @@ Interpretation:
 
 - [x] `lab_world` origin is defined as Arm A base center projection.
 - [x] Arm A base transform is recorded by first-baseline convention.
-- [ ] Arm B full transform is accepted; translation is measured, yaw is still an RViz-validation candidate.
+- [ ] Arm B full transform is accepted; translation is measured, root orientation is still an RViz-validation candidate.
 - [ ] Translation uncertainty is about `5 mm` or better, or the limitation is documented.
 - [ ] Yaw uncertainty is about `1 deg` or better, or the limitation is documented.
 - [ ] Roll/pitch are set to `0` only if the table/base level assumption is acceptable.
@@ -106,5 +110,5 @@ Interpretation:
 ## Deviations
 
 - Translation uncertainty and measurement tool were not reported yet.
-- Yaw is derived from Web-frame observation and must be checked in RViz before
-  S11 acceptance.
+- The first RViz visual check with pure Arm B yaw `pi` did not match reality;
+  revised 3D root rotations must be checked in RViz before S11 acceptance.
