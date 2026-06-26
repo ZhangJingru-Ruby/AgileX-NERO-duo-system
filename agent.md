@@ -176,7 +176,7 @@ These are the current deployment assumptions. Update them only when verified.
 | CAN bitrate | `1000000` |
 | Initial TCP offset | `[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]` |
 | Deployment mode | Ubuntu 20.04 host SDK/CAN-only + Docker ROS2 Humble |
-| Current live state | S10 complete: Arm A and Arm B both passed Web/SDK/ROS low-speed single-joint motion and final control-source closure |
+| Current live state | S11 partially measured: Arm B translation is `x=0.260 m, y=0, z=0`; yaw candidate `pi` is pending RViz validation |
 | Observed Web model | `7ax`, interpreted as one NERO 7-axis arm/controller per physical arm |
 | Observed Web footer version | `v1.121`; current SDK firmware selector is `v112` |
 | Current next phase | S11 dual-arm experiment baseline and coordinate closure |
@@ -262,6 +262,13 @@ S11 prepared path: use `docs/s11_dual_arm_experiment_baseline.md`. S11 is a
 coordinate, TF, TCP, and logging baseline phase, not a motion-expansion phase.
 Keep `effector_type:=none` and TCP offset zero until an end effector is
 installed and measured. End-effector installation is now S14, not S11.
+
+S11 measurement state: the operator defined `lab_world` with Arm A base center
+projection as origin, `+X` from Arm A to Arm B, `+Y` left when facing `+X`, and
+`+Z` up. Arm B translation is recorded as `x=0.260 m, y=0, z=0`. Arm B yaw
+candidate is `3.1415926 rad`, inferred from Web-axis observations, but it is not
+accepted until RViz confirms the ROS `base_link` orientation. Do not treat Web
+coordinate axes as identical to ROS `base_link` without validation.
 
 ## Raw CAN Policy
 

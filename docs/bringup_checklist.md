@@ -232,14 +232,14 @@
 
 ## S11 双臂实验基线与坐标闭环
 
-- [ ] 已定义 `lab_world` 坐标系。
-- [ ] 已测量 `lab_world -> arm_a/base_link`。
-- [ ] 已测量 `lab_world -> arm_b/base_link`。
-- [ ] 已记录测量方法、工具、误差估计和照片。
-- [ ] 已建立静态 TF 发布方案。
+- [x] 已定义 `lab_world` 坐标系。
+- [x] 已记录 `lab_world -> arm_a/base_link` 初始候选：identity。
+- [ ] 已验收 `lab_world -> arm_b/base_link`：translation 已测为 `x=0.260 m, y=0, z=0`，yaw 候选 `pi` 待 RViz 验证。
+- [ ] 已记录测量方法、工具、误差估计和照片；照片已保存，工具/误差仍待补充。
+- [x] 已建立静态 TF 候选发布方案。
 - [ ] RViz 中双臂相对位置与实物一致。
-- [ ] 当前 TCP 定义已记录，裸臂阶段保持默认 TCP。
-- [ ] rosbag / snapshot / 实验日志命名规范已确定。
+- [x] 当前 TCP 定义已记录，裸臂阶段保持默认 TCP。
+- [x] rosbag / snapshot / 实验日志命名规范已确定。
 
 ## S12 控制隔离与日志闭环
 

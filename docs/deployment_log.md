@@ -3784,3 +3784,75 @@ Open risks:
 Next:
 Operator marks `lab_world`, measures A/B base transforms, saves photos, and
 reports the values for static TF review.
+
+## 2026-06-26 - S11 Initial Measurement Recorded
+
+Phase: S11 双臂实验基线与坐标闭环
+
+Goal:
+Record the first physical dual-arm baseline and prepare a static-TF candidate
+for RViz validation.
+
+Action:
+Recorded the operator-provided `lab_world` convention, Arm B translation, new
+photo/evidence directory, and Web-frame observations. Converted the observed
+A/B Web-frame relationship into a cautious Arm B yaw candidate for RViz testing.
+
+Commands / evidence:
+
+- Photo/evidence directory: `docs/pics/s11_measurement_20260626/`.
+- Arm A natural posture screenshot: `arm A 姿态.png`.
+- Arm B natural posture screenshot: `arm B 姿态.png`.
+- Base drawing: `底座.png`.
+- Arm size drawing: `机械臂尺寸.png`.
+- Operator measurement: `x_b = 260 mm`, `y_b = 0`, `z_b = 0`.
+- Operator Web-frame observation:
+  - Arm A: `+x_web = +Z`, `+y_web = +Y`, `+z_web = -X`.
+  - Arm B: `+x_web = +Z`, `+y_web = -Y`, `+z_web = +X`.
+
+Result:
+
+- `lab_world` is defined:
+  - origin: Arm A base center projection.
+  - `+X`: Arm A base center to Arm B base center.
+  - `+Y`: left-hand direction when facing `+X`.
+  - `+Z`: up.
+- Arm A transform candidate is identity.
+- Arm B translation candidate is `x=0.260 m, y=0, z=0`.
+- Arm B yaw candidate is `3.1415926 rad`.
+
+Deployment choices:
+
+- Treat `x_b=0.260 m` as measured physical evidence.
+- Treat Arm B yaw `pi` as a validation candidate, not final acceptance, because
+  Web coordinates may not be identical to ROS `base_link`.
+- Continue S11 as no-motion TF/RViz validation.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/current_bringup_status.md`,
+`docs/bringup_checklist.md`, `docs/deployment_log.md`,
+`docs/s11_measurement_notes.md`, `docs/s11_static_tf_plan.md`,
+`docs/机器人部署与调试行动路线.md`, `docs/pics/s11_measurement_20260626/`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile examples/nero_read_state.py examples/nero_sdk_single_joint_step.py scripts/ros_single_joint_step.py`
+- `git diff --check`
+
+RViz/static-TF validation is still pending.
+
+Route updates:
+S11 is now partially measured; the next gate is static-TF publishing and RViz
+confirmation.
+
+Open risks:
+
+- Measurement uncertainty and exact tool were not reported.
+- Yaw candidate may need correction if RViz shows a 90 deg or 180 deg mismatch.
+- Web-frame axes are recorded as observations, not as ROS `base_link` facts.
+
+Next:
+Run the candidate static TF commands, check `tf2_echo`, inspect RViz, and save a
+post-TF read-only snapshot if the layout is correct.
