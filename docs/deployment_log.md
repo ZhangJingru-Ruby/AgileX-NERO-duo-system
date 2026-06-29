@@ -5865,3 +5865,35 @@ Deployment choices:
 Route updates:
 Next live work should identify the actual hand CAN interfaces and read
 LinkerHand serial/version/state/current/temperature/fault without finger motion.
+
+## 2026-06-29 - S14 LinkerHand Cable Connected And Targeted Identify Tool Added
+
+Phase: S14 末端执行器接入
+
+Goal:
+Prepare a safe next step after the operator connected the available hand-side
+cable.
+
+Action:
+Added a targeted LinkerHand CAN identification script that only sends
+LinkerHand identify/read request frames to an explicitly selected CAN interface.
+
+Files:
+
+- `scripts/s14_linkerhand_identify_can.sh`
+
+Safety behavior:
+
+- The script sends `0FF#C0` and fallback `0FF#01` only to the selected
+  interface.
+- It refuses to run on configured arm CAN interfaces `can_arm_a` and
+  `can_arm_b` unless `--allow-arm-can` is explicitly provided.
+- It does not send LinkerHand pose, speed, torque, or finger-motion commands.
+
+Next live work:
+
+1. Stop any ROS/Revo2 hand-test driver terminals.
+2. List current CAN interfaces and identify the newly connected hand-side CAN
+   interface.
+3. Activate that candidate interface at `1000000` bitrate if needed.
+4. Run the targeted LinkerHand identification script on the candidate interface.

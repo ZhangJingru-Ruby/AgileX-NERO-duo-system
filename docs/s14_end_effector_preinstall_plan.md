@@ -289,6 +289,18 @@ S14.3L is accepted only after LinkerHand read-only evidence records:
 - state/current/temperature/fault data;
 - no active hand fault condition.
 
+Field update on 2026-06-29:
+
+- Operator reported the available hand-side cable has been connected.
+- Next action is to identify the hand CAN interface without scanning arm CAN
+  interfaces.
+- Use `scripts/s14_linkerhand_identify_can.sh <can_iface>` for targeted
+  LinkerHand identification after the candidate hand CAN interface is known and
+  UP at `1000000` bitrate.
+- The script refuses to run on `can_arm_a` or `can_arm_b` unless
+  `--allow-arm-can` is explicitly supplied. Do not use that override before a
+  documented bus review.
+
 ### S14.4 First Finger Motion
 
 Deferred. Requires a separate dry-run/safety gate. First finger motion should be
