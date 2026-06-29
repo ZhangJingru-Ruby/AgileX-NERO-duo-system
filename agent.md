@@ -338,6 +338,16 @@ confirmed left/right mapping, and confirmed both hands are mechanically stable.
 The temporary J6/J7 cable rule remains active: no large wrist motion beyond the
 observed about `70 deg` cable-bend envelope. Next gate is S14.1 no-motion ROS
 read-only verification with no Web hand controls and no finger actuation.
+
+S14.1 arm read-only verification is accepted with a posture warning. The
+operator confirmed `Publisher count: 1` for both A/B joint-state feedback topics.
+Snapshot `docs/s9_ros_snapshots/20260629_074337/` has `Failed capture
+commands: 0`, A/B about `200 Hz`, A/B `err_status: 0`, all joint-limit flags
+`false`, and all joint-communication flags `false`. A/B `arm_status=3`, which
+upstream maps to `SINGULARITY_POINT` / `奇异点`; A/B `motion_status=1`, not
+reached target. Treat S14.1 as communication/read-only pass only, not
+motion-ready posture approval. Next gate is S14.2 model/parameter decision and
+then Revo2 hand read-only; no finger, wrist, Cartesian, or Web hand action yet.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

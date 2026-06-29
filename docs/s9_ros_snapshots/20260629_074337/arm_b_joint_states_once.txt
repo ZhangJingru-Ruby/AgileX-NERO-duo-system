@@ -1,0 +1,39 @@
+$ ros2 topic echo --once /arm_b/feedback/joint_states
+header:
+  stamp:
+    sec: 1782719026
+    nanosec: 996984243
+  frame_id: ''
+name:
+- joint1
+- joint2
+- joint3
+- joint4
+- joint5
+- joint6
+- joint7
+position:
+- 0.0
+- 6.981317007977319e-05
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- -1.7453292519943296e-05
+velocity:
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+effort:
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+---

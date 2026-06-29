@@ -284,7 +284,8 @@
 - [ ] 夹爪/示教器/灵巧手类型与 Web/ROS 配置一致。
 - [ ] 如使用旧 Piper 夹爪，已完成 ID 更改确认。
 - [ ] 灵巧手安装后已复核 `docs/pics/4 灵巧手示意图.png` 和 `docs/pics/5 灵巧手法兰安装示意图.png`，并确认出线位置与法兰缺口居中。
-- [ ] S14.1 双臂 no-motion ROS 只读快照通过。
+- [x] S14.1 双臂 no-motion ROS 只读快照通过：`docs/s9_ros_snapshots/20260629_074337/`；A/B `Publisher count: 1`。
+- [x] S14.1 观察项已记录：A/B `arm_status=3`，按上游说明为 `奇异点`，因此后续不从当前姿态直接做腕部/笛卡尔/手指动作。
 - [ ] S14.2 Web/ROS `effector_type:=revo2`、左右手模型、负载和 TCP 决策已记录。
 - [ ] 夹爪 `0x2A8` 或上层反馈正常。
 - [ ] 低速小行程动作正常。

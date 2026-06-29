@@ -1,6 +1,6 @@
 # S14 End-Effector Installation Plan
 
-Status: S14.0 mechanical/cable review accepted; S14.1 no-motion ROS pending.
+Status: S14.1 arm read-only accepted with singularity observation; S14.2 model/parameter decision pending.
 
 S14 starts after S13 closed the bare-arm low-risk dual-arm primitive. Installing
 the dexterous hands changes mass, TCP, cable routing, collision envelope, and
@@ -95,6 +95,33 @@ Accept only if:
 - A/B joint-limit and joint-communication flags are all `false`.
 - No dexterous-hand control topic is published by the test.
 - No Web dexterous-hand action is used.
+
+Actual S14.1 result on 2026-06-29:
+
+- Operator confirmed ROS publisher count:
+  - `/arm_a/feedback/joint_states`: `Publisher count: 1`.
+  - `/arm_b/feedback/joint_states`: `Publisher count: 1`.
+- Snapshot: `docs/s9_ros_snapshots/20260629_074337/`.
+- `Failed capture commands: 0`.
+- Arm A joint-state feedback: about `200 Hz`.
+- Arm B joint-state feedback: about `200 Hz`.
+- A/B `err_status: 0`.
+- A/B joint-limit flags: all `false`.
+- A/B joint-communication flags: all `false`.
+- A/B `arm_status=3`; upstream documentation maps this value to `奇异点`
+  / `SINGULARITY_POINT`.
+- A/B `motion_status=1`; upstream documentation maps this value to not reached
+  target.
+- The topic list still only contains arm feedback/control topics because this
+  snapshot used the normal read-only launch with `effector_type:=none`.
+
+Result:
+
+- S14.1 is accepted as arm-controller read-only communication evidence after
+  mechanical hand installation.
+- It is not accepted as a motion-ready posture. Before any wrist, Cartesian, or
+  finger motion, S14 must either move to or explicitly accept a non-problematic
+  posture under a separate gate.
 
 ### S14.2 Model And Parameter Decision
 

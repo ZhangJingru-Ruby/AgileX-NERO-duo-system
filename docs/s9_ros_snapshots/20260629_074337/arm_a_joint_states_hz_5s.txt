@@ -1,0 +1,8 @@
+$ timeout --signal=INT 5s ros2 topic hz /arm_a/feedback/joint_states
+average rate: 199.753
+	min: 0.004s max: 0.006s std dev: 0.00052s window: 201
+average rate: 199.922
+	min: 0.004s max: 0.006s std dev: 0.00051s window: 402
+average rate: 199.896
+	min: 0.003s max: 0.007s std dev: 0.00050s window: 602
+Command ended by timeout after the requested sample window.

@@ -5628,3 +5628,76 @@ Open risks:
 - J6/J7 cable-safe envelope is still qualitative and must not be treated as a
   calibrated joint limit.
 - Hand status and hand motion have not been tested.
+
+## 2026-06-29 - S14 Arm Read-Only Verification Accepted With Singularity Observation
+
+Phase: S14 末端执行器接入
+
+Goal:
+Verify the arm feedback path remains healthy after dexterous-hand mechanical
+installation, without configuring or actuating the hands.
+
+Action:
+Operator verified single publishers for A/B joint-state feedback and captured a
+no-motion ROS read-only snapshot.
+
+Publisher-count evidence:
+
+- `/arm_a/feedback/joint_states`: `Publisher count: 1`.
+- `/arm_b/feedback/joint_states`: `Publisher count: 1`.
+- The single publisher in each namespace is `agx_arm_ctrl_single_node`.
+
+Snapshot evidence:
+
+- Snapshot directory: `docs/s9_ros_snapshots/20260629_074337/`.
+- `Failed capture commands: 0`.
+- Arm A joint-state frequency: about `200 Hz`.
+- Arm B joint-state frequency: about `200 Hz`.
+- Arm A status: `ctrl_mode=1`, `arm_status=3`, `mode_feedback=1`,
+  `motion_status=1`, `err_status=0`.
+- Arm B status: `ctrl_mode=1`, `arm_status=3`, `mode_feedback=1`,
+  `motion_status=1`, `err_status=0`.
+- Arm A joint-limit flags: all `false`.
+- Arm B joint-limit flags: all `false`.
+- Arm A joint-communication flags: all `false`.
+- Arm B joint-communication flags: all `false`.
+- Topic list contains arm feedback/control topics only; no hand-status topic
+  was expected because this snapshot used `effector_type:=none`.
+
+Interpretation:
+
+- S14.1 passes as no-motion arm-controller communication/read-only evidence.
+- It does not prove the current posture is ready for motion.
+- Upstream documentation maps `arm_status=3` to `奇异点` /
+  `SINGULARITY_POINT` and `motion_status=1` to not reached target.
+
+Deployment choices:
+
+- Keep hand controls disabled.
+- Do not use Web dexterous-hand UI yet.
+- Do not publish ROS `/control/hand` or SDK Revo2 control yet.
+- Move next to S14.2 model/parameter decision, then S14.3 Revo2 hand read-only.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s14_end_effector_preinstall_plan.md`,
+`docs/s9_ros_snapshots/20260629_074337/`,
+`docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s13_dual_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S14 advances from S14.1 no-motion arm read-only to S14.2 model/parameter
+decision.
+
+Open risks:
+
+- The current arm posture reports singularity status. Do not use it as a motion
+  starting point without a separate posture plan.
+- Hand status and hand motion have not been tested.
