@@ -6,8 +6,8 @@ Last updated: 2026-06-29
 
 | Item | Current value |
 | --- | --- |
-| Current end effector | Dual Revo2 dexterous hands installed mechanically; Arm A right hand, Arm B left hand |
-| Planned end effector state | S14 Revo2 read-only verification pending; no finger actuation accepted yet |
+| Current end effector | Dual LinkerHand L6 dexterous hands installed mechanically; Arm A right hand, Arm B left hand |
+| Planned end effector state | S14.3L LinkerHand read-only identification pending; no finger actuation accepted yet |
 | Physical arm count | Two NERO arms, independently powered |
 | Arm A | Web verified; hotspot `agx-7ax-armA`; planned CAN `can_arm_a`; ROS namespace `arm_a` |
 | Arm B | Web verified; hotspot `agx-7ax-armB`; planned CAN `can_arm_b`; ROS namespace `arm_b` |
@@ -43,7 +43,7 @@ Last updated: 2026-06-29
 | S11 双臂实验基线 | Complete / accepted | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Accepted static TF values are `lab_world -> arm_a/world: x=0, y=0, z=0, roll=0, pitch=-1.5707963, yaw=0` and `lab_world -> arm_b/world: x=0.260, y=0, z=0, roll=3.1415926, pitch=-1.5707963, yaw=0`. Operator reports RViz matches the physical layout and follows both arms when they move. Post-TF snapshot `20260626_055339` is clean, and X11 access was restored to local-user only. |
 | S12 控制隔离与日志闭环 | Complete / accepted | Arm A `joint1 +30 deg` and Arm B `joint1 -30 deg` isolation tests both passed and returned. Passive-arm deviations were `0.005 deg` for Arm B during Arm A motion and `0.008 deg` for Arm A during Arm B motion. Post-motion snapshots `20260626_080809` and `20260626_083210` are clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
 | S13 低风险双臂协同原语 | Complete / accepted | Corrected Arm A `joint1 +30 deg` / Arm B `joint1 +30 deg` execution passed and operator confirmed visible direction matched expectation. Earlier final-snapshot attempts `20260626_093414` and `20260629_043358` were not accepted because duplicate publishers produced about `400 Hz` feedback. After cleanup, publisher count was `1` for both A/B joint-state topics, and final snapshot `20260629_043441` is clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
-| S14 末端执行器 | Active; S14.3 Revo2 endpoints present, hand-status message pending | Both dexterous hands are mechanically installed and stable. Arm A = right hand, Arm B = left hand. S14.1 no-motion snapshot `20260629_074337` is accepted for communication/read-only health: A/B `Publisher count: 1`, failed captures `0`, about `200 Hz`, `err_status: 0`, no joint-limit flags, and no joint-communication flags. Observation: A/B `arm_status=3`, documented upstream as `奇异点`; do not start wrist, Cartesian, or finger motion from this state without a separate posture/safety decision. S14.2 decision: keep global `effector_type:=none` for arm-only regression, use `scripts/launch_s14_dual_revo2_readonly.sh` for Revo2 hand read-only. Corrected S14.3 launch exposes A/B `hand` endpoints, but raw `ros2 topic echo --once /arm_a/feedback/hand_status` waited without output. Use `scripts/s14_revo2_hand_status_probe.sh` next; do not publish `/control/hand` yet. |
+| S14 末端执行器 | Active; LinkerHand L6 SDK is now the preferred hand path | Both dexterous hands are mechanically installed and stable. Arm A = right hand, Arm B = left hand. S14.1 no-motion snapshot `20260629_074337` is accepted for communication/read-only health: A/B `Publisher count: 1`, failed captures `0`, about `200 Hz`, `err_status: 0`, no joint-limit flags, and no joint-communication flags. Observation: A/B `arm_status=3`, documented upstream as `奇异点`; do not start wrist, Cartesian, or finger motion from this state without a separate posture/safety decision. AgileX Revo2 ROS endpoints appeared but did not produce physical hand status. The newly provided `upstream/linkerhand_sdk/` source identifies the hands as LinkerHand L6 devices, defaulting to left `can0` / right `can1`, 1 Mbps, CAN IDs `0x28` / `0x27`. Next gate: S14.3L LinkerHand read-only CAN identification. Do not publish AgileX `/control/hand`, and do not run LinkerHand motion scripts yet. |
 
 ## S0 Evidence
 
@@ -120,17 +120,17 @@ S2 offline environment result:
 
 S13 is complete. S14 is active. S14.0 mechanical/cable review, S14.1
 no-motion arm read-only verification, and S14.2 model/parameter decision are
-recorded. S14.3 now has Revo2 ROS endpoints, but actual hand-status messages
-are not accepted yet. The immediate next step is the bounded S14.3 hand-status
-probe with `scripts/s14_revo2_hand_status_probe.sh`. Do not actuate the hand
-until S14 records:
+recorded. The LinkerHand SDK source is now available at
+`upstream/linkerhand_sdk/` and reviewed in
+`docs/s14_linkerhand_sdk_review.md`. The immediate next step is S14.3L
+LinkerHand read-only CAN identification. Do not actuate the hand until S14
+records:
 
-- Revo2 driver logs showing A/B `effector_type: revo2`.
-- `/arm_a/feedback/hand_status` and `/arm_b/feedback/hand_status` actual
-  message evidence, or a documented protocol reason why a no-command stream is
-  not expected.
-- Hand left/right status where available.
-- No hand error, over-current, over-temperature, or blocked motor status.
+- actual LinkerHand CAN interface mapping for left/right hand;
+- serials matching `LHL6-03-253-L-B-1-C` for left and
+  `LHL6-03-240-R-B-1-C` for right;
+- version/state/current/temperature/fault read-only evidence;
+- no hand error, over-current, over-temperature, or blocked motor status;
 - A temporary J6/J7 wrist envelope that respects the observed cable limit.
 - How to handle the current A/B `arm_status=3` singularity observation before
   any arm, wrist, or Cartesian motion.

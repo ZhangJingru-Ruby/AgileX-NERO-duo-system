@@ -1,6 +1,6 @@
 # S14 End-Effector Installation Plan
 
-Status: S14.3 Revo2 hand read-only retry prepared after first attempt used `effector_type:=none`.
+Status: S14.3L LinkerHand L6 read-only identification pending; AgileX Revo2 path is no longer the preferred hand path.
 
 S14 starts after S13 closed the bare-arm low-risk dual-arm primitive. Installing
 the dexterous hands changes mass, TCP, cable routing, collision envelope, and
@@ -224,6 +224,70 @@ Next read-only probe:
   result.
 - Do not publish `/control/hand` or `/control/hand_position_time` until a
   separate S14.4 motion/safety gate is written and accepted.
+
+### S14.3b LinkerHand SDK Source Review
+
+New field information on 2026-06-29:
+
+- The two installed hands were previously debugged with
+  `https://github.com/LV-Robotics-Lab/linkerhand_sdk`.
+- This SDK should be treated as the preferred hand-side software reference once
+  its source is available locally and reviewed.
+
+Current access status:
+
+- Initial direct clone was blocked because GitHub requested credentials.
+- The operator downloaded the source tree manually.
+- The local source is now stored at `upstream/linkerhand_sdk/`.
+- The local copy is a downloaded tree, not a git clone, so no commit hash is
+  available locally.
+
+Decision:
+
+- Pause any attempt to solve the hand through AgileX `effector_type:=revo2`
+  control commands.
+- Do not publish to AgileX ROS `/control/hand` or
+  `/control/hand_position_time` while LinkerHand source review is pending.
+- Review result is recorded in `docs/s14_linkerhand_sdk_review.md`.
+
+Key review findings:
+
+- The installed hands should be treated as LinkerHand `L6` unless later evidence
+  proves otherwise.
+- The SDK expects direct CAN communication, not AgileX Revo2 ROS feedback:
+  - left hand default CAN: `can0`;
+  - right hand default CAN: `can1`;
+  - CAN bitrate: `1000000`;
+  - left hand CAN ID: `0x28`;
+  - right hand CAN ID: `0x27`.
+- Expected serials from the local README:
+  - left: `LHL6-03-253-L-B-1-C`;
+  - right: `LHL6-03-240-R-B-1-C`.
+- LinkerHand L6 pose/state order is
+  `[thumb_flex, thumb_abduct, index, middle, ring, pinky]`, each `0..255`.
+- The local wrapper provides `get_state`, `get_current`, `get_torque`,
+  `get_temperature`, `get_fault`, and `get_serial_number`.
+
+Updated S14.3 decision:
+
+- Replace the Revo2 hand-read-only gate with `S14.3L LinkerHand read-only
+  identification`.
+- Stop using AgileX Revo2 ROS `feedback/hand_status` as the primary evidence for
+  these hands.
+- Do not run `find_linker_hand.sh` blindly because it scans every CAN interface
+  and sends `0FF#C0`; arm CAN interfaces may also be present.
+- Identify actual hand CAN interfaces first, preferably using targeted
+  interface checks against known hand CAN ports.
+- Do not run `test_hand.py`, `gestures.py`, `diagnose.py`, or `dual_gui.py`
+  before a separate S14.4 motion gate; those tools can command finger movement.
+
+S14.3L is accepted only after LinkerHand read-only evidence records:
+
+- detected left/right CAN interface mapping;
+- serial numbers matching the expected left/right devices;
+- firmware/version data;
+- state/current/temperature/fault data;
+- no active hand fault condition.
 
 ### S14.4 First Finger Motion
 

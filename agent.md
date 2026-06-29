@@ -165,8 +165,8 @@ These are the current deployment assumptions. Update them only when verified.
 
 | Item | Current value |
 | --- | --- |
-| Current end effector | Bare arm |
-| Planned end effector | Dexterous hand, later |
+| Current end effector | Dual LinkerHand L6 dexterous hands mechanically installed |
+| Planned end effector | LinkerHand L6 read-only identification, then gated first finger motion |
 | Physical arm count | `2`, independent power |
 | Arm A | Web verified; hotspot `agx-7ax-armA`; CAN `can_arm_a`; namespace `arm_a`; USB bus `1-5:1.0` |
 | Arm B | Web verified; hotspot `agx-7ax-armB`; CAN `can_arm_b`; namespace `arm_b`; USB bus `1-11:1.0` |
@@ -177,10 +177,10 @@ These are the current deployment assumptions. Update them only when verified.
 | CAN bitrate | `1000000` |
 | Initial TCP offset | `[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]` |
 | Deployment mode | Ubuntu 20.04 host SDK/CAN-only + Docker ROS2 Humble |
-| Current live state | S13 accepted/closed: corrected low-risk dual-arm J1 primitive and final clean read-only snapshot accepted |
+| Current live state | S14 active: LinkerHand SDK reviewed; S14.3L read-only CAN identification pending |
 | Observed Web model | `7ax`, interpreted as one NERO 7-axis arm/controller per physical arm |
 | Observed Web footer version | `v1.121`; current SDK firmware selector is `v112` |
-| Current next phase | S14 end-effector post-installation no-motion review |
+| Current next phase | S14.3L LinkerHand read-only CAN identification |
 
 Current Web evidence shows one set of joint tabs, `关节1` through `关节7`.
 Treat this as normal for one NERO 7-axis arm/controller. The physical setup has
@@ -321,16 +321,15 @@ is Arm A `joint1 +30 deg` and Arm B `joint1 +30 deg`; Arm A `+30 deg` / Arm B
 end-effector pre-installation review before any dexterous-hand mounting,
 powering, configuration, or actuation.
 
-S14 is active. On 2026-06-29 the operator reported both Revo2 dexterous hands
+S14 is active. On 2026-06-29 the operator reported both dexterous hands
 are mechanically installed. Current mapping follows the prior decision: Arm A
 has the right hand and Arm B has the left hand. Cable routing constrains J6/J7
 wrist motion; operator reports bends below about `70 deg` do not interfere, but
 larger bends may. Treat this as a field cable-bend constraint, not a calibrated
 joint-angle limit. Next gate is S14.0/S14.1 no-motion mechanical/cable/read-only
-verification. Do not power/configure/actuate fingers, do not use Web dexterous
-hand controls, and do not command large J6/J7 wrist motions until S14 records
-the cable-safe envelope, load/TCP decisions, `effector_type:=revo2` plan, and a
-clean no-motion read-only snapshot.
+verification. Do not actuate fingers, do not use Web dexterous hand controls,
+and do not command large J6/J7 wrist motions until S14 records the cable-safe
+envelope, load/TCP decisions, and a clean no-motion read-only path.
 
 S14.0 mechanical/cable review is accepted. The operator archived cable photos
 at `docs/pics/S14自然状态线束.jpeg` and `docs/pics/S14手腕弯折状态线束.jpeg`,
@@ -367,6 +366,17 @@ raw `ros2 topic echo --once /arm_a/feedback/hand_status` waited without output.
 Use `scripts/s14_revo2_hand_status_probe.sh` for bounded read-only probes. Do
 not publish to `/control/hand` or `/control/hand_position_time` before a
 separate S14.4 motion/safety gate.
+
+New S14 field evidence changes the preferred hand path. The operator provided
+the previously used `linkerhand_sdk` source tree, now stored at
+`upstream/linkerhand_sdk/` and reviewed in
+`docs/s14_linkerhand_sdk_review.md`. It identifies the installed hands as a
+dual LinkerHand L6 setup, not the AgileX Revo2 path: left hand default `can0`,
+serial `LHL6-03-253-L-B-1-C`, CAN ID `0x28`; right hand default `can1`,
+serial `LHL6-03-240-R-B-1-C`, CAN ID `0x27`; bitrate `1000000`.
+S14.3 is reoriented to S14.3L LinkerHand read-only CAN identification. Do not
+run `test_hand.py`, `gestures.py`, `diagnose.py`, `dual_gui.py`, or publish
+AgileX `/control/hand` before the S14.4 motion gate.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

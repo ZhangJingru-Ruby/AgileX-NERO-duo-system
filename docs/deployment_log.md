@@ -5810,3 +5810,58 @@ Pending live checks:
 - Run bounded A/B hand-status waits.
 - If no messages arrive, perform passive CAN observation for Revo2 feedback IDs
   before deciding whether a no-motion status stream is expected.
+
+## 2026-06-29 - S14 LinkerHand SDK Review Reorients Hand Path
+
+Phase: S14 末端执行器接入
+
+Goal:
+Review the hand SDK that was previously used to debug these two installed
+hands, and decide how it changes the S14 route.
+
+Action:
+Operator downloaded `https://github.com/LV-Robotics-Lab/linkerhand_sdk` into
+the NERO workspace. The source tree was moved to `upstream/linkerhand_sdk/` so
+it remains an ignored upstream evidence cache. The source was reviewed locally.
+
+Evidence:
+
+- Local source path: `upstream/linkerhand_sdk/`.
+- The local copy is a downloaded tree and has no `.git` commit hash.
+- README states this working copy is configured for a dual Linker Hand L6 setup.
+- README hardware table:
+  - left: SocketCAN `can0`, serial `LHL6-03-253-L-B-1-C`, firmware `2.3.7`;
+  - right: SocketCAN `can1`, serial `LHL6-03-240-R-B-1-C`, firmware `2.3.7`.
+- `LinkerHand/config/setting.yaml` configures both hands as `L6`, with left
+  CAN `can0`, right CAN `can1`, SDK version `3.1.0`.
+- `linker_hand_l6.py` provides high-level single-hand and bimanual control,
+  status APIs, and side-specific presets.
+- `LinkerHand/core/can/linker_hand_l6_can.py` shows LinkerHand L6 CAN IDs:
+  - left hand `0x28`;
+  - right hand `0x27`;
+  - status/function bytes include `0x01` state, `0x33` temperature,
+    `0x35` fault, `0x36` current, `0xC0` serial, and `0x64`/`0xC2` version.
+
+Interpretation:
+
+- The installed hands should now be treated as LinkerHand L6 devices unless
+  later evidence proves otherwise.
+- AgileX Revo2 ROS `feedback/hand_status` is not the preferred evidence path for
+  these hands.
+- The earlier Revo2 endpoint-without-message result is consistent with a
+  protocol/device mismatch.
+
+Deployment choices:
+
+- Add `docs/s14_linkerhand_sdk_review.md`.
+- Change the next gate to `S14.3L LinkerHand read-only identification`.
+- Do not publish to AgileX ROS `/control/hand` or
+  `/control/hand_position_time`.
+- Do not run LinkerHand motion scripts (`test_hand.py`, `gestures.py`,
+  `diagnose.py`, `dual_gui.py`) before a separate S14.4 motion gate.
+- Do not run `find_linker_hand.sh` blindly while arm CAN interfaces are present,
+  because it scans all CAN interfaces and sends `0FF#C0`.
+
+Route updates:
+Next live work should identify the actual hand CAN interfaces and read
+LinkerHand serial/version/state/current/temperature/fault without finger motion.

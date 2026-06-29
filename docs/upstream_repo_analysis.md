@@ -13,6 +13,7 @@ than relying on assumptions from earlier GitHub references.
 | `agilexrobotics/pyAgxArm` | `upstream/pyAgxArm` | `master` | `a226840` | Python SDK used by the ROS driver and usable standalone over CAN. |
 | `agilexrobotics/piper_ros` | `upstream/piper_ros` | `humble_beta1` | `2dc30fc` | Reference source for the NERO description package supplied by the user. |
 | `agilexrobotics/agx_arm_urdf` submodule | `upstream/agx_arm_ros/src/agx_arm_description/agx_arm_urdf` | submodule | `f6642ce` | Current URDF/Xacro/mesh model set used by `agx_arm_ros`. |
+| `LV-Robotics-Lab/linkerhand_sdk` | `upstream/linkerhand_sdk` | downloaded tree | unavailable | S14 hand-side SDK evidence for the installed LinkerHand L6 pair. |
 
 ## Evidence From `agx_arm_ros`
 
@@ -70,6 +71,31 @@ Noetic the preferred ROS route.
 
 Conclusion: ROS1 can display/package model assets if needed, but the current
 control stack evidence remains ROS2.
+
+## Evidence From `linkerhand_sdk`
+
+Added on 2026-06-29 for S14 end-effector work.
+
+- The local source is a user-provided downloaded tree, not a git clone, so no
+  commit hash is available locally.
+- Its README identifies the hand setup as dual Linker Hand L6, not AgileX
+  Revo2.
+- It expects left hand `can0`, right hand `can1`, CAN bitrate `1000000`, and
+  two PEAK PCAN-USB adapters.
+- Expected serials:
+  - left: `LHL6-03-253-L-B-1-C`;
+  - right: `LHL6-03-240-R-B-1-C`.
+- `LinkerHand/config/setting.yaml` configures both hands as `L6`.
+- `LinkerHand/core/can/linker_hand_l6_can.py` uses left CAN ID `0x28` and
+  right CAN ID `0x27`.
+- The high-level wrapper `linker_hand_l6.py` provides status reads and
+  bimanual commands, with L6 joint order
+  `[thumb_flex, thumb_abduct, index, middle, ring, pinky]`.
+
+Conclusion: S14 hand-side bring-up should use LinkerHand L6 read-only
+identification as the next evidence path. AgileX `effector_type:=revo2` remains
+useful model/control context but is not the primary control path for these
+installed hands unless later evidence contradicts the LinkerHand SDK.
 
 ## ROS Strategy Decision
 

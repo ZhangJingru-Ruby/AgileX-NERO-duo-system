@@ -30,7 +30,8 @@
 - 夹爪/灵巧手模型：`docs/nero带夹爪以及带灵巧手模型/`
 - 法兰连接件模型：`docs/NERO+两指夹爪-法兰.STEP/`、`docs/NERO+强脑标准版灵巧手 法兰连接件-左右前/`
 - 用户手册关键图片：`docs/pics/`
-- 上游仓库证据缓存：`upstream/agx_arm_ros`、`upstream/pyAgxArm`、`upstream/piper_ros`
+- 上游仓库证据缓存：`upstream/agx_arm_ros`、`upstream/pyAgxArm`、`upstream/piper_ros`、
+  `upstream/linkerhand_sdk`
   可在本机存在，但不纳入 git 首次提交；复现条件见下方“上游依赖”。
 
 ## Git 包边界
@@ -38,7 +39,7 @@
 本仓库提交项目自有的部署脚本、配置、现场记录、行动路线、截图、快照和本地文档证据。
 以下内容故意不提交：
 
-- `upstream/`：未修改的 AgileX 上游仓库 clone，体积约 1.3 GB，可按固定 URL 和 commit 复现。
+- `upstream/`：上游仓库/SDK 证据缓存，体积较大，可按固定 URL 和记录条件复现。
 - `.venv/`：本机 Python 虚拟环境，应由脚本重新创建。
 - `build/`、`install/`、`log/`：ROS/colcon 构建产物。
 - `.agents/`、`.codex/`、`__pycache__/`：本地运行缓存。
@@ -61,6 +62,17 @@ git -C upstream/pyAgxArm checkout a226840db0c3d5c5dc7f3ec78d6cef1a6800f9e6
 git clone https://github.com/agilexrobotics/piper_ros.git upstream/piper_ros
 git -C upstream/piper_ros checkout 2dc30fca68cbf4e04d1d0bc15c123d026380ece7
 ```
+
+S14 LinkerHand SDK source is currently a user-provided downloaded tree:
+
+```bash
+# Requires repository access credentials if cloned directly.
+git clone https://github.com/LV-Robotics-Lab/linkerhand_sdk upstream/linkerhand_sdk
+```
+
+The local `upstream/linkerhand_sdk/` copy has no recorded git commit because it
+was provided as a downloaded source tree. Review summary:
+`docs/s14_linkerhand_sdk_review.md`.
 
 当前项目实际 ROS2 工作区位于 `~/agx_arm_ws`，并由
 `bash scripts/build_humble_container.sh` 和 Humble 容器内的 `colcon build`

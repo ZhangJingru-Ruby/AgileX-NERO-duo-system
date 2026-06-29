@@ -290,7 +290,10 @@
 - [x] S14.3 首次 Revo2 topic 检查已诊断：driver 实际日志为 `effector_type: none`，因此没有 `hand` topic 不是硬件反馈失败。
 - [x] S14.3 修正后的 Revo2 只读路径已暴露 A/B `hand` endpoint：`/feedback/hand_status`、`/control/hand`、`/control/hand_position_time`。
 - [x] S14.3 raw `ros2 topic echo --once /arm_a/feedback/hand_status` 长时间无输出已记录；后续改用带超时探针。
-- [ ] A/B `/feedback/hand_status` 已在带超时探针中收到实际消息。
+- [x] LinkerHand SDK 已下载并移入 `upstream/linkerhand_sdk/`；审阅记录见 `docs/s14_linkerhand_sdk_review.md`。
+- [x] S14 手部事实源已改为 LinkerHand L6 优先；AgileX Revo2 ROS `hand_status` 不再作为这些手的主验收路径。
+- [ ] S14.3L LinkerHand 左/右手 CAN 接口已识别，且未误向 `can_arm_a`/`can_arm_b` 发手部扫描帧。
+- [ ] S14.3L LinkerHand 左/右手串码、版本、state/current/temperature/fault 只读结果已记录。
 - [ ] 夹爪 `0x2A8` 或上层反馈正常。
 - [ ] 低速小行程动作正常。
 - [ ] 无过流、过温、传感器异常。
