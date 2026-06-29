@@ -42,7 +42,8 @@ Last updated: 2026-06-26
 | S10 首次低速运动 | Complete for both arms | Web, SDK, and ROS J1 motion passed on Arm A and Arm B. Final S10.8 audit `20260625_155538` shows both CAN interfaces UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker container, and no NERO host process. |
 | S11 双臂实验基线 | Complete / accepted | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Accepted static TF values are `lab_world -> arm_a/world: x=0, y=0, z=0, roll=0, pitch=-1.5707963, yaw=0` and `lab_world -> arm_b/world: x=0.260, y=0, z=0, roll=3.1415926, pitch=-1.5707963, yaw=0`. Operator reports RViz matches the physical layout and follows both arms when they move. Post-TF snapshot `20260626_055339` is clean, and X11 access was restored to local-user only. |
 | S12 控制隔离与日志闭环 | Complete / accepted | Arm A `joint1 +30 deg` and Arm B `joint1 -30 deg` isolation tests both passed and returned. Passive-arm deviations were `0.005 deg` for Arm B during Arm A motion and `0.008 deg` for Arm A during Arm B motion. Post-motion snapshots `20260626_080809` and `20260626_083210` are clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
-| S13 低风险双臂协同原语 | Corrected execution accepted; final snapshot frequency anomaly; rerun pending | Corrected Arm A `joint1 +30 deg` / Arm B `joint1 +30 deg` execution passed and operator confirmed visible direction matched expectation. Snapshot attempt `20260626_093414` has `Failed capture commands: 0`, A/B `err_status: 0`, and no joint-limit or joint-communication flags, but joint-state frequency is about `400 Hz` instead of the expected about `200 Hz`. Treat this as likely duplicate feedback publishers or an extra driver still running; do not close S13 until a clean single-publisher read-only snapshot is captured. |
+| S13 低风险双臂协同原语 | Complete / accepted | Corrected Arm A `joint1 +30 deg` / Arm B `joint1 +30 deg` execution passed and operator confirmed visible direction matched expectation. Earlier final-snapshot attempts `20260626_093414` and `20260629_043358` were not accepted because duplicate publishers produced about `400 Hz` feedback. After cleanup, publisher count was `1` for both A/B joint-state topics, and final snapshot `20260629_043441` is clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
+| S14 末端执行器 | Next / not started | Enter S14.0 pre-installation review before mounting or actuating the dexterous hand: confirm mechanical adapter, cable routing, end XT30 2+2 pinout, CAN/ID assumptions, load/TCP choice, URDF/ROS effector parameters, and a no-motion read-only plan. |
 
 ## S0 Evidence
 
@@ -115,45 +116,20 @@ S2 offline environment result:
 
 ## Immediate Next Step
 
-S10 is complete for both arms: Arm A and Arm B both passed Web, SDK, and ROS
-low-speed single-joint motion. Final S10.8 audit `20260625_155538` is clean.
-S11 is complete: RViz visual layout matches the physical dual-arm layout, both
-arms follow real feedback in RViz, post-TF snapshot `20260626_055339` is clean,
-and the accepted screenshot is
-`docs/pics/S11_RViz_accepted_dual_arm_layout.png`.
+S13 is complete. The immediate next step is S14.0 end-effector pre-installation
+review for the dexterous hand path. Do not mount, power, configure, or actuate
+the hand until S14.0 records:
 
-S12 is complete: a visible `30 deg` J1 command to Arm A did not move Arm B, and
-a visible `30 deg` J1 command to Arm B did not move Arm A. Both tests have
-command output, passive-arm deviation measurements, post-motion read-only
-snapshots, and git commits.
+- Which physical hand/adapter will be installed on each arm.
+- Mechanical fit against `docs/pics/4 灵巧手示意图.png`,
+  `docs/pics/5 灵巧手法兰安装示意图.png`, and the STEP models.
+- End XT30 2+2 power/CAN pinout and cable strain relief.
+- Whether the hand uses the NERO end CAN path or another approved interface.
+- Load mode, TCP offset, URDF/ROS `effector_type`, and any hand-specific IDs.
+- A no-motion read-only verification plan before any finger movement.
 
-The immediate next step is S13.0/S13.1 dry-run and hold validation: start both
-control drivers active, run the S13 dual joint-step dry-run, and accept it only
-if both target vectors are correct and both arms hold within tolerance before
-any motion command.
-
-Next checks:
-
-- Do not send more Arm A Web motion just to "try more"; preserve the successful
-  state and avoid unnecessary accumulated risk.
-- Record whether the final Arm A pose is intentionally acceptable or whether it
-  should later be returned to a known home/park pose under a separate command.
-- Stop temporary S11 RViz/static-TF terminals unless deliberately revalidating
-  S11.
-- Before S13 motion, run the control-source audit again and confirm only the
-  intended control paths are active.
-- Do not expand to Cartesian, MoveIt, MIT/JS, dual-arm coordinated motion, or
-  dexterous-hand actuation yet.
-- Actual SDK speed was `10%`, not the planned `5%`; keep future first tests at
-  or below `10%`, and prefer `5%` unless observability requires otherwise.
-- Do not use SDK motion, ROS `/control/*`, raw CAN motion, MoveIt execute,
-  Cartesian point/linear/circular motion, MIT mode, master-slave mode, or
-  dexterous-hand actuation outside the documented S10.3 ROS procedure.
-- Monitor the state-machine difference: Arm A `arm_status` is now `0` instead
-  of the earlier `6`, while `err_status` and all flags remain healthy.
-- Do not move into Cartesian, MoveIt, dexterous-hand, contact, handoff, or
-  manipulation motion until S13 and later application-specific gates are
-  accepted.
+Until S14 has its own gates accepted, do not run Cartesian, MoveIt execute,
+contact, handoff, dexterous-hand actuation, or close-proximity manipulation.
 
 ## S2 Discovery Result
 

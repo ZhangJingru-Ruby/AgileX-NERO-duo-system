@@ -177,10 +177,10 @@ These are the current deployment assumptions. Update them only when verified.
 | CAN bitrate | `1000000` |
 | Initial TCP offset | `[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]` |
 | Deployment mode | Ubuntu 20.04 host SDK/CAN-only + Docker ROS2 Humble |
-| Current live state | S11 accepted/closed: `lab_world` static TF baseline is accepted by RViz visual validation and post-TF ROS snapshot |
+| Current live state | S13 accepted/closed: corrected low-risk dual-arm J1 primitive and final clean read-only snapshot accepted |
 | Observed Web model | `7ax`, interpreted as one NERO 7-axis arm/controller per physical arm |
 | Observed Web footer version | `v1.121`; current SDK firmware selector is `v112` |
-| Current next phase | S13 low-risk dual-arm primitives, direction-sign correction active |
+| Current next phase | S14 end-effector pre-installation review |
 
 Current Web evidence shows one set of joint tabs, `关节1` through `关节7`.
 Treat this as normal for one NERO 7-axis arm/controller. The physical setup has
@@ -308,6 +308,18 @@ frequency is about `400 Hz`, not the expected about `200 Hz`. Treat this as a
 likely duplicate-publisher state caused by an extra ROS driver/container still
 running. Next gate: stop extra ROS drivers, verify a single feedback source, and
 rerun the corrected-execution final read-only snapshot.
+
+S13 is accepted and closed. A second frequency-anomaly snapshot
+`docs/s9_ros_snapshots/20260629_043358/` still showed about `400 Hz`, so it is
+recorded as not accepted. The operator then verified `Publisher count: 1` for
+both `/arm_a/feedback/joint_states` and `/arm_b/feedback/joint_states`. Final
+snapshot `docs/s9_ros_snapshots/20260629_043441/` is accepted: `Failed capture
+commands: 0`, A/B about `200 Hz`, A/B `err_status: 0`, all joint-limit flags
+`false`, and all joint-communication flags `false`. The accepted S13 primitive
+is Arm A `joint1 +30 deg` and Arm B `joint1 +30 deg`; Arm A `+30 deg` / Arm B
+`-30 deg` remains rejected for world-direction semantics. Next phase is S14:
+end-effector pre-installation review before any dexterous-hand mounting,
+powering, configuration, or actuation.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

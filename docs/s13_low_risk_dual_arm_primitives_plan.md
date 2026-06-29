@@ -1,6 +1,6 @@
 # S13 Low-Risk Dual-Arm Primitives Plan
 
-Status: corrected direction-sign execution accepted; final snapshot frequency anomaly; rerun pending.
+Status: complete / accepted.
 
 S13 starts the minimum dual-arm primitive layer after S12 proved control
 isolation. This phase still does not authorize Cartesian motion, MoveIt
@@ -276,6 +276,45 @@ Result:
   S13 driver still running while the read-only driver was launched.
 - Stop extra ROS driver containers/terminals, verify the feedback source is
   single, then rerun the final post-motion snapshot.
+
+Second final snapshot attempt after corrected execution on 2026-06-29:
+
+- Snapshot: `docs/s9_ros_snapshots/20260629_043358/`.
+- `Failed capture commands: 0`.
+- A/B status: `ctrl_mode=1`, `arm_status=6`, `mode_feedback=1`,
+  `motion_status=1`, `err_status=0`.
+- A/B joint-limit flags: all `false`.
+- A/B joint-communication flags: all `false`.
+- Arm A joint-state frequency: about `400 Hz`.
+- Arm B joint-state frequency: about `400 Hz`.
+
+Result:
+
+- This snapshot is not accepted for S13 closure because duplicate feedback was
+  still present.
+
+Final accepted snapshot on 2026-06-29:
+
+- Operator confirmed `Publisher count: 1` for both
+  `/arm_a/feedback/joint_states` and `/arm_b/feedback/joint_states`.
+- Snapshot: `docs/s9_ros_snapshots/20260629_043441/`.
+- `Failed capture commands: 0`.
+- A/B status: `ctrl_mode=1`, `arm_status=6`, `mode_feedback=1`,
+  `motion_status=1`, `err_status=0`.
+- A/B joint-limit flags: all `false`.
+- A/B joint-communication flags: all `false`.
+- Arm A joint-state feedback: about `200 Hz`.
+- Arm B joint-state feedback: about `200 Hz`.
+
+S13 closure result:
+
+- Accepted low-risk dual-arm joint-space primitive: Arm A `joint1 +30 deg`,
+  Arm B `joint1 +30 deg`.
+- Rejected world-direction primitive: Arm A `joint1 +30 deg`, Arm B
+  `joint1 -30 deg`.
+- Final ROS read-only health evidence is clean after duplicate publishers were
+  removed.
+- S13 is closed. Next phase is S14 end-effector pre-installation review.
 
 ## Stop Conditions
 

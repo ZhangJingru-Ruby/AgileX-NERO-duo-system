@@ -5423,3 +5423,83 @@ Open risks:
 - Running duplicate feedback publishers can hide whether the snapshot reflects a
   clean deployment topology.
 - No next-phase motion should start until S13 has a clean final snapshot.
+
+## 2026-06-29 - S13 Final Snapshot Accepted And Phase Closed
+
+Phase: S13 低风险双臂协同原语
+
+Goal:
+Close S13 with clean final read-only evidence after the corrected dual-arm
+execution and the previous duplicate-publisher frequency anomaly.
+
+Action:
+Operator cleaned up the extra ROS driver terminal/container state, checked
+publisher counts, and reran the final read-only snapshot.
+
+Publisher-count evidence:
+
+- `/arm_a/feedback/joint_states`: `Publisher count: 1`.
+- `/arm_b/feedback/joint_states`: `Publisher count: 1`.
+- The single publisher in each namespace is `agx_arm_ctrl_single_node`.
+
+Intermediate evidence:
+
+- Snapshot directory: `docs/s9_ros_snapshots/20260629_043358/`.
+- `Failed capture commands: 0`.
+- A/B `err_status: 0`, no joint-limit flags, no joint-communication flags.
+- A/B joint-state frequency was still about `400 Hz`.
+- Result: not accepted for closure; duplicate publishers were still indicated.
+
+Accepted final evidence:
+
+- Snapshot directory: `docs/s9_ros_snapshots/20260629_043441/`.
+- `Failed capture commands: 0`.
+- Arm A joint-state frequency: about `200 Hz`.
+- Arm B joint-state frequency: about `200 Hz`.
+- Arm A status: `ctrl_mode=1`, `arm_status=6`, `mode_feedback=1`,
+  `motion_status=1`, `err_status=0`.
+- Arm B status: `ctrl_mode=1`, `arm_status=6`, `mode_feedback=1`,
+  `motion_status=1`, `err_status=0`.
+- Arm A joint-limit flags: all `false`.
+- Arm B joint-limit flags: all `false`.
+- Arm A joint-communication flags: all `false`.
+- Arm B joint-communication flags: all `false`.
+
+Result:
+S13 is accepted and closed. The final clean snapshot explains the prior
+`400 Hz` anomaly as duplicate publishers from an extra terminal/driver. The
+accepted low-risk dual-arm primitive is Arm A `joint1 +30 deg` and Arm B
+`joint1 +30 deg`. The original Arm A `+30 deg` / Arm B `-30 deg` sign pair
+remains recorded as a rejected world-direction primitive.
+
+Deployment choices:
+
+- Move next to S14 end-effector pre-installation review.
+- Do not mount, power, configure, or actuate the dexterous hand before S14.0
+  records mechanical, electrical, CAN/ID, load/TCP, URDF/ROS, and no-motion
+  read-only decisions.
+- Do not expand to Cartesian, MoveIt execute, contact, handoff, or close
+  proximity manipulation until later gates are accepted.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s13_low_risk_dual_arm_primitives_plan.md`,
+`docs/s9_ros_snapshots/20260629_043358/`,
+`docs/s9_ros_snapshots/20260629_043441/`,
+`docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s13_dual_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S13 is closed. S14 is the next phase.
+
+Open risks:
+
+- S14 changes mass, TCP, cable routing, URDF, and possibly CAN endpoints; it
+  must not inherit S13's bare-arm assumptions without revalidation.
