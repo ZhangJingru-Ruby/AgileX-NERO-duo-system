@@ -348,6 +348,17 @@ upstream maps to `SINGULARITY_POINT` / `奇异点`; A/B `motion_status=1`, not
 reached target. Treat S14.1 as communication/read-only pass only, not
 motion-ready posture approval. Next gate is S14.2 model/parameter decision and
 then Revo2 hand read-only; no finger, wrist, Cartesian, or Web hand action yet.
+
+S14.2 model/parameter decision is recorded. Keep the global arm-only regression
+default as `effector_type:=none`; use `scripts/launch_s14_dual_revo2_readonly.sh`
+for S14 hand read-only with `effector_type:=revo2`,
+`auto_enable:=false`, and `control_enabled:=false`. Physical/model mapping is
+Arm A right Revo2 and Arm B left Revo2. The first S14.3 hand-topic attempt did
+not produce hand topics because both driver logs showed `effector_type: none`.
+Treat that as an environment/config propagation issue, not a Revo2 hardware
+failure. The next S14.3 retry must first confirm `effector_type: revo2` in A/B
+logs before checking `/arm_a/feedback/hand_status` and
+`/arm_b/feedback/hand_status`.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

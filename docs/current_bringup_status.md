@@ -1,13 +1,13 @@
 # NERO Current Bring-Up Status
 
-Last updated: 2026-06-26
+Last updated: 2026-06-29
 
 ## Confirmed Configuration
 
 | Item | Current value |
 | --- | --- |
-| Current end effector | Bare arm |
-| Planned end effector | Dual Revo2 dexterous hands installed mechanically; no-motion verification pending |
+| Current end effector | Dual Revo2 dexterous hands installed mechanically; Arm A right hand, Arm B left hand |
+| Planned end effector state | S14 Revo2 read-only verification pending; no finger actuation accepted yet |
 | Physical arm count | Two NERO arms, independently powered |
 | Arm A | Web verified; hotspot `agx-7ax-armA`; planned CAN `can_arm_a`; ROS namespace `arm_a` |
 | Arm B | Web verified; hotspot `agx-7ax-armB`; planned CAN `can_arm_b`; ROS namespace `arm_b` |
@@ -43,7 +43,7 @@ Last updated: 2026-06-26
 | S11 双臂实验基线 | Complete / accepted | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Accepted static TF values are `lab_world -> arm_a/world: x=0, y=0, z=0, roll=0, pitch=-1.5707963, yaw=0` and `lab_world -> arm_b/world: x=0.260, y=0, z=0, roll=3.1415926, pitch=-1.5707963, yaw=0`. Operator reports RViz matches the physical layout and follows both arms when they move. Post-TF snapshot `20260626_055339` is clean, and X11 access was restored to local-user only. |
 | S12 控制隔离与日志闭环 | Complete / accepted | Arm A `joint1 +30 deg` and Arm B `joint1 -30 deg` isolation tests both passed and returned. Passive-arm deviations were `0.005 deg` for Arm B during Arm A motion and `0.008 deg` for Arm A during Arm B motion. Post-motion snapshots `20260626_080809` and `20260626_083210` are clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
 | S13 低风险双臂协同原语 | Complete / accepted | Corrected Arm A `joint1 +30 deg` / Arm B `joint1 +30 deg` execution passed and operator confirmed visible direction matched expectation. Earlier final-snapshot attempts `20260626_093414` and `20260629_043358` were not accepted because duplicate publishers produced about `400 Hz` feedback. After cleanup, publisher count was `1` for both A/B joint-state topics, and final snapshot `20260629_043441` is clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
-| S14 末端执行器 | Active; S14.1 arm read-only accepted with singularity observation | Both dexterous hands are mechanically installed and stable. Arm A = right hand, Arm B = left hand. S14.1 no-motion snapshot `20260629_074337` is accepted for communication/read-only health: A/B `Publisher count: 1`, failed captures `0`, about `200 Hz`, `err_status: 0`, no joint-limit flags, and no joint-communication flags. Observation: A/B `arm_status=3`, documented upstream as `奇异点`; do not start wrist, Cartesian, or finger motion from this state without a separate posture/safety decision. Next gate: S14.2 model/parameter decision, then Revo2 hand read-only. |
+| S14 末端执行器 | Active; S14.2 decision recorded, S14.3 Revo2 read-only retry prepared | Both dexterous hands are mechanically installed and stable. Arm A = right hand, Arm B = left hand. S14.1 no-motion snapshot `20260629_074337` is accepted for communication/read-only health: A/B `Publisher count: 1`, failed captures `0`, about `200 Hz`, `err_status: 0`, no joint-limit flags, and no joint-communication flags. Observation: A/B `arm_status=3`, documented upstream as `奇异点`; do not start wrist, Cartesian, or finger motion from this state without a separate posture/safety decision. S14.2 decision: keep global `effector_type:=none` for arm-only regression, use `scripts/launch_s14_dual_revo2_readonly.sh` for Revo2 hand read-only. First S14.3 attempt produced no hand topics because the actual driver logs showed `effector_type: none`; retry must confirm `effector_type: revo2` in A/B logs before checking `/feedback/hand_status`. |
 
 ## S0 Evidence
 
@@ -72,8 +72,10 @@ Manual image index:
 S0 result:
 
 - No manual-image blocker remains for S2-S4.
-- Dexterous hand images are available, but dexterous hand installation remains deferred to S14.
-- Initial ROS `effector_type` remains `none`.
+- Dexterous hand images are available and were used as S14 installation
+  references.
+- Global arm-only ROS default `effector_type` remains `none`; S14 hand read-only
+  uses a dedicated `revo2` launch script.
 - Initial TCP offset remains zero until a tool is installed and measured.
 
 ## S1 Result
@@ -116,18 +118,17 @@ S2 offline environment result:
 
 ## Immediate Next Step
 
-S13 is complete. S14 is active. S14.0 mechanical/cable review and S14.1
-no-motion arm read-only verification are accepted. The immediate next step is
-S14.2 model/parameter decision for the dexterous hand path. Do not configure or
-actuate the hand until S14 records:
+S13 is complete. S14 is active. S14.0 mechanical/cable review, S14.1
+no-motion arm read-only verification, and S14.2 model/parameter decision are
+recorded. The immediate next step is the corrected S14.3 Revo2 hand read-only
+retry with `scripts/launch_s14_dual_revo2_readonly.sh`. Do not actuate the hand
+until S14 records:
 
-- Which physical hand/adapter is installed on each arm.
-- Mechanical fit against `docs/pics/4 灵巧手示意图.png`,
-  `docs/pics/5 灵巧手法兰安装示意图.png`, and the STEP models.
-- End XT30 2+2 power/CAN pinout and cable strain relief.
-- Whether the hand uses the NERO end CAN path or another approved interface.
-- Load mode, TCP offset, URDF/ROS `effector_type`, and any hand-specific IDs.
-- A no-motion read-only verification plan before any finger movement.
+- Revo2 driver logs showing A/B `effector_type: revo2`.
+- `/arm_a/feedback/hand_status` and `/arm_b/feedback/hand_status` read-only
+  evidence.
+- Hand left/right status where available.
+- No hand error, over-current, over-temperature, or blocked motor status.
 - A temporary J6/J7 wrist envelope that respects the observed cable limit.
 - How to handle the current A/B `arm_status=3` singularity observation before
   any arm, wrist, or Cartesian motion.
@@ -187,13 +188,14 @@ Observed on 2026-06-24:
 - Runtime model package: `agx_arm_description`.
 - Runtime URDF source: `agx_arm_urdf` submodule commit `f6642ce`.
 - Current bare-arm model: `nero/urdf/nero_description.urdf`.
-- Current active setup remains `arm_type:=nero`, `effector_type:=none`.
+- S3 arm-only model setup remains `arm_type:=nero`, `effector_type:=none` for
+  regression checks.
 - Bare-arm model passes `xacro`, `check_urdf`, mesh existence checks, and
   `robot_state_publisher` loading.
 - Bare-arm model structure: robot `nero`, 9 links, 8 joints, chain
   `world -> base_link -> link1 -> ... -> link7`.
 - Gripper and Revo2/dexterous-hand model variants also pass `xacro` and
-  `check_urdf`, but they remain deferred to S14.
+  `check_urdf`; Revo2 is now active only in S14-specific read-only checks.
 - RViz GUI verification succeeded from the real desktop terminal:
   `rviz2` started, OpenGL `4.5` was reported, and the model segments
   `base_link`, `link1` through `link7`, and `world` were loaded.

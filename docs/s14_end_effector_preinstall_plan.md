@@ -1,6 +1,6 @@
 # S14 End-Effector Installation Plan
 
-Status: S14.1 arm read-only accepted with singularity observation; S14.2 model/parameter decision pending.
+Status: S14.3 Revo2 hand read-only retry prepared after first attempt used `effector_type:=none`.
 
 S14 starts after S13 closed the bare-arm low-risk dual-arm primitive. Installing
 the dexterous hands changes mass, TCP, cable routing, collision envelope, and
@@ -135,6 +135,27 @@ Decide before hand motion:
 - Load mode and TCP offset after hand installation.
 - Whether hand status is checked through ROS or SDK first.
 
+Actual S14.2 decision on 2026-06-29:
+
+- Keep the global/default arm-only ROS configuration as `effector_type:=none`.
+  This preserves the already accepted S9-S13 arm-only regression path.
+- For S14 hand read-only only, use a dedicated launch path with
+  `effector_type:=revo2`.
+- Use the current physical/model mapping:
+  - Arm A: right Revo2 hand, model `revo2_type:=right` where a model launch
+    needs that argument.
+  - Arm B: left Revo2 hand, model `revo2_type:=left` where a model launch needs
+    that argument.
+- Do not use Web dexterous-hand controls yet.
+- Do not publish ROS `/control/hand` or `/control/hand_position_time` yet.
+- Keep TCP offset at zero for read-only checks. This is not a final manipulation
+  TCP calibration.
+- Keep the current load/TCP state out of motion acceptance until the hand mass,
+  center of gravity, and TCP are measured or explicitly accepted.
+- Because S14.1 observed A/B `arm_status=3` / singularity, do not start wrist,
+  Cartesian, or finger motion from the current posture without a separate
+  posture/safety gate.
+
 ### S14.3 Hand Read-Only
 
 Goal:
@@ -146,6 +167,32 @@ Accept only if:
 - Hand left/right flag matches the physical mapping where available.
 - No motor blocked/over-current/over-temperature/error state is reported.
 - Feedback frequency is stable enough to trust before motion.
+
+First S14.3 attempt on 2026-06-29:
+
+- Operator started the usual dual-arm read-only script with a host-side
+  `NERO_EFFECTOR_TYPE=revo2` assignment.
+- The ROS driver logs still printed `effector_type: none` for both arms.
+- `ros2 topic list` contained no `hand` topics.
+- Interpretation: this is not evidence of Revo2 hardware feedback failure. The
+  host-side environment override was not passed into the Docker container, and
+  the container-side script sourced `config/nero.env`, whose global default is
+  still `NERO_EFFECTOR_TYPE="none"`.
+
+Corrected S14.3 retry path:
+
+- Use `scripts/launch_s14_dual_revo2_readonly.sh`.
+- The corrected driver terminal must print `effector_type=revo2` in the script
+  banner and `effector_type: revo2` in both driver logs.
+- Expected topic evidence after startup:
+  - `/arm_a/feedback/hand_status`
+  - `/arm_b/feedback/hand_status`
+  - `/arm_a/control/hand` and/or `/arm_a/control/hand_position_time` may appear
+    as advertised control endpoints, but they must not be published to in
+    S14.3.
+  - `/arm_b/control/hand` and/or `/arm_b/control/hand_position_time` may appear
+    as advertised control endpoints, but they must not be published to in
+    S14.3.
 
 ### S14.4 First Finger Motion
 

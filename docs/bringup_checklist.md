@@ -286,7 +286,10 @@
 - [ ] 灵巧手安装后已复核 `docs/pics/4 灵巧手示意图.png` 和 `docs/pics/5 灵巧手法兰安装示意图.png`，并确认出线位置与法兰缺口居中。
 - [x] S14.1 双臂 no-motion ROS 只读快照通过：`docs/s9_ros_snapshots/20260629_074337/`；A/B `Publisher count: 1`。
 - [x] S14.1 观察项已记录：A/B `arm_status=3`，按上游说明为 `奇异点`，因此后续不从当前姿态直接做腕部/笛卡尔/手指动作。
-- [ ] S14.2 Web/ROS `effector_type:=revo2`、左右手模型、负载和 TCP 决策已记录。
+- [x] S14.2 Web/ROS `effector_type:=revo2`、左右手模型、负载和 TCP 决策已记录：全局默认仍为 `none`，S14 手部只读专用脚本显式使用 `revo2`。
+- [x] S14.3 首次 Revo2 topic 检查已诊断：driver 实际日志为 `effector_type: none`，因此没有 `hand` topic 不是硬件反馈失败。
+- [ ] S14.3 修正后的 Revo2 只读 driver 已启动，并在日志中确认 A/B 均为 `effector_type: revo2`。
+- [ ] A/B `/feedback/hand_status` 已出现并可 `echo --once`。
 - [ ] 夹爪 `0x2A8` 或上层反馈正常。
 - [ ] 低速小行程动作正常。
 - [ ] 无过流、过温、传感器异常。

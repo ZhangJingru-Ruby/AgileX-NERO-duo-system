@@ -5701,3 +5701,61 @@ Open risks:
 - The current arm posture reports singularity status. Do not use it as a motion
   starting point without a separate posture plan.
 - Hand status and hand motion have not been tested.
+
+## 2026-06-29 - S14 Revo2 Read-Only Launch Path Corrected
+
+Phase: S14 末端执行器接入
+
+Goal:
+Start Revo2 hand read-only verification without finger actuation.
+
+Action:
+Operator attempted to launch the usual dual-arm read-only driver with
+host-side `NERO_EFFECTOR_TYPE=revo2` and then checked ROS topics.
+
+Evidence:
+
+- Driver startup succeeded for both arms.
+- Both driver logs printed `effector_type: none`.
+- `ros2 topic list` showed arm feedback/control topics only.
+- `ros2 topic list | grep hand` returned no topics.
+
+Interpretation:
+The missing hand topics are explained by the actual launch parameter:
+`effector_type` remained `none`. This is an environment/config propagation
+issue, not evidence that the Revo2 hardware feedback path failed. The host-side
+temporary `NERO_EFFECTOR_TYPE=revo2` assignment was not passed into the Docker
+container, and the container-side script sourced `config/nero.env`, whose global
+default remains `NERO_EFFECTOR_TYPE="none"`.
+
+Deployment choices:
+
+- Keep the global `NERO_EFFECTOR_TYPE="none"` default for arm-only regression.
+- Add `scripts/launch_s14_dual_revo2_readonly.sh` for S14.3 hand read-only.
+- The S14.3 retry must confirm `effector_type: revo2` in both A/B driver logs
+  before checking `/arm_a/feedback/hand_status` and
+  `/arm_b/feedback/hand_status`.
+- Continue to prohibit Web hand controls, ROS `/control/hand`,
+  `/control/hand_position_time`, SDK Revo2 motion, wrist motion, Cartesian
+  motion, and manipulation until later S14 gates are accepted.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s14_end_effector_preinstall_plan.md`,
+`docs/机器人部署与调试行动路线.md`,
+`scripts/launch_s14_dual_revo2_readonly.sh`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s13_dual_joint_step.py`
+- `git diff --check`
+
+Live hardware verification is still pending: execute the corrected S14.3
+read-only launch from the real desktop terminal.
+
+Route updates:
+S14.2 is recorded. S14.3 is not accepted yet; the corrected Revo2 read-only
+retry is the next gate.
