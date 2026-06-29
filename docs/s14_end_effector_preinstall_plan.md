@@ -1,6 +1,6 @@
 # S14 End-Effector Installation Plan
 
-Status: mechanical installation reported; no-motion verification pending.
+Status: S14.0 mechanical/cable review accepted; S14.1 no-motion ROS pending.
 
 S14 starts after S13 closed the bare-arm low-risk dual-arm primitive. Installing
 the dexterous hands changes mass, TCP, cable routing, collision envelope, and
@@ -22,6 +22,21 @@ Reported on 2026-06-29:
 The `70 deg` limit is a cable-bend observation, not a verified joint-angle
 limit. Treat it as a field safety constraint until measured against actual
 joint poses.
+
+Actual S14.0 result on 2026-06-29:
+
+- Operator archived cable photos:
+  - `docs/pics/S14自然状态线束.jpeg`.
+  - `docs/pics/S14手腕弯折状态线束.jpeg`.
+- Left/right hand mapping is confirmed:
+  - Arm A: right dexterous hand.
+  - Arm B: left dexterous hand.
+- Both hands are mechanically stable after installation.
+- Cable routing still constrains J6/J7, but the operator reports no interference
+  as long as wrist/cable bending does not exceed about `70 deg`.
+
+S14.0 is accepted within this temporary cable boundary. It does not authorize
+finger actuation, Web hand controls, or large J6/J7 wrist motion.
 
 ## Documented Installation Facts
 

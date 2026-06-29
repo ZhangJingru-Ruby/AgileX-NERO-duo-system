@@ -5565,3 +5565,66 @@ Open risks:
   installation if not already checked after final tightening.
 - Cable constraints near J6/J7 must be converted into a conservative motion
   boundary before wrist motion or manipulation.
+
+## 2026-06-29 - S14 Mechanical And Cable Review Accepted
+
+Phase: S14 末端执行器接入
+
+Goal:
+Accept the post-installation mechanical/cable review before any hand
+configuration or actuation.
+
+Action:
+Operator archived cable photos, confirmed left/right hand mapping, and
+confirmed both hands are mechanically stable.
+
+Evidence:
+
+- Natural cable state photo:
+  `docs/pics/S14自然状态线束.jpeg`.
+- Wrist-bend cable state photo:
+  `docs/pics/S14手腕弯折状态线束.jpeg`.
+- Hand mapping:
+  - Arm A: right dexterous hand.
+  - Arm B: left dexterous hand.
+- Mechanical installation: stable by operator confirmation.
+- Cable constraint: J6/J7 cable routing constrains large wrist bends; bends below
+  about `70 deg` are reported as non-interfering.
+
+Result:
+S14.0 mechanical/cable review is accepted within the temporary cable boundary.
+This does not authorize finger motion, Web hand controls, ROS `/control/hand`,
+SDK Revo2 control, Cartesian motion, or large J6/J7 wrist motion.
+
+Deployment choices:
+
+- Keep the temporary wrist rule: no large J6/J7 motion beyond the observed about
+  `70 deg` cable-bend envelope.
+- Next gate is S14.1 no-motion ROS read-only verification.
+- Keep Web/ROS hand configuration unchanged until S14.2 records the exact
+  `effector_type`, left/right model, load, and TCP choices.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/pics/S14自然状态线束.jpeg`,
+`docs/pics/S14手腕弯折状态线束.jpeg`,
+`docs/s14_end_effector_preinstall_plan.md`,
+`docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s13_dual_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S14 advances from mechanical install reported to S14.1 no-motion ROS read-only
+verification.
+
+Open risks:
+
+- J6/J7 cable-safe envelope is still qualitative and must not be treated as a
+  calibrated joint limit.
+- Hand status and hand motion have not been tested.

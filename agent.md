@@ -331,6 +331,13 @@ verification. Do not power/configure/actuate fingers, do not use Web dexterous
 hand controls, and do not command large J6/J7 wrist motions until S14 records
 the cable-safe envelope, load/TCP decisions, `effector_type:=revo2` plan, and a
 clean no-motion read-only snapshot.
+
+S14.0 mechanical/cable review is accepted. The operator archived cable photos
+at `docs/pics/S14自然状态线束.jpeg` and `docs/pics/S14手腕弯折状态线束.jpeg`,
+confirmed left/right mapping, and confirmed both hands are mechanically stable.
+The temporary J6/J7 cable rule remains active: no large wrist motion beyond the
+observed about `70 deg` cable-bend envelope. Next gate is S14.1 no-motion ROS
+read-only verification with no Web hand controls and no finger actuation.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at
