@@ -5759,3 +5759,54 @@ read-only launch from the real desktop terminal.
 Route updates:
 S14.2 is recorded. S14.3 is not accepted yet; the corrected Revo2 read-only
 retry is the next gate.
+
+## 2026-06-29 - S14 Revo2 Endpoints Present But Status Message Pending
+
+Phase: S14 末端执行器接入
+
+Goal:
+Verify whether the corrected Revo2 read-only launch produces actual hand-status
+messages without sending finger commands.
+
+Action:
+Operator launched the corrected S14 Revo2 read-only driver and checked ROS
+topics.
+
+Evidence:
+
+- `ros2 topic list` shows:
+  - `/arm_a/feedback/hand_status`
+  - `/arm_a/control/hand`
+  - `/arm_a/control/hand_position_time`
+  - `/arm_b/feedback/hand_status`
+  - `/arm_b/control/hand`
+  - `/arm_b/control/hand_position_time`
+- Raw `ros2 topic echo --once /arm_a/feedback/hand_status` waited without
+  output.
+
+Interpretation:
+
+- The ROS graph is now in the Revo2 software path.
+- A `feedback/hand_status` topic existing in the ROS graph is not yet proof
+  that physical hand feedback is being received.
+- Upstream `agx_arm_ctrl_single_node.py` publishes `feedback/hand_status` only
+  when `self.hand.get_status()` returns a non-`None` result.
+- Upstream pyAgxArm virtual CAN tests model Revo2 feedback as a reply after
+  host `0x1Bx` command frames, not as a proven periodic no-command feedback
+  stream.
+
+Deployment choices:
+
+- Add `scripts/s14_revo2_hand_status_probe.sh` to bound the read-only
+  `hand_status` wait and print explicit results.
+- Continue to prohibit `/control/hand`, `/control/hand_position_time`, SDK
+  Revo2 control, Web hand controls, and finger motion until a separate S14.4
+  motion/safety gate.
+
+Verification:
+Pending live checks:
+
+- Confirm A/B `feedback/hand_status` publisher count with the probe script.
+- Run bounded A/B hand-status waits.
+- If no messages arrive, perform passive CAN observation for Revo2 feedback IDs
+  before deciding whether a no-motion status stream is expected.

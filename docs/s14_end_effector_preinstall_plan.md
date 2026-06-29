@@ -194,6 +194,37 @@ Corrected S14.3 retry path:
     as advertised control endpoints, but they must not be published to in
     S14.3.
 
+Corrected S14.3 observation on 2026-06-29:
+
+- The corrected Revo2 launch exposed the expected ROS endpoints:
+  - `/arm_a/feedback/hand_status`
+  - `/arm_b/feedback/hand_status`
+  - `/arm_a/control/hand`
+  - `/arm_a/control/hand_position_time`
+  - `/arm_b/control/hand`
+  - `/arm_b/control/hand_position_time`
+- `ros2 topic echo --once /arm_a/feedback/hand_status` waited without output.
+
+Interpretation:
+
+- The ROS graph has switched into the Revo2 software path.
+- A visible `hand_status` topic is not yet proof of physical hand feedback.
+- Upstream code publishes `feedback/hand_status` only after the SDK has a
+  non-empty `get_hand_status()` result.
+- The upstream pyAgxArm Revo2 virtual CAN test models Revo2 feedback as a reply
+  after host `0x1Bx` command frames, not as a proven periodic no-command
+  stream. Therefore, no output from a strict no-command `echo --once` may mean
+  either no passive feedback is expected, or that the physical hand feedback
+  path is not yet active.
+
+Next read-only probe:
+
+- Use `scripts/s14_revo2_hand_status_probe.sh` instead of raw
+  `ros2 topic echo --once` so the check has a bounded timeout and explicit
+  result.
+- Do not publish `/control/hand` or `/control/hand_position_time` until a
+  separate S14.4 motion/safety gate is written and accepted.
+
 ### S14.4 First Finger Motion
 
 Deferred. Requires a separate dry-run/safety gate. First finger motion should be

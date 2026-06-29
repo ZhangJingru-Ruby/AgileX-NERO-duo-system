@@ -359,6 +359,14 @@ Treat that as an environment/config propagation issue, not a Revo2 hardware
 failure. The next S14.3 retry must first confirm `effector_type: revo2` in A/B
 logs before checking `/arm_a/feedback/hand_status` and
 `/arm_b/feedback/hand_status`.
+
+S14.3 corrected Revo2 launch exposed A/B hand endpoints, including
+`/arm_a/feedback/hand_status`, `/arm_b/feedback/hand_status`, and the matching
+`/control/hand` endpoints. This is not yet accepted as physical hand feedback:
+raw `ros2 topic echo --once /arm_a/feedback/hand_status` waited without output.
+Use `scripts/s14_revo2_hand_status_probe.sh` for bounded read-only probes. Do
+not publish to `/control/hand` or `/control/hand_position_time` before a
+separate S14.4 motion/safety gate.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at
