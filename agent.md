@@ -180,7 +180,7 @@ These are the current deployment assumptions. Update them only when verified.
 | Current live state | S13 accepted/closed: corrected low-risk dual-arm J1 primitive and final clean read-only snapshot accepted |
 | Observed Web model | `7ax`, interpreted as one NERO 7-axis arm/controller per physical arm |
 | Observed Web footer version | `v1.121`; current SDK firmware selector is `v112` |
-| Current next phase | S14 end-effector pre-installation review |
+| Current next phase | S14 end-effector post-installation no-motion review |
 
 Current Web evidence shows one set of joint tabs, `关节1` through `关节7`.
 Treat this as normal for one NERO 7-axis arm/controller. The physical setup has
@@ -320,6 +320,17 @@ is Arm A `joint1 +30 deg` and Arm B `joint1 +30 deg`; Arm A `+30 deg` / Arm B
 `-30 deg` remains rejected for world-direction semantics. Next phase is S14:
 end-effector pre-installation review before any dexterous-hand mounting,
 powering, configuration, or actuation.
+
+S14 is active. On 2026-06-29 the operator reported both Revo2 dexterous hands
+are mechanically installed. Current mapping follows the prior decision: Arm A
+has the right hand and Arm B has the left hand. Cable routing constrains J6/J7
+wrist motion; operator reports bends below about `70 deg` do not interfere, but
+larger bends may. Treat this as a field cable-bend constraint, not a calibrated
+joint-angle limit. Next gate is S14.0/S14.1 no-motion mechanical/cable/read-only
+verification. Do not power/configure/actuate fingers, do not use Web dexterous
+hand controls, and do not command large J6/J7 wrist motions until S14 records
+the cable-safe envelope, load/TCP decisions, `effector_type:=revo2` plan, and a
+clean no-motion read-only snapshot.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at

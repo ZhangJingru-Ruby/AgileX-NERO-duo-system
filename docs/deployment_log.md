@@ -5503,3 +5503,65 @@ Open risks:
 
 - S14 changes mass, TCP, cable routing, URDF, and possibly CAN endpoints; it
   must not inherit S13's bare-arm assumptions without revalidation.
+
+## 2026-06-29 - S14 Dexterous Hands Mechanically Installed
+
+Phase: S14 末端执行器接入
+
+Goal:
+Record the first field state after installing both dexterous hands and define
+the next no-motion verification boundary.
+
+Action:
+Operator reported both dexterous hands have been mechanically installed.
+
+Field facts:
+
+- Both dexterous hands are installed mechanically.
+- Current mapping follows the prior decision:
+  - Arm A: right dexterous hand.
+  - Arm B: left dexterous hand.
+- Cable routing constrains J6/J7 wrist motion.
+- Operator reports the cable does not interfere when bends stay below about
+  `70 deg`; larger bends may affect the cable.
+
+Interpretation:
+
+- The `70 deg` value is a field cable-bend observation, not a calibrated joint
+  angle limit.
+- S13 bare-arm assumptions no longer fully apply because mass, TCP, collision
+  envelope, cable routing, and model/driver parameters changed.
+- No hand power/configuration/actuation is accepted yet.
+
+Deployment choices:
+
+- Created `docs/s14_end_effector_preinstall_plan.md`.
+- Treat S14.0/S14.1 as no-motion mechanical/cable/read-only verification.
+- Do not command large J6/J7 wrist motion until a cable-safe envelope is
+  documented.
+- Do not use Web dexterous-hand controls, ROS `/control/hand`, SDK Revo2 control,
+  Cartesian motion, MoveIt execute, contact, or handoff before the relevant S14
+  gates are accepted.
+
+Files changed:
+`agent.md`, `config/nero.env`, `docs/bringup_checklist.md`,
+`docs/current_bringup_status.md`, `docs/deployment_log.md`,
+`docs/s14_end_effector_preinstall_plan.md`,
+`docs/机器人部署与调试行动路线.md`.
+
+Verification:
+Local checks passed:
+
+- `bash -n scripts/*.sh`
+- `python3 -m py_compile scripts/ros_s13_dual_joint_step.py`
+- `git diff --check`
+
+Route updates:
+S14 is active. The next gate is post-installation no-motion review.
+
+Open risks:
+
+- Left/right hand mapping still needs visual confirmation against the physical
+  installation if not already checked after final tightening.
+- Cable constraints near J6/J7 must be converted into a conservative motion
+  boundary before wrist motion or manipulation.

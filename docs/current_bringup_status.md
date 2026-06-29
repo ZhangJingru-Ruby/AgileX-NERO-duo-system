@@ -7,7 +7,7 @@ Last updated: 2026-06-26
 | Item | Current value |
 | --- | --- |
 | Current end effector | Bare arm |
-| Planned end effector | Dexterous hand, to be installed later |
+| Planned end effector | Dual Revo2 dexterous hands installed mechanically; no-motion verification pending |
 | Physical arm count | Two NERO arms, independently powered |
 | Arm A | Web verified; hotspot `agx-7ax-armA`; planned CAN `can_arm_a`; ROS namespace `arm_a` |
 | Arm B | Web verified; hotspot `agx-7ax-armB`; planned CAN `can_arm_b`; ROS namespace `arm_b` |
@@ -43,7 +43,7 @@ Last updated: 2026-06-26
 | S11 双臂实验基线 | Complete / accepted | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Accepted static TF values are `lab_world -> arm_a/world: x=0, y=0, z=0, roll=0, pitch=-1.5707963, yaw=0` and `lab_world -> arm_b/world: x=0.260, y=0, z=0, roll=3.1415926, pitch=-1.5707963, yaw=0`. Operator reports RViz matches the physical layout and follows both arms when they move. Post-TF snapshot `20260626_055339` is clean, and X11 access was restored to local-user only. |
 | S12 控制隔离与日志闭环 | Complete / accepted | Arm A `joint1 +30 deg` and Arm B `joint1 -30 deg` isolation tests both passed and returned. Passive-arm deviations were `0.005 deg` for Arm B during Arm A motion and `0.008 deg` for Arm A during Arm B motion. Post-motion snapshots `20260626_080809` and `20260626_083210` are clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
 | S13 低风险双臂协同原语 | Complete / accepted | Corrected Arm A `joint1 +30 deg` / Arm B `joint1 +30 deg` execution passed and operator confirmed visible direction matched expectation. Earlier final-snapshot attempts `20260626_093414` and `20260629_043358` were not accepted because duplicate publishers produced about `400 Hz` feedback. After cleanup, publisher count was `1` for both A/B joint-state topics, and final snapshot `20260629_043441` is clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
-| S14 末端执行器 | Next / not started | Enter S14.0 pre-installation review before mounting or actuating the dexterous hand: confirm mechanical adapter, cable routing, end XT30 2+2 pinout, CAN/ID assumptions, load/TCP choice, URDF/ROS effector parameters, and a no-motion read-only plan. |
+| S14 末端执行器 | Active; mechanical installation reported | Both dexterous hands are installed mechanically. Current mapping is Arm A = right hand, Arm B = left hand. Cable routing constrains J6/J7 large wrist bends; operator reports bends below about `70 deg` do not interfere, but larger bends may. Next gate is S14.0/S14.1 no-motion mechanical/cable/read-only verification before power/configuration/finger motion. |
 
 ## S0 Evidence
 
@@ -116,17 +116,18 @@ S2 offline environment result:
 
 ## Immediate Next Step
 
-S13 is complete. The immediate next step is S14.0 end-effector pre-installation
-review for the dexterous hand path. Do not mount, power, configure, or actuate
-the hand until S14.0 records:
+S13 is complete. S14 is active. The immediate next step is S14.0/S14.1
+post-installation no-motion review for the dexterous hand path. Do not power,
+configure, or actuate the hand until S14 records:
 
-- Which physical hand/adapter will be installed on each arm.
+- Which physical hand/adapter is installed on each arm.
 - Mechanical fit against `docs/pics/4 灵巧手示意图.png`,
   `docs/pics/5 灵巧手法兰安装示意图.png`, and the STEP models.
 - End XT30 2+2 power/CAN pinout and cable strain relief.
 - Whether the hand uses the NERO end CAN path or another approved interface.
 - Load mode, TCP offset, URDF/ROS `effector_type`, and any hand-specific IDs.
 - A no-motion read-only verification plan before any finger movement.
+- A temporary J6/J7 wrist envelope that respects the observed cable limit.
 
 Until S14 has its own gates accepted, do not run Cartesian, MoveIt execute,
 contact, handoff, dexterous-hand actuation, or close-proximity manipulation.
