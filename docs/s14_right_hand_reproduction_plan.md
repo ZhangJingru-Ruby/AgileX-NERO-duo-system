@@ -35,6 +35,15 @@ Expected right-hand facts from `upstream/linkerhand_sdk`:
 - SDK open preset: `[255, 70, 255, 255, 255, 255]`
 - Index micro target with `delta=-10`: `[255, 70, 245, 255, 255, 255]`
 
+Live CAN inventory result:
+
+- Recorded in `docs/s14_hand_can_inventory_result_20260630.md`.
+- `can1` is the accepted left-hand interface, driver `peak_usb`, bus-info
+  `1-3.4.4:1.0`.
+- `can2` is the right-hand candidate, driver `peak_usb`, bus-info `1-3.4.2:1.0`.
+- `can2` was DOWN during inventory and must be activated before right-hand SDK
+  health.
+
 ## S14.9R.0 Fix Hand CAN Positions
 
 1. Keep the left and right hand CAN cables in their intended USB-C adapter
@@ -58,19 +67,20 @@ Acceptance:
 - Their driver and `bus_info` are recorded.
 - NERO arm CAN interfaces are not used for hand tests.
 
-If an interface is DOWN, activate it at 1 Mbps before SDK health:
+For the current right-hand candidate, activate `can2` at 1 Mbps before SDK
+health:
 
 ```bash
-sudo ip link set <iface> up type can bitrate 1000000
+sudo ip link set can2 up type can bitrate 1000000
 ```
 
 ## S14.9R.1 SDK Health
 
-Replace `<right_can>` with the right-hand candidate interface after inventory.
+Current right-hand candidate interface: `can2`.
 
 ```bash
 .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_health.py \
-  --can <right_can> \
+  --can can2 \
   --side right
 ```
 
@@ -87,7 +97,7 @@ Acceptance:
 
 ```bash
 .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_motion_gate.py \
-  --can <right_can> \
+  --can can2 \
   --side right \
   --mode open-anchor
 ```
@@ -104,7 +114,7 @@ Acceptance:
 ```bash
 .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_motion_gate.py \
   --execute \
-  --can <right_can> \
+  --can can2 \
   --side right \
   --mode open-anchor
 ```
@@ -120,7 +130,7 @@ Acceptance:
 
 ```bash
 .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_motion_gate.py \
-  --can <right_can> \
+  --can can2 \
   --side right \
   --mode index-micro \
   --joint index \
@@ -140,7 +150,7 @@ Acceptance:
 ```bash
 .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_motion_gate.py \
   --execute \
-  --can <right_can> \
+  --can can2 \
   --side right \
   --mode index-micro \
   --joint index \
