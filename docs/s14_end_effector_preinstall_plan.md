@@ -451,6 +451,27 @@ Bench-test branch, if selected later:
 5. Bring up only the selected USB-CAN interface at `1000000` bitrate.
 6. Run identity/status reads first, not gestures or position commands.
 
+Update on 2026-06-30:
+
+- The bench-test branch has now been selected for the left hand only.
+- The operator reports the selected left hand is disconnected from the NERO arm
+  and powered independently.
+- The new evidence image is
+  `docs/pics/灵巧手连接设备/灵巧手左手上电操控示意图.jpeg`.
+- The image shows about `24.00 V` and `0.122 A` on the WANPTEK supply.
+- The operator reports a computer serial connection, so the next active branch
+  is RS485/Modbus, not SocketCAN, unless later device evidence proves otherwise.
+- Detailed plan: `docs/s14_left_hand_rs485_bringup_plan.md`.
+
+Revised next gate:
+
+1. Identify the serial device as `/dev/serial/by-id/...`, `/dev/ttyUSB*`, or
+   `/dev/ttyACM*`.
+2. Use LinkerHand L6 RS485 settings: `115200 8N1`, left hand ID `0x28`.
+3. Run read-only version/state/temperature/fault checks first.
+4. Do not run GUI, `test_hand.py`, `gestures.py`, or the RS485 demo's
+   open/fist sequence before S14.6 read-only acceptance.
+
 Blocking wiring issue before any bench-test:
 
 - `docs/pics/灵巧手连接设备/灵巧手连接设备03.jpeg` shows an exposed/frayed
