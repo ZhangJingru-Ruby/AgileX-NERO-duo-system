@@ -120,6 +120,20 @@ this without a separate plan.
 Deferred until S14.10.3 dry-run is accepted and the operator confirms both
 hands are clear.
 
+Live result:
+
+- Accepted from SDK/software health on 2026-06-30; see
+  `docs/s14_dual_index_micro_result_20260630.md`.
+- Dry-run and execute used `--left-delta -20 --right-delta -20`.
+- Left target was `[255, 179, 235, 255, 255, 255]`.
+- Right target was `[255, 70, 235, 255, 255, 255]`.
+- Pre/post faults were all zero.
+- Temperature/current raw values remained stable.
+- Target send delta was about `0.682 ms`; return send delta was about `0.562 ms`.
+
+This closes S14.10 as the first low-risk dual-hand synchronization gate.
+Further work moves to S15 dual arm + dual hand coordination planning.
+
 ## Boundaries
 
 - This stage does not authorize grasping objects.

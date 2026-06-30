@@ -1,0 +1,150 @@
+# S15 Dual Arm + Dual Hand Coordination Plan
+
+Date: 2026-06-30
+
+## Decision
+
+Use a hybrid control architecture for the next stage:
+
+- NERO arms: ROS2 through the existing `agx_arm_ros` driver and the accepted
+  `/arm_a` and `/arm_b` namespaces.
+- LinkerHand L6 hands: the validated local `upstream/linkerhand_sdk` path through
+  project safety wrappers on `can1` and `can2`.
+
+Do not switch the arms back to SDK-only as the primary path for dual-arm
+manipulation experiments. Keep arm SDK as a diagnostic/fallback path.
+
+## Why Arms Should Use ROS Next
+
+ROS is the better primary route for the arms because:
+
+- The project has already accepted dual-arm ROS read-only and motion gates from
+  S8 through S13.
+- The arms already have stable namespaces:
+  `/arm_a/...` and `/arm_b/...`.
+- ROS gives the manipulation stack access to joint states, arm status, TCP pose,
+  TF, RViz, and eventually MoveIt/planning integration.
+- The S11 `lab_world` frame and dual-arm RViz alignment are ROS assets; using
+  SDK-only arm control would bypass that context.
+- ROS topic logging and snapshot scripts are already part of the project
+  evidence chain.
+- Dual-arm experiments need state visibility and coordination more than the
+  lowest-level CAN access.
+
+Arm SDK remains useful for:
+
+- low-level diagnostics;
+- reproducing simple single-arm checks outside ROS;
+- emergency/fallback comparisons if ROS behavior is unclear.
+
+## Why Hands Should Stay SDK For Now
+
+The LinkerHand SDK is the better route for the hands because:
+
+- Direct hand control through `can1` and `can2` is already validated.
+- The local tuned SDK repo provides correct left/right IDs, side-specific open
+  presets, and L6 joint order.
+- The earlier ROS/Revo2 hand path did not produce usable hand feedback or motion
+  for these LinkerHand L6 hands.
+- The hand CAN interfaces are separate from the arm CAN interfaces, so SDK hand
+  control does not contend with ROS arm control.
+
+Longer-term, wrap the hand SDK as a ROS2 node or service so future algorithms
+can call one ROS interface for both arms and hands. That is a software
+integration task after the current safety gates are complete.
+
+## Control Ownership
+
+During S15:
+
+| Device | CAN / Interface | Controller owner |
+| --- | --- | --- |
+| Arm A | `can_arm_a` | ROS2 `agx_arm_ros` under namespace `/arm_a` |
+| Arm B | `can_arm_b` | ROS2 `agx_arm_ros` under namespace `/arm_b` |
+| Left hand | `can1` | LinkerHand SDK safety wrappers |
+| Right hand | `can2` | LinkerHand SDK safety wrappers |
+
+Do not run arm SDK motion scripts while ROS arm control is active. Do not run
+LinkerHand GUI/demo/gesture scripts while project hand wrappers are active.
+
+## S15.0 No-Motion Integration Health
+
+Goal: prove arm ROS feedback and hand SDK health can run in the same session
+without command conflicts.
+
+Checks:
+
+```bash
+bash scripts/s10_control_source_audit.sh
+
+# Terminal 1: start accepted dual-arm ROS read-only/control driver as used in S13.
+bash scripts/run_humble_container.sh \
+  bash /workspace/nero/scripts/launch_dual_ros_readonly.sh
+
+# Terminal 2: verify arm ROS topics and rates.
+NERO_CONTAINER_NAME=nero-humble-s15-tools \
+  bash scripts/run_humble_container.sh ros2 topic list
+
+# Terminal 3: verify hand SDK health.
+.venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_health.py \
+  --can can1 \
+  --side left
+
+.venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_health.py \
+  --can can2 \
+  --side right
+```
+
+Acceptance:
+
+- Arm feedback topics exist for both arms.
+- Arm faults remain zero.
+- Hand faults remain zero.
+- No unexpected motion occurs.
+- No stale SDK/GUI/demo processes are running.
+
+## S15.1 Static Coordination Dry Run
+
+Goal: prepare a single operator-facing sequence that does not move the arms and
+only dry-runs the hands.
+
+Planned sequence:
+
+1. Verify arm ROS feedback.
+2. Dry-run dual-hand open or dual index micro.
+3. Record the intended command timing.
+
+Acceptance:
+
+- No arm command is published.
+- No hand command is sent unless `--execute` is explicitly supplied.
+- Both control domains are visible and separable.
+
+## S15.2 First Hybrid Motion
+
+Goal: one very small arm motion plus one very small hand motion, with explicit
+ordering and no object contact.
+
+Recommended first hybrid motion:
+
+1. Move no arms; execute dual-hand index micro once if S15.0/S15.1 are accepted.
+2. Then do a known-safe single-arm or dual-arm J1 micro motion using the existing
+   ROS gate, while hands stay open.
+3. Only after both are accepted separately, combine them in a sequential script:
+   hands open -> arm micro motion -> hands index micro -> return hands open.
+
+Do not start with simultaneous arm and hand motion.
+
+## Why Not Full Synchronization Yet
+
+The current dual-hand script is good enough for first coordination but is not a
+hard real-time synchronizer. It sends commands to two independent CAN adapters
+from Python threads and reports millisecond-level send deltas. That is adequate
+for bring-up, but not yet for contact-rich manipulation.
+
+For real manipulation experiments, implement a ROS2 coordination layer that:
+
+- subscribes to arm feedback and publishes arm commands;
+- wraps LinkerHand SDK commands behind ROS services/actions;
+- logs one timeline for arms and hands;
+- enforces control-source exclusivity and emergency stop policy.

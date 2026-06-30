@@ -563,6 +563,11 @@ S14 SDK health result:
 - No visible response was observed, which is expected when both hands are
   already near open. Next gate is dual index-micro dry-run, not fist/full-hand
   motion.
+- Dual index-micro passed from SDK/software health on 2026-06-30; see
+  `docs/s14_dual_index_micro_result_20260630.md`.
+- Next phase is S15 hybrid arm+hand coordination. Arms should use ROS2
+  `agx_arm_ros`; hands should continue through LinkerHand SDK wrappers until a
+  ROS hand bridge is implemented.
 
 Blocking wiring issue before any bench-test:
 

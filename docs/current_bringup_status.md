@@ -7,7 +7,7 @@ Last updated: 2026-06-30
 | Item | Current value |
 | --- | --- |
 | Current end effector | Dual LinkerHand L6 dexterous hands installed mechanically; Arm A right hand, Arm B left hand |
-| Planned end effector state | S14.10 dual-hand index-micro dry-run pending |
+| Planned end effector state | S15 dual arm + dual hand coordination planning |
 | Physical arm count | Two NERO arms, independently powered |
 | Arm A | Web verified; hotspot `agx-7ax-armA`; planned CAN `can_arm_a`; ROS namespace `arm_a` |
 | Arm B | Web verified; hotspot `agx-7ax-armB`; planned CAN `can_arm_b`; ROS namespace `arm_b` |
@@ -43,7 +43,7 @@ Last updated: 2026-06-30
 | S11 双臂实验基线 | Complete / accepted | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Accepted static TF values are `lab_world -> arm_a/world: x=0, y=0, z=0, roll=0, pitch=-1.5707963, yaw=0` and `lab_world -> arm_b/world: x=0.260, y=0, z=0, roll=3.1415926, pitch=-1.5707963, yaw=0`. Operator reports RViz matches the physical layout and follows both arms when they move. Post-TF snapshot `20260626_055339` is clean, and X11 access was restored to local-user only. |
 | S12 控制隔离与日志闭环 | Complete / accepted | Arm A `joint1 +30 deg` and Arm B `joint1 -30 deg` isolation tests both passed and returned. Passive-arm deviations were `0.005 deg` for Arm B during Arm A motion and `0.008 deg` for Arm A during Arm B motion. Post-motion snapshots `20260626_080809` and `20260626_083210` are clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
 | S13 低风险双臂协同原语 | Complete / accepted | Corrected Arm A `joint1 +30 deg` / Arm B `joint1 +30 deg` execution passed and operator confirmed visible direction matched expectation. Earlier final-snapshot attempts `20260626_093414` and `20260629_043358` were not accepted because duplicate publishers produced about `400 Hz` feedback. After cleanup, publisher count was `1` for both A/B joint-state topics, and final snapshot `20260629_043441` is clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
-| S14 末端执行器 | Active; dual-hand open-anchor accepted from SDK health, dual index-micro dry-run pending | Both dexterous hands are mechanically installed and stable. Arm A = right hand, Arm B = left hand. Left-hand SDK health, open-anchor, and index micro-motion are accepted, with normal physical observation. Hand CAN inventory is complete: `can1` is the accepted left hand (`peak_usb`, `1-3.4.4:1.0`), and `can2` is the accepted right hand (`peak_usb`, `1-3.4.2:1.0`). Right-hand SDK health, open-anchor, and index micro-motion are accepted, with right index response confirmed by operator. Dual open-anchor identified both hands and completed with zero faults and stable temperature/current; no visible motion was observed, which is expected because both hands were already near open. Next gate: dual index-micro dry-run under `docs/s14_dual_hand_sync_plan.md`; do not jump directly to fist/full-hand presets. Full gestures, grasping, dual-hand execute, and arm motion remain blocked until their own dry-runs and safety gates pass. |
+| S14 末端执行器 | Complete for low-risk dual-hand bring-up; S15 hybrid arm+hand planning active | Both dexterous hands are mechanically installed and stable. Arm A = right hand, Arm B = left hand. Left hand on `can1` and right hand on `can2` passed SDK health, open-anchor, and index micro-motion. Dual open-anchor and dual index-micro gates passed from SDK/software health. The dual index micro used left target `[255,179,235,255,255,255]` and right target `[255,70,235,255,255,255]`, then returned both to open; pre/post faults were all zero and temperature/current were stable. S15 decision: arms should use ROS2 `agx_arm_ros`, hands should keep using LinkerHand SDK wrappers for now. Full gestures, grasping, simultaneous arm+hand motion, and arm motion during hand sync remain blocked until S15 gates pass. |
 
 ## S0 Evidence
 
@@ -136,25 +136,16 @@ bash scripts/s14_hand_can_inventory.sh
 Right-hand index micro-motion is accepted from SDK/software health and physical
 observation; see `docs/s14_right_hand_index_micro_result_20260630.md`.
 
-Dual-hand open-anchor is accepted from SDK/software health; see
-`docs/s14_dual_open_anchor_result_20260630.md`.
+Dual-hand open-anchor and dual index-micro are accepted from SDK/software
+health; see `docs/s14_dual_open_anchor_result_20260630.md` and
+`docs/s14_dual_index_micro_result_20260630.md`.
 
-The next software gate is dual index-micro dry-run. Use `-20` if a more visible
-but still single-joint motion is needed:
+The next phase is S15 dual arm + dual hand coordination planning:
+`docs/s15_dual_arm_hand_coordination_plan.md`.
 
-```bash
-.venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_dual_motion_gate.py \
-  --left-can can1 \
-  --right-can can2 \
-  --mode index-micro \
-  --joint index \
-  --left-delta -20 \
-  --right-delta -20 \
-  --speed 30
-```
-
-Full SDK demos, GUI, gesture loops, `get_state()`, `get_torque()`, synchronized
-execute, fist/full-hand presets, grasping, and arm motion remain blocked.
+Recommended architecture: arms via ROS2, hands via LinkerHand SDK wrappers.
+Full SDK demos, GUI, gesture loops, `get_state()`, `get_torque()`, full-hand
+presets, grasping, and simultaneous arm+hand motion remain blocked.
 
 Until S14 has its own gates accepted, do not run Cartesian, MoveIt execute,
 contact, handoff, full dexterous-hand actuation, or close-proximity
