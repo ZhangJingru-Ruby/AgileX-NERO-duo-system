@@ -270,3 +270,77 @@ Bench-test wiring repair requirements:
 7. Add strain relief so hand/cable motion cannot pull bare wire back out.
 8. Verify polarity at the hand-side plug with the hand disconnected before any
    hand is powered.
+
+## 2026-06-30 Wiring Decision
+
+There are two valid-looking but mutually exclusive topologies. They must not be
+mixed.
+
+### A. Current Installed NERO J6 Topology
+
+Use this topology when the hand remains mechanically installed on the NERO arm
+and connected through the J6 end-effector cable.
+
+Document facts:
+
+- NERO manual section `2.1.2` defines the J6 end connector as XT30(2+2), `24 V`,
+  `2 A MAX`.
+- With the saved NERO drawing orientation, side key on the left:
+  - large upper contact: power `+`;
+  - large lower contact: power `-`;
+  - lower small left contact: CAN `H`;
+  - lower small right contact: CAN `L`.
+- The same manual warns that the J6 end CAN is only adapted for AgileX/松灵 own
+  devices and must not be privately connected to other CAN devices.
+
+Wiring action:
+
+- Keep only the supplied NERO end-effector power/communication cable between J6
+  and the installed hand.
+- Do not connect the WANPTEK bench supply, blue USB-CAN adapter, or LinkerHand
+  direct-CAN harness to the same hand while this J6 cable is connected.
+- Do not splice an external USB-CAN adapter into J6. If LinkerHand L6 is not
+  working through J6, request vendor confirmation for the correct NERO firmware,
+  Web option, and J6 compatibility path before rewiring.
+
+### B. LinkerHand Direct Bench-Test Topology
+
+Use this topology only if we deliberately remove one hand from the NERO J6 path
+for isolated LinkerHand debugging.
+
+Document facts:
+
+- The L6 manual section `4.3` defines the hand connector as XT30(2+2).
+- In the L6 manual drawing orientation:
+  - power contacts: `VCC` and `GND`;
+  - small upper contact: `CAN_L`;
+  - small lower contact: `CAN_H`.
+- L6 electrical limits in the manual: `DC24V +/- 10%`, static current `0.2 A`,
+  average no-load current `0.75 A`, maximum current `1.4 A`.
+- The photo set shows a WANPTEK bench DC supply plus blue USB-CAN adapters with
+  screw-terminal labels `120R`, `GND`, `CANL`, `CANH`.
+
+Bench-test wiring map:
+
+| LinkerHand L6 side | Connect to | Requirement |
+| --- | --- | --- |
+| `VCC` | WANPTEK positive output | Set and verify `24 V` before connecting the hand. |
+| `GND` | WANPTEK negative output | Confirm polarity at the hand-side connector first. |
+| `CAN_H` | blue USB-CAN `CANH` | Verify by terminal label and continuity, not wire color. |
+| `CAN_L` | blue USB-CAN `CANL` | Verify by terminal label and continuity, not wire color. |
+| shield/drain or exposed conductor | no connection unless identified and required | Insulate individually or terminate per vendor guidance. |
+| blue USB-CAN `120R` | no signal wire | Treat as termination feature, not CAN_H/CAN_L/GND. |
+| blue USB-CAN `GND` | CAN reference only if the original harness/vendor confirms it | Do not improvise a ground bridge. |
+
+Bench-test gate:
+
+1. Disconnect the selected hand from NERO J6.
+2. Use one hand, one bench supply, and one USB-CAN adapter at first.
+3. Repair the exposed conductor seen in `灵巧手连接设备03.jpeg`.
+4. With power off, use a multimeter to verify conductor identity and absence of
+   shorts.
+5. Set the bench supply to `24 V` with a conservative current limit for the first
+   read-only identity/status check; increase only within the L6 manual current
+   limits if motion is later authorized.
+6. Run only read-only LinkerHand identity/status checks first. No vendor motion
+   demo is authorized at this gate.
