@@ -323,25 +323,52 @@ Observed evidence on 2026-06-30:
 - Operator can enable/control the arm in Web, but cannot enable/control the
   hand in Web.
 
+Additional Web evidence on 2026-06-30:
+
+- Screenshots:
+  - `docs/pics/灵巧手01.png`
+  - `docs/pics/灵巧手02.png`
+- Web dexterous-hand page shows:
+  - hand type: `普通灵巧手`;
+  - vendor/model field: `revo2`;
+  - mode: `位置控制`;
+  - enable toggle appears active;
+  - finger sliders and a `发送` button are present.
+- Web status panel shows:
+  - control mode: `WEB`;
+  - end effector: `强脑灵巧手`.
+- Web configuration drawer shows:
+  - `末端执行器配置` selected as `强脑灵巧手`;
+  - green `当前配置` marker.
+- Operator reports enable produced no Web error, but finger control did not move
+  the hand.
+
 Current interpretation:
 
 - External arm CAN is healthy.
 - The provided passive sample does not prove that J6 end-effector CAN is
   forwarded to the external arm CAN bus.
-- Web hand enable failure now points first to J6 hand power/communication,
-  Web end-effector configuration, hand compatibility, or hand-side fault.
+- Web end-effector configuration is no longer the primary suspected blocker
+  because the screenshots show `强脑灵巧手` as current configuration.
+- The remaining likely blockers are J6 hand power/communication, hand-side
+  fault/compatibility, Web command not being sent/applied, or an internal
+  controller-to-hand bridge issue.
 
 Next S14.3J gate:
 
 1. Confirm which arm J6 the connected hand cable is plugged into.
-2. In that arm's Web UI, inspect `6.8.5 末端执行器配置` and record whether the
-   end effector is still `默认（无加载）` or has a hand-specific option.
-3. If the current Web end-effector type is still `默认（无加载）`, change only
-   the end-effector type to the documented hand option if available; do not
-   command finger movement.
-4. Return to the Web `6.3 灵巧手` page and try enable-only if the UI exposes a
-   separate enable button, with no slider movement and no `应用` motion command.
-5. Screenshot or copy the exact Web failure message if enable still fails.
+2. Keep Web `6.8.5 末端执行器配置` as `强脑灵巧手`; do not change load/TCP values
+   during this diagnostic step.
+3. On the Web `6.3 灵巧手` page, run a single-finger small position command only
+   while collecting evidence:
+   - start passive `candump -tz can_arm_a`;
+   - enable hand if needed;
+   - change only one clearly visible finger by a small value;
+   - press `发送`;
+   - return that finger to the original value.
+4. Record whether Web logs show any hand command/error.
+5. Screenshot or copy the exact Web message if the send fails or silently does
+   nothing.
 6. Re-check physical cable seating at J6 and the hand connector, using the
    manual references `2.1.2` and `2.3.2`.
 

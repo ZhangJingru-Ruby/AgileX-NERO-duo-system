@@ -5955,3 +5955,47 @@ Deployment choices:
   not the immediate live control path.
 - Next gate is `S14.3J`: Web end-effector configuration and J6 hand enable-only
   diagnosis.
+
+## 2026-06-30 - S14 Web Hand Configuration Present But No Motion
+
+Phase: S14 末端执行器接入
+
+Goal:
+Record Web evidence after the operator reported that hand enable does not error,
+but finger commands do not move the hand.
+
+Evidence:
+
+- Screenshots:
+  - `docs/pics/灵巧手01.png`
+  - `docs/pics/灵巧手02.png`
+- Web hand page shows:
+  - hand type `普通灵巧手`;
+  - vendor/model `revo2`;
+  - mode `位置控制`;
+  - enable toggle active;
+  - finger sliders and `发送` button available.
+- Web status panel shows:
+  - control mode `WEB`;
+  - end effector `强脑灵巧手`.
+- Web system setting drawer shows:
+  - `末端执行器配置` selected as `强脑灵巧手`;
+  - `当前配置` marker.
+- Operator reports enable has no error, but the hand does not move when
+  controlled.
+
+Interpretation:
+
+- The hand is no longer blocked by Web end-effector type being left at
+  `默认（无加载）`.
+- The next likely blockers are:
+  - Web send/apply command not actually being issued;
+  - J6 end-effector power/communication problem;
+  - internal controller-to-hand bridge problem;
+  - hand-side fault or incompatibility.
+
+Next live diagnostic:
+
+Run a small single-finger Web send while passively logging `can_arm_a`, and
+capture Web `日志` around the same action. Do not use LinkerHand direct-CAN
+scripts or ROS `/control/hand`.
