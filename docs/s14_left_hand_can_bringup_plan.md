@@ -206,9 +206,14 @@ Recommended first motion sequence:
    ```
 3. If the open-anchor command is accepted, run a small index micro-motion:
 
+   The open-anchor execute gate was accepted from SDK/software health on
+   2026-06-30; see
+   `docs/s14_left_hand_open_anchor_execute_result_20260630.md`. The operator
+   should still confirm physical observation and bench supply stability before
+   any index-micro execute.
+
    ```bash
    .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_motion_gate.py \
-     --execute \
      --can can1 \
      --side left \
      --mode index-micro \

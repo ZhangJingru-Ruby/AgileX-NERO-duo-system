@@ -525,6 +525,13 @@ S14 SDK health result:
   `docs/s14_left_hand_open_anchor_dry_run_result_20260630.md`.
 - The next gate is the explicit open-anchor execute command, which sends one
   SDK `open` preset to the left hand on `can1`.
+- The open-anchor execute gate was accepted from SDK/software health on
+  2026-06-30; see
+  `docs/s14_left_hand_open_anchor_execute_result_20260630.md`.
+- The final `Bad file descriptor` line occurred after completion and is treated
+  as SDK receive-thread shutdown noise. The wrapper now joins the receive thread
+  before shutting down the bus.
+- Next gate is index-micro dry-run only.
 
 Blocking wiring issue before any bench-test:
 

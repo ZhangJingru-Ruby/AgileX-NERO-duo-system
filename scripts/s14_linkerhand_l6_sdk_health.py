@@ -68,15 +68,15 @@ def close_sdk_bus(api: LinkerHandApi) -> None:
     if hand is None:
         return
     setattr(hand, "running", False)
+    receive_thread = getattr(hand, "receive_thread", None)
+    if receive_thread is not None and receive_thread.is_alive():
+        receive_thread.join(timeout=2.0)
     bus = getattr(hand, "bus", None)
     if bus is not None:
         try:
             bus.shutdown()
         except Exception:
             pass
-    receive_thread = getattr(hand, "receive_thread", None)
-    if receive_thread is not None and receive_thread.is_alive():
-        receive_thread.join(timeout=2.0)
 
 
 def query_health(api: LinkerHandApi) -> tuple[list[int], list[int], list[int]]:
@@ -128,8 +128,7 @@ def main() -> int:
             all_faults.append(fault)
             print(
                 f"sample={index} "
-                f"temperature={temperature} fault={fault} current_raw={current}"
-                ,
+                f"temperature={temperature} fault={fault} current_raw={current}",
                 flush=True,
             )
             time.sleep(0.2)
