@@ -493,14 +493,34 @@ S14.6C live result:
 
 Revised next gate after this observation:
 
-1. Stop sending commands.
-2. Observe bench supply current, hand temperature, sound, and mechanical state.
-3. If stable, collect passive CAN only:
-   `timeout 5s candump -tz can1`.
-4. Only after passive stability is recorded may the updated identity/health probe
-   be rerun.
-5. Redesign S14.8C first micro motion with explicit acceptance that `0x01` can
-   physically move the hand.
+1. Stop sending raw/manual CAN commands.
+2. Passive `timeout 5s candump -tz can1` produced no idle frames while the bench
+   supply stayed stable at about `24 V` and `0.135 A`; this is now treated as an
+   idle-device fact, not a communication failure.
+3. Use the local tuned repository `upstream/linkerhand_sdk` as the primary hand
+   control source, but only through project safety wrappers for the first gates.
+4. Run SDK-backed identity/health with:
+
+   ```bash
+   .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_health.py \
+     --can can1 \
+     --side left
+   ```
+
+5. Redesign S14.8C first micro motion around the SDK preset table, with explicit
+   acceptance that `0x01` can physically move the hand. Do not run full SDK demos
+   or GUI tools before this gate passes.
+
+S14 SDK health result:
+
+- Accepted on 2026-06-30; see
+  `docs/s14_left_hand_sdk_health_result_20260630.md`.
+- The local SDK identified left hand serial `LHL6-03-253-L-B-1-C` on `can1`.
+- Embedded version was `[2, 3, 7]`.
+- Three fault samples were all zero, with stable temperature and current raw
+  values.
+- Next gate is `scripts/s14_linkerhand_l6_sdk_motion_gate.py --mode open-anchor`
+  dry-run.
 
 Blocking wiring issue before any bench-test:
 
@@ -533,9 +553,10 @@ Deferred S14.3J Revo2/J6 gate:
 
 ### S14.4 First Finger Motion
 
-Deferred. Requires a separate dry-run/safety gate. First finger motion should be
-single arm, single finger or small grouped position change, low speed/current,
-with no object in the hand.
+Deferred. Requires the SDK-backed S14.8C dry-run/safety gate. First finger
+motion starts with the LinkerHand SDK `open` preset as an anchor command, then a
+small index micro-motion only after the anchor is accepted. No object may be in
+the hand.
 
 ## Stop Conditions
 

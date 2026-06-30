@@ -147,14 +147,67 @@ Safety gate:
 - The motion plan explicitly accounts for the S14.6C observation that `0x01`
   can cause hand motion on this device.
 
-Recommended first motion:
+SDK-first policy after S14.6C:
 
-1. Read current six-joint state.
-2. Set conservative speed and torque with explicit documented values.
-3. Move only a clearly visible non-thumb joint, preferably index flexion
-   `joint index 2`.
-4. Change the raw value by about `10`, then return to the original state.
-5. Read state, fault, temperature, and supply current before and after.
+- Prefer the local tuned repository `upstream/linkerhand_sdk` over manual CAN
+  guessing.
+- Do not run the SDK demos directly for first motion. `test_hand.py`,
+  `gestures.py`, `diagnose.py`, `dual_gui.py`, and the high-level wrapper
+  context manager can send large or implicit hand motions.
+- Do not call SDK `get_state()` or `get_torque()` during the first-motion gate,
+  because those map to frame types that were involved in the S14.6C physical
+  opening event.
+- Use project-local safety wrappers that import the SDK API and preset table,
+  but expose dry-run and explicit `--execute` gates.
+
+Current SDK health gate:
+
+```bash
+.venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_health.py \
+  --can can1 \
+  --side left
+```
+
+Live S14 SDK health result:
+
+- Accepted on 2026-06-30; see
+  `docs/s14_left_hand_sdk_health_result_20260630.md`.
+- SDK version `3.1.0` connected to `can1` over SocketCAN.
+- Embedded version `[2, 3, 7]`.
+- Serial `LHL6-03-253-L-B-1-C`.
+- Three fault samples were all `[0, 0, 0, 0, 0, 0]`.
+- Temperature samples were stable at `[36, 37, 36, 36, 36, 36]`.
+
+Recommended first motion sequence:
+
+1. Confirm SDK health: identity, temperature, current, and all-zero faults.
+   This is complete for the left hand.
+2. Send only the SDK `open` preset once as an anchor pose:
+
+   ```bash
+   .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_motion_gate.py \
+     --can can1 \
+     --side left \
+     --mode open-anchor
+   ```
+
+   Add `--execute` only after the dry-run is reviewed.
+3. If the open-anchor command is accepted, run a small index micro-motion:
+
+   ```bash
+   .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_motion_gate.py \
+     --execute \
+     --can can1 \
+     --side left \
+     --mode index-micro \
+     --joint index \
+     --delta -10 \
+     --speed 30
+   ```
+
+4. Monitor supply voltage/current and physical motion throughout. Stop on any
+   unexpected jump, heat, noise, nonzero fault, or motion inconsistent with the
+   printed target pose.
 
 Do not use `test_hand.py`, `gestures.py`, `dual_gui.py`, or SDK demo scripts for
 the first motion.
