@@ -78,6 +78,18 @@ Acceptance:
 - No abnormal sound, heat, smell, vibration, or power jump occurs.
 - The script reports send time delta for the paired command.
 
+Live result:
+
+- Accepted from SDK/software health on 2026-06-30; see
+  `docs/s14_dual_open_anchor_result_20260630.md`.
+- Both hands were identified on `can1` and `can2`.
+- Pre/post faults were all zero.
+- Send time delta was about `0.593 ms`.
+- Operator did not observe visible motion, which is expected when both hands are
+  already near the open preset.
+- Do not jump directly to `fist`; use dual index-micro first for a visible but
+  lower-risk synchronized motion check.
+
 ## S14.10.3 Dual Index-Micro Dry Run
 
 Only after dual open-anchor execute is accepted:
@@ -98,6 +110,10 @@ Acceptance:
 - Left target is `[255, 179, 245, 255, 255, 255]`.
 - Right target is `[255, 70, 245, 255, 255, 255]`.
 - Sequence is target for both hands, then return both hands to open.
+
+If the operator needs more visible motion for reporting, the first widened
+dual-index dry-run may use `--left-delta -20 --right-delta -20`. Do not exceed
+this without a separate plan.
 
 ## S14.10.4 Dual Index-Micro Execute
 

@@ -558,6 +558,11 @@ S14 SDK health result:
 - Dual-hand synchronization planning is recorded in
   `docs/s14_dual_hand_sync_plan.md`; the first allowed software step is
   dual open-anchor dry-run only.
+- Dual open-anchor passed from SDK/software health on 2026-06-30; see
+  `docs/s14_dual_open_anchor_result_20260630.md`.
+- No visible response was observed, which is expected when both hands are
+  already near open. Next gate is dual index-micro dry-run, not fist/full-hand
+  motion.
 
 Blocking wiring issue before any bench-test:
 
