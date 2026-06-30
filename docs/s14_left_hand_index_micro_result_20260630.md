@@ -99,10 +99,17 @@ Operator physical observation and bench power behavior should still be recorded
 before widening the motion envelope, running multi-finger gestures, or moving to
 the right hand.
 
+## Physical Observation
+
+Operator update on 2026-06-30:
+
+- Open-anchor and index-micro observations were normal and matched expectation.
+- No abnormal sound, heat, smell, vibration, or unexpected motion was reported.
+- The result is accepted as the left-hand first-motion baseline.
+
 Next recommended gate:
 
-- Confirm physical observation and bench supply behavior for this index-micro
-  execution.
-- If accepted, repeat the same SDK health/dry-run/execute discipline on the
-  right hand after moving the bench wiring to the right hand, or plan a
-  slightly larger left-hand single-finger motion with explicit dry-run first.
+- Repeat the same SDK health/dry-run/execute discipline on the right hand after
+  moving the bench wiring to the right hand.
+- Synchronized control remains blocked until the right hand passes the same
+  gates.

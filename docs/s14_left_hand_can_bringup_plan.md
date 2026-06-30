@@ -235,8 +235,9 @@ Live S14 index-micro result:
 - Execute sent target then returned to `[255, 179, 255, 255, 255, 255]`.
 - Pre/post fault values were all zero.
 - Temperature and current raw values stayed stable.
-- Physical observation and bench supply behavior still need to be explicitly
-  recorded before widening the motion envelope or moving to the second hand.
+- Operator physical observation was normal and matched expectation.
+- This closes the left-hand first-motion baseline. Next branch is right-hand
+  reproduction under `docs/s14_right_hand_reproduction_plan.md`.
 
 Do not use `test_hand.py`, `gestures.py`, `dual_gui.py`, or SDK demo scripts for
 the first motion.

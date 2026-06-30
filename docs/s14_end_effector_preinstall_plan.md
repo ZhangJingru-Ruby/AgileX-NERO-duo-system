@@ -534,9 +534,11 @@ S14 SDK health result:
 - The left index micro-motion dry-run and execute gates were accepted from
   SDK/software health on 2026-06-30; see
   `docs/s14_left_hand_index_micro_result_20260630.md`.
-- Before any broader gesture, larger delta, or right-hand reproduction, record
-  the operator's physical observation and bench supply behavior from the
-  open-anchor and index-micro executions.
+- Operator reported the open-anchor and index-micro physical observation as
+  normal and expected.
+- Next gate is right-hand independent bench reproduction under
+  `docs/s14_right_hand_reproduction_plan.md`. Synchronized control remains
+  blocked until the right hand passes the same gates.
 
 Blocking wiring issue before any bench-test:
 
