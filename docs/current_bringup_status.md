@@ -7,7 +7,7 @@ Last updated: 2026-06-30
 | Item | Current value |
 | --- | --- |
 | Current end effector | Dual LinkerHand L6 dexterous hands installed mechanically; Arm A right hand, Arm B left hand |
-| Planned end effector state | S14.9R right LinkerHand independent bench reproduction pending |
+| Planned end effector state | S14.9R hand CAN position fixation, then right LinkerHand independent reproduction |
 | Physical arm count | Two NERO arms, independently powered |
 | Arm A | Web verified; hotspot `agx-7ax-armA`; planned CAN `can_arm_a`; ROS namespace `arm_a` |
 | Arm B | Web verified; hotspot `agx-7ax-armB`; planned CAN `can_arm_b`; ROS namespace `arm_b` |
@@ -43,7 +43,7 @@ Last updated: 2026-06-30
 | S11 双臂实验基线 | Complete / accepted | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Accepted static TF values are `lab_world -> arm_a/world: x=0, y=0, z=0, roll=0, pitch=-1.5707963, yaw=0` and `lab_world -> arm_b/world: x=0.260, y=0, z=0, roll=3.1415926, pitch=-1.5707963, yaw=0`. Operator reports RViz matches the physical layout and follows both arms when they move. Post-TF snapshot `20260626_055339` is clean, and X11 access was restored to local-user only. |
 | S12 控制隔离与日志闭环 | Complete / accepted | Arm A `joint1 +30 deg` and Arm B `joint1 -30 deg` isolation tests both passed and returned. Passive-arm deviations were `0.005 deg` for Arm B during Arm A motion and `0.008 deg` for Arm A during Arm B motion. Post-motion snapshots `20260626_080809` and `20260626_083210` are clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
 | S13 低风险双臂协同原语 | Complete / accepted | Corrected Arm A `joint1 +30 deg` / Arm B `joint1 +30 deg` execution passed and operator confirmed visible direction matched expectation. Earlier final-snapshot attempts `20260626_093414` and `20260629_043358` were not accepted because duplicate publishers produced about `400 Hz` feedback. After cleanup, publisher count was `1` for both A/B joint-state topics, and final snapshot `20260629_043441` is clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
-| S14 末端执行器 | Active; left-hand first motion accepted, right-hand reproduction pending | Both dexterous hands are mechanically installed and stable. Arm A = right hand, Arm B = left hand. S14.1 no-motion snapshot `20260629_074337` is accepted for arm communication/read-only health. Web screenshots show current end-effector config `强脑灵巧手`, hand page `普通灵巧手`, model `revo2`, mode `位置控制`, and enable without error, but Web single-finger send produced no hand motion. New Drive docs reviewed in `docs/s14_linker_drive_review.md` confirm LinkerHand L6; the live network probe did not reach `192.168.10.21`, and photos under `docs/pics/灵巧手连接设备/` show a bench DC supply plus USB-CAN debug hardware, not an IP controller. The left hand is now disconnected from arm/J6 and powered independently. Host checks found PEAK-System `XCAN-USB` on SocketCAN `can1`, USB path `1-3.4.4:1.0`; `can1` is UP/ERROR-ACTIVE at `1000000`. Left-hand SDK health, open-anchor, and index micro-motion are accepted from SDK/software health, and operator reported physical observation as normal and expected. Next gate: move bench wiring to the right hand and repeat the same health/open-anchor/index-micro gates from `docs/s14_right_hand_reproduction_plan.md`. Synchronized hand control remains blocked until right-hand reproduction passes. |
+| S14 末端执行器 | Active; left-hand first motion accepted, two hand CAN cables now connected, right-hand reproduction pending | Both dexterous hands are mechanically installed and stable. Arm A = right hand, Arm B = left hand. S14.1 no-motion snapshot `20260629_074337` is accepted for arm communication/read-only health. Web screenshots show current end-effector config `强脑灵巧手`, hand page `普通灵巧手`, model `revo2`, mode `位置控制`, and enable without error, but Web single-finger send produced no hand motion. New Drive docs reviewed in `docs/s14_linker_drive_review.md` confirm LinkerHand L6; the live network probe did not reach `192.168.10.21`, and photos under `docs/pics/灵巧手连接设备/` show a bench DC supply plus USB-CAN debug hardware, not an IP controller. Left-hand SDK health, open-anchor, and index micro-motion are accepted from SDK/software health, and operator reported physical observation as normal and expected. The field setup is corrected again: left and right hands each have an independent CAN cable connected to the USB-C adapter path. Next gate: inventory/fix hand CAN interface positions, verify right-hand serial `LHL6-03-240-R-B-1-C`, then run right-hand health/open-anchor/index-micro gates from `docs/s14_right_hand_reproduction_plan.md`. Synchronized hand control remains blocked until right-hand reproduction passes. |
 
 ## S0 Evidence
 
@@ -126,11 +126,17 @@ validation with the local tuned repository is accepted; see
 The left index micro-motion gate is accepted from SDK/software health and field
 observation; see `docs/s14_left_hand_index_micro_result_20260630.md`.
 
-The immediate next step is right-hand independent reproduction:
-`docs/s14_right_hand_reproduction_plan.md`. Start by powering down the bench
-supply, moving the standalone hand harness from the left hand to the right hand,
-then running the right-hand SDK health check. Full SDK demos, GUI, gesture
-loops, `get_state()`, `get_torque()`, and synchronized control remain blocked.
+The immediate next step is to fix hand CAN positions, then start right-hand
+independent reproduction: `docs/s14_right_hand_reproduction_plan.md`.
+
+```bash
+bash scripts/s14_hand_can_inventory.sh
+```
+
+After inventory, run the right-hand SDK health check on the interface that is
+physically and logically assigned to the right hand. Full SDK demos, GUI,
+gesture loops, `get_state()`, `get_torque()`, and synchronized control remain
+blocked.
 
 Until S14 has its own gates accepted, do not run Cartesian, MoveIt execute,
 contact, handoff, full dexterous-hand actuation, or close-proximity

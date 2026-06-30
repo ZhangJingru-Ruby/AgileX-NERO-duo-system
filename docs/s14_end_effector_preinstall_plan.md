@@ -539,6 +539,9 @@ S14 SDK health result:
 - Next gate is right-hand independent bench reproduction under
   `docs/s14_right_hand_reproduction_plan.md`. Synchronized control remains
   blocked until the right hand passes the same gates.
+- Field correction: the left and right hands now each have their own CAN cable
+  connected through the USB-C adapter path. Before right-hand health, inventory
+  and fix both hand CAN positions with `scripts/s14_hand_can_inventory.sh`.
 
 Blocking wiring issue before any bench-test:
 

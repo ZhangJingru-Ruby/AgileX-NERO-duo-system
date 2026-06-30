@@ -16,7 +16,10 @@ Safety:
 
 Frames:
   0FF#C0   primary serial request used by the LinkerHand SDK helper
-  0FF#01   fallback hand-side probe used by the LinkerHand SDK helper
+
+  This script no longer sends 0FF#01 by default. S14 live testing showed that
+  frame type 0x01 can cause physical hand motion on the current L6 setup, so
+  use the SDK health gate for side-specific identity checks instead.
 USAGE
 }
 
@@ -95,24 +98,6 @@ if [ -s "$tmp_file" ]; then
   cat "$tmp_file"
 else
   echo "No primary response frames captured."
-fi
-
-echo
-echo "Sending fallback identify request: ${iface} 0FF#01"
-: >"$tmp_file"
-timeout 2s candump "$iface" >"$tmp_file" 2>&1 &
-dump_pid=$!
-sleep 0.1
-cansend "$iface" "0FF#01"
-sleep 1
-kill "$dump_pid" 2>/dev/null || true
-wait "$dump_pid" 2>/dev/null || true
-
-if [ -s "$tmp_file" ]; then
-  echo "Fallback response frames:"
-  cat "$tmp_file"
-else
-  echo "No fallback response frames captured."
 fi
 
 response_id="$(awk '

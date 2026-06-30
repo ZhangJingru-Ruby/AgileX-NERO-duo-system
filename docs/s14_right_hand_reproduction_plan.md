@@ -5,8 +5,10 @@ Date: 2026-06-30
 ## Goal
 
 Repeat the accepted left-hand independent CAN bench-test process on the right
-LinkerHand L6, using the same standalone PEAK/XCAN-USB adapter and the same
-project safety wrappers.
+LinkerHand L6. The field setup has been corrected: the left and right hands now
+each have their own CAN cable connected to the USB-C adapter path, so the
+workflow first fixes physical USB/CAN positions and validates which SocketCAN
+interface belongs to each hand.
 
 This plan does not authorize bimanual or synchronized hand control. Synchronized
 control starts only after the right hand passes the same health, open-anchor,
@@ -17,13 +19,12 @@ and index-micro gates.
 - Left hand first-motion baseline is accepted:
   `docs/s14_left_hand_index_micro_result_20260630.md`.
 - Power supply can be cut immediately.
-- The right hand is disconnected from NERO J6 before bench wiring.
-- Only one hand is connected to the standalone bench-test CAN/power harness at
-  a time.
+- Both hand CAN cables are separate from `can_arm_a` and `can_arm_b`.
+- The right hand is disconnected from NERO J6 before bench testing.
 - Bench wiring follows the same reviewed LinkerHand L6 XT30(2+2) CAN/power
   discipline used for the left hand.
-- `can1` remains the standalone PEAK/XCAN-USB interface, not `can_arm_a` or
-  `can_arm_b`.
+- SocketCAN interface names must be verified by SDK identity/health, not by
+  physical guesswork.
 - The hand is empty and clear of tools, cables, and fingers.
 
 Expected right-hand facts from `upstream/linkerhand_sdk`:
@@ -34,37 +35,48 @@ Expected right-hand facts from `upstream/linkerhand_sdk`:
 - SDK open preset: `[255, 70, 255, 255, 255, 255]`
 - Index micro target with `delta=-10`: `[255, 70, 245, 255, 255, 255]`
 
-## S14.9R.0 Physical Rewire
+## S14.9R.0 Fix Hand CAN Positions
 
-1. Turn off the bench 24 V supply.
-2. Disconnect the left hand from the bench-test harness.
-3. Connect the right hand to the same bench-test harness.
-4. Confirm CAN_H/CAN_L and VCC/GND polarity before power.
-5. Power on at 24 V and observe idle current.
-6. Confirm the hand is mechanically stable and empty.
+1. Keep the left and right hand CAN cables in their intended USB-C adapter
+   positions.
+2. Label or photograph the physical positions before running commands.
+3. Confirm no hand CAN cable is connected to `can_arm_a` or `can_arm_b`.
+4. Inventory CAN interfaces:
+
+   ```bash
+   bash scripts/s14_hand_can_inventory.sh
+   ```
+
+5. If both hand interfaces are temporary names such as `can0`/`can1`, record
+   each interface's `bus_info` and physical USB position.
+6. Prefer stable names after identity is verified:
+   `can_hand_left` and `can_hand_right`.
 
 Acceptance:
 
-- No heat, smell, sound, twitching, or abnormal current after power-on.
-- `can1` is still UP at `1000000`.
+- Two non-arm hand CAN candidates are visible.
+- Their driver and `bus_info` are recorded.
+- NERO arm CAN interfaces are not used for hand tests.
 
-Check:
+If an interface is DOWN, activate it at 1 Mbps before SDK health:
 
 ```bash
-ip -details link show can1
+sudo ip link set <iface> up type can bitrate 1000000
 ```
 
 ## S14.9R.1 SDK Health
 
+Replace `<right_can>` with the right-hand candidate interface after inventory.
+
 ```bash
 .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_health.py \
-  --can can1 \
+  --can <right_can> \
   --side right
 ```
 
 Acceptance:
 
-- SDK connects to `can1`.
+- SDK connects to the selected right-hand interface.
 - Serial matches right hand, expected `LHL6-03-240-R-B-1-C`.
 - Embedded version is readable.
 - Fault samples are all zero.
@@ -75,7 +87,7 @@ Acceptance:
 
 ```bash
 .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_motion_gate.py \
-  --can can1 \
+  --can <right_can> \
   --side right \
   --mode open-anchor
 ```
@@ -92,7 +104,7 @@ Acceptance:
 ```bash
 .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_motion_gate.py \
   --execute \
-  --can can1 \
+  --can <right_can> \
   --side right \
   --mode open-anchor
 ```
@@ -108,7 +120,7 @@ Acceptance:
 
 ```bash
 .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_motion_gate.py \
-  --can can1 \
+  --can <right_can> \
   --side right \
   --mode index-micro \
   --joint index \
@@ -128,7 +140,7 @@ Acceptance:
 ```bash
 .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_motion_gate.py \
   --execute \
-  --can can1 \
+  --can <right_can> \
   --side right \
   --mode index-micro \
   --joint index \
