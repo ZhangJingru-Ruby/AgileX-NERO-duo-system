@@ -50,13 +50,22 @@ Read-only request frame set for the left hand:
 | --- | --- |
 | `028#64` | version query |
 | `028#C0` | serial query |
-| `028#01` | current joint state query |
 | `028#33` | motor temperature query |
 | `028#35` | motor fault query |
 | `028#36` | current query |
-| `028#02` | torque/status query |
 
 Do not send six-byte position, speed, or torque payloads before S14.8.
+
+Live correction after S14.6C:
+
+- The first version of the project probe also sent `028#01` and `028#02`.
+- The operator observed the hand physically opening during that probe.
+- Therefore `0x01` is no longer treated as safe read-only in this process, even
+  though the SDK names it as a current-state request when sent without payload.
+- `0x02` is also excluded from the default safe probe because it shares the frame
+  type used by torque-limit writes when payload is present.
+- The default probe is now identity/health-only: `0x64`, `0xC0`, `0x33`, `0x35`,
+  and `0x36`.
 
 ## S14.5C CAN Interface Baseline
 
@@ -105,10 +114,10 @@ Acceptance:
 
 - Responses appear on `0x28` or `0x30`.
 - Version or serial response appears.
-- Joint state response `0x01` returns six values.
 - Temperature response `0x33` returns plausible values.
 - Fault response `0x35` returns all zero values.
 - Supply current remains stable around idle.
+- No physical hand motion occurs during the revised identity/health-only probe.
 
 Stop conditions:
 
@@ -116,6 +125,8 @@ Stop conditions:
 - Any nonzero fault code.
 - Current rises unexpectedly, or the hand heats, twitches, or makes abnormal
   noise during read-only queries.
+- Any physical hand motion occurs during a probe that is expected to be
+  identity/health-only.
 
 ## S14.7C Optional Tactile Read-Only Probe
 
@@ -133,6 +144,8 @@ Safety gate:
 - Left hand is the only hand on the bench control path.
 - Power supply is still `24 V`; current is stable.
 - A human is ready to cut power.
+- The motion plan explicitly accounts for the S14.6C observation that `0x01`
+  can cause hand motion on this device.
 
 Recommended first motion:
 

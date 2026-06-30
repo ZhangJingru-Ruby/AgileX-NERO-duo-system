@@ -477,6 +477,31 @@ Revised next gate:
 5. Do not run GUI, `test_hand.py`, `gestures.py`, or SDK motion examples before
    S14.6C read-only acceptance.
 
+S14.6C live result:
+
+- `can1` was brought UP at `1000000` and reported `ERROR-ACTIVE`.
+- The original project probe confirmed left serial `LHL6-03-253-L-B-1-C`,
+  plausible temperature values, and all-zero fault values.
+- The operator observed physical hand opening during the probe.
+- Therefore the original probe is not accepted as motion-free read-only.
+- `0x01` is treated as motion-risk, and `0x02` is removed from the default safe
+  probe until semantics are reviewed.
+- The updated probe now sends only identity/health requests: `0x64`, `0xC0`,
+  `0x33`, `0x35`, and `0x36`.
+- Result record:
+  `docs/s14_left_hand_can_readonly_result_20260630.md`.
+
+Revised next gate after this observation:
+
+1. Stop sending commands.
+2. Observe bench supply current, hand temperature, sound, and mechanical state.
+3. If stable, collect passive CAN only:
+   `timeout 5s candump -tz can1`.
+4. Only after passive stability is recorded may the updated identity/health probe
+   be rerun.
+5. Redesign S14.8C first micro motion with explicit acceptance that `0x01` can
+   physically move the hand.
+
 Blocking wiring issue before any bench-test:
 
 - `docs/pics/灵巧手连接设备/灵巧手连接设备03.jpeg` shows an exposed/frayed

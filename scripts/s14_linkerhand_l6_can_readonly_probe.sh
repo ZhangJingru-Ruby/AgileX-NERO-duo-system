@@ -11,10 +11,12 @@ Examples:
   bash scripts/s14_linkerhand_l6_can_readonly_probe.sh can_hand_left left
 
 This probe sends LinkerHand L6 read-only request frames only:
-  0x64 version, 0xC0 serial, 0x01 state, 0x33 temperature,
-  0x35 fault, 0x36 current, 0x02 torque/status query.
+  0x64 version, 0xC0 serial, 0x33 temperature,
+  0x35 fault, 0x36 current.
 
 It does not send position/speed/torque setting payloads.
+It also avoids 0x01 and 0x02 because a live S14.6C run observed physical
+hand opening after the original probe included 0x01.
 USAGE
 }
 
@@ -77,6 +79,7 @@ fi
 
 echo "S14 LinkerHand L6 CAN read-only probe"
 echo "interface=$iface side=$side request_id=0x$hand_id expected_response=$response_ids"
+echo "safety=identity_and_health_only no_state_or_torque_query"
 echo
 
 ip -details link show "$iface" | sed 's/^/  /'
@@ -112,11 +115,9 @@ send_read() {
 
 send_read "64" "version"
 send_read "C0" "serial"
-send_read "01" "joint_state"
 send_read "33" "temperature"
 send_read "35" "fault"
 send_read "36" "current"
-send_read "02" "torque_status"
 
 sleep 0.8
 kill "$candump_pid" 2>/dev/null || true
@@ -134,5 +135,6 @@ fi
 echo
 echo "Acceptance hints:"
 echo "  - Expected response arbitration IDs: $response_ids."
-echo "  - Response byte0 should include some of: 0x64/0xC2, 0xC0, 0x01, 0x33, 0x35, 0x36, 0x02."
+echo "  - Response byte0 should include some of: 0x64/0xC2, 0xC0, 0x33, 0x35, 0x36."
 echo "  - Fault response 0x35 should report all-zero joint fault values before motion."
+echo "  - This script intentionally does not query 0x01 state or 0x02 torque/status."
