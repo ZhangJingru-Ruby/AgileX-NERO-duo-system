@@ -2,6 +2,14 @@
 
 Date: 2026-06-30
 
+Status: Superseded by live CAN device evidence on 2026-06-30.
+
+The operator's live checks showed no `/dev/serial/by-id/`, `/dev/ttyUSB*`, or
+`/dev/ttyACM*` device. The USB-C hub instead exposed a PEAK-System PCAN-USB
+adapter as SocketCAN `can1`. Continue with
+`docs/s14_left_hand_can_bringup_plan.md` unless a real serial/RS485 adapter is
+connected later.
+
 ## Current Evidence
 
 - The selected hand is the left LinkerHand L6.

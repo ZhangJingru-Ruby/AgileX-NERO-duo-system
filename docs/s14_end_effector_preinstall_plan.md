@@ -459,18 +459,23 @@ Update on 2026-06-30:
 - The new evidence image is
   `docs/pics/灵巧手连接设备/灵巧手左手上电操控示意图.jpeg`.
 - The image shows about `24.00 V` and `0.122 A` on the WANPTEK supply.
-- The operator reports a computer serial connection, so the next active branch
-  is RS485/Modbus, not SocketCAN, unless later device evidence proves otherwise.
-- Detailed plan: `docs/s14_left_hand_rs485_bringup_plan.md`.
+- The operator initially described the computer connection as serial, but live
+  host evidence corrected that interpretation: no `/dev/serial/by-id/`,
+  `/dev/ttyUSB*`, or `/dev/ttyACM*` was present.
+- `dmesg` shows PEAK-System `XCAN-USB`, USB ID `0c72:000c`, driver `peak_usb`,
+  attached as SocketCAN `can1` at USB bus path `1-3.4.4:1.0`.
+- The active branch is therefore LinkerHand CAN, not RS485/Modbus.
+- Detailed plan: `docs/s14_left_hand_can_bringup_plan.md`.
 
 Revised next gate:
 
-1. Identify the serial device as `/dev/serial/by-id/...`, `/dev/ttyUSB*`, or
-   `/dev/ttyACM*`.
-2. Use LinkerHand L6 RS485 settings: `115200 8N1`, left hand ID `0x28`.
-3. Run read-only version/state/temperature/fault checks first.
-4. Do not run GUI, `test_hand.py`, `gestures.py`, or the RS485 demo's
-   open/fist sequence before S14.6 read-only acceptance.
+1. Confirm `can1` is the hand-only PEAK adapter and not `can_arm_a` or
+   `can_arm_b`.
+2. Bring `can1` UP at bitrate `1000000` if needed.
+3. Use LinkerHand L6 left hand CAN ID `0x28`.
+4. Run `bash scripts/s14_linkerhand_l6_can_readonly_probe.sh can1 left`.
+5. Do not run GUI, `test_hand.py`, `gestures.py`, or SDK motion examples before
+   S14.6C read-only acceptance.
 
 Blocking wiring issue before any bench-test:
 
