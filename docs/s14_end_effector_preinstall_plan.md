@@ -416,6 +416,41 @@ Accept the gate if the result is recorded either way:
 Do not run vendor demos from `api_lk73_v1.0.4`; some demos command hand motion,
 arm motion, zero setting, enable/disable, e-stop, and joint-limit changes.
 
+Photo evidence on 2026-06-30:
+
+- Operator provided photos under `docs/pics/灵巧手连接设备/`.
+- The photos show a WANPTEK bench DC supply and two blue USB-CAN adapters whose
+  terminal labels include `120R`, `GND`, `CANL`, and `CANH`.
+- No Ethernet/RJ45 network controller, Raspberry Pi, or router is visible.
+- Interpretation: this is a LinkerHand direct bench-test/debug kit, not the
+  Linker/LBOT `192.168.10.21` controller.
+- This explains why the current network probe does not reach
+  `192.168.10.21`; the observed kit is not an IP device.
+- This does not mean the installed hands should be reconnected immediately.
+  Current installation remains through NERO J6 until a deliberate bench-test
+  branch is accepted.
+
+Revised S14.3K conclusion:
+
+- The Linker/LBOT network controller is not currently evidenced by the network
+  probe or the photos.
+- Next decision should be made before touching wiring:
+  - keep the J6-integrated installation and ask vendor which NERO firmware/Web
+    setting supports LinkerHand L6; or
+  - intentionally switch one hand to a direct bench-test setup using the shown
+    24 V supply plus USB-CAN kit.
+
+Bench-test branch, if selected later:
+
+1. Test only one hand at a time.
+2. Power down and disconnect that hand from NERO J6 first; do not connect one
+   hand simultaneously to J6 and the bench CAN/power kit.
+3. Verify L6 manual XT30(2+2) polarity and CAN_H/CAN_L before energizing.
+4. Set bench supply to the manual-confirmed `24 V` range with conservative
+   current limiting before connection.
+5. Bring up only the selected USB-CAN interface at `1000000` bitrate.
+6. Run identity/status reads first, not gestures or position commands.
+
 Deferred S14.3J Revo2/J6 gate:
 
 1. Confirm which arm J6 the connected hand cable is plugged into.

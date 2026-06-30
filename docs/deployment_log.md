@@ -6111,3 +6111,48 @@ Artifacts:
 - Updated: `docs/current_bringup_status.md`.
 - Updated: `docs/bringup_checklist.md`.
 - Updated: `docs/机器人部署与调试行动路线.md`.
+
+## 2026-06-30 - S14 Hand Connection Kit Photo Analysis
+
+Phase: S14 末端执行器接入
+
+Goal:
+Determine whether the newly photographed hand connection equipment is the
+Linker/LBOT `192.168.10.21` controller or a direct hand debug kit.
+
+Evidence:
+
+- Network probe:
+  - `ip -br addr` showed no host address in `192.168.10.x/24`.
+  - `ping -c 2 192.168.10.21` had 100% packet loss.
+  - `curl -I --max-time 3 http://192.168.10.21:8000` timed out.
+- Photos:
+  - `docs/pics/灵巧手连接设备/灵巧手连接设备01.jpeg`
+  - `docs/pics/灵巧手连接设备/灵巧手连接设备02.jpeg`
+  - `docs/pics/灵巧手连接设备/灵巧手连接设备03.jpeg`
+- Visible hardware:
+  - WANPTEK bench DC power supply;
+  - two blue USB-CAN adapters;
+  - screw-terminal labels `120R`, `GND`, `CANL`, `CANH`;
+  - yellow/green CAN wires and red/black power leads;
+  - no Ethernet/RJ45 port or IP controller.
+
+Interpretation:
+
+- The photographed kit is a direct LinkerHand bench-test/debug setup, not the
+  Linker/LBOT network controller described by `api_lk73_v1.0.4`.
+- This explains why `192.168.10.21` is not reachable in the current network
+  state.
+- The kit can be used later to bench-test one hand directly, but doing so is a
+  different wiring topology from the current NERO J6 installation.
+
+Deployment choice:
+
+- Do not reconnect the installed hands immediately.
+- Keep the current NERO J6 installation unless a deliberate bench-test branch is
+  accepted.
+- Before any bench test, disconnect the selected hand from NERO J6, test one
+  hand at a time, verify the L6 manual XT30(2+2) polarity and CAN_H/CAN_L,
+  set bench supply to the manual-confirmed 24 V range with conservative current
+  limiting, bring up one USB-CAN adapter at 1 Mbps, and run only read-only
+  identity/status checks before any motion command.

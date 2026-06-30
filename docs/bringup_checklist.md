@@ -301,9 +301,10 @@
 - [x] S14.3J Web 小幅单指 `发送` 同步 `candump` 证据已记录：Web 无报错但手未动，样本未见 Revo2 `0x1B*` / `0x1C*` 帧。
 - [x] 2026-06-30 新 Linker Drive 文档包已下载、校验、解压并审阅；记录见 `docs/s14_linker_drive_review.md`。
 - [x] 新资料已将下一步修正为 S14.3K：先确认 Linker/LBOT `192.168.10.21` 控制器是否存在，再继续 Revo2/J6 假设。
-- [ ] S14.3K Linker/LBOT 只读网络探针已完成：`ping -c 2 192.168.10.21` 与 `curl -I --max-time 3 http://192.168.10.21:8000`。
-- [ ] 若 `192.168.10.21` 可达，自定义只读 `LbotRobot` 探针已记录 API version、controller info、current state；未调用任何 hand/arm motion 或设置接口。
-- [ ] 若 `192.168.10.21` 不可达，已向供应商确认 NERO J6 是否支持 LinkerHand L6、是否需要 Linker/LBOT 控制器或固件选项。
+- [x] S14.3K Linker/LBOT 只读网络探针已完成：当前主机无 `192.168.10.x` 地址，`ping -c 2 192.168.10.21` 丢包，`curl -I --max-time 3 http://192.168.10.21:8000` 超时。
+- [x] `docs/pics/灵巧手连接设备/` 照片已分析：设备为 bench DC 电源 + USB-CAN 调试工装，不是 Linker/LBOT `192.168.10.21` 网络控制器。
+- [ ] 已向供应商确认 NERO J6 是否支持 LinkerHand L6、是否需要 Linker/LBOT 控制器或固件选项。
+- [ ] 若改走手部直连 bench-test，一只手断开 NERO J6 后已按单独 checklist 做 24V/CAN 极性核对和只读身份/状态读取。
 - [ ] S14.3J 过滤 Revo2 帧复验已完成：`timeout 20s candump -tz can_arm_a,1B0:7F0,1C0:7F0`。（仅在 S14.3K 结论后继续。）
 - [ ] S14.3J J6 末端供电通讯线和手端接头已重新断电复插并复验。
 - [ ] 若未来改回手部直连 bench-test，S14.3L LinkerHand 左/右手串码、版本、state/current/temperature/fault 只读结果已记录。

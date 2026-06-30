@@ -202,3 +202,46 @@ If the controller is not reachable:
 4. Only then continue Revo2-frame filtering or J6 power/communication checks.
 
 No finger motion is authorized by this review.
+
+## 2026-06-30 Photo Evidence: Hand Connection Kit
+
+Operator-provided photos:
+
+- `docs/pics/灵巧手连接设备/灵巧手连接设备01.jpeg`
+- `docs/pics/灵巧手连接设备/灵巧手连接设备02.jpeg`
+- `docs/pics/灵巧手连接设备/灵巧手连接设备03.jpeg`
+
+Visible hardware:
+
+- A WANPTEK bench DC power supply.
+- Two blue USB modules with screw terminals.
+- The USB module terminal silk screen includes `120R`, `GND`, `CANL`, and
+  `CANH`.
+- Yellow/green signal wires are connected at the CAN terminal side.
+- Red/black power leads and hand-side plug harnesses are visible.
+- No Ethernet/RJ45 port, router, Raspberry Pi, or other network controller is
+  visible in these photos.
+
+Interpretation:
+
+- This photo set matches the LinkerHand direct bench-test/debug topology:
+  independent `24 V` power plus USB-CAN communication.
+- It does not match the `api_lk73_v1.0.4` Linker/LBOT network-controller
+  topology at `192.168.10.21`.
+- Therefore the failed `ping 192.168.10.21` and
+  `curl http://192.168.10.21:8000` result is consistent with the observed
+  equipment: no Linker/LBOT network controller is currently evident.
+
+Deployment decision:
+
+- Do not reconnect the installed hands just because this kit exists.
+- The current installed robot state remains NERO J6-integrated.
+- This kit is useful if we intentionally switch one hand into a bench-test
+  setup, but that is a different wiring topology and should be treated as a
+  separate S14 branch.
+
+If bench-test becomes necessary, the first accepted form should be one hand at a
+time, with the robot hand cable disconnected from NERO J6, bench supply set to
+manual-confirmed `24 V`, polarity and XT30(2+2) pinout verified against the L6
+manual, one USB-CAN adapter connected to the hand CAN pair at `1 Mbps`, and only
+read-only LinkerHand identity/status checks run before any finger motion.
