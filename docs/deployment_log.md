@@ -6156,3 +6156,39 @@ Deployment choice:
   set bench supply to the manual-confirmed 24 V range with conservative current
   limiting, bring up one USB-CAN adapter at 1 Mbps, and run only read-only
   identity/status checks before any motion command.
+
+## 2026-06-30 - S14 Bench Kit Exposed Wire Risk
+
+Phase: S14 末端执行器接入
+
+Goal:
+Record the operator-observed exposed/disconnected wire in
+`灵巧手连接设备03.jpeg` and define the minimum handling requirements before this
+kit can be used.
+
+Observation:
+
+- A red/orange conductor with exposed stranded/shield-like metal is visible near
+  the bench DC power supply and loose harness.
+- The photo does not identify whether it is V+, GND, shield/drain, or an unused
+  wire.
+
+Decision:
+
+- Treat the exposed conductor as unsafe until proven otherwise.
+- Do not energize the bench supply, connect a hand, or connect the USB-CAN
+  adapter to a powered hand while this conductor remains bare or unidentified.
+
+Required before bench-test use:
+
+1. Power supply unplugged and output disabled.
+2. Use a multimeter continuity test to identify V+, GND, CAN_H, CAN_L, and any
+   shield/drain conductor.
+3. Verify the mapping against the L6 manual XT30(2+2) pinout.
+4. Confirm no short between V+/GND, CAN_H/CAN_L, CAN to V+, or CAN to GND.
+5. Properly terminate functional conductors with ferrules/crimps/connectors; no
+   loose strands in screw terminals.
+6. Individually insulate unused or shield/drain conductors if not intentionally
+   terminated.
+7. Verify 24 V polarity at the hand-side connector with the hand disconnected.
+8. Only then proceed to one-hand read-only identity/status checks.

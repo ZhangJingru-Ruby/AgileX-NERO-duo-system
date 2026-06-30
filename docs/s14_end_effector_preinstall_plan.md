@@ -451,6 +451,20 @@ Bench-test branch, if selected later:
 5. Bring up only the selected USB-CAN interface at `1000000` bitrate.
 6. Run identity/status reads first, not gestures or position commands.
 
+Blocking wiring issue before any bench-test:
+
+- `docs/pics/灵巧手连接设备/灵巧手连接设备03.jpeg` shows an exposed/frayed
+  conductor near the bench supply and loose harness.
+- Its role is not identifiable from the photo. It may be power, ground, shield,
+  or unused wire.
+- Do not energize the bench supply or connect a hand to this kit until every
+  conductor is identified with a multimeter, the L6 manual XT30(2+2) pinout is
+  verified, and the exposed conductor is either properly terminated or
+  individually insulated.
+- No bare strands may remain near the power binding posts or CAN terminals.
+- A continuity check must confirm no short between power and CAN lines before
+  connecting a hand.
+
 Deferred S14.3J Revo2/J6 gate:
 
 1. Confirm which arm J6 the connected hand cable is plugged into.

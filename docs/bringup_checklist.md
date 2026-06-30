@@ -303,8 +303,10 @@
 - [x] 新资料已将下一步修正为 S14.3K：先确认 Linker/LBOT `192.168.10.21` 控制器是否存在，再继续 Revo2/J6 假设。
 - [x] S14.3K Linker/LBOT 只读网络探针已完成：当前主机无 `192.168.10.x` 地址，`ping -c 2 192.168.10.21` 丢包，`curl -I --max-time 3 http://192.168.10.21:8000` 超时。
 - [x] `docs/pics/灵巧手连接设备/` 照片已分析：设备为 bench DC 电源 + USB-CAN 调试工装，不是 Linker/LBOT `192.168.10.21` 网络控制器。
+- [x] `灵巧手连接设备03.jpeg` 裸露/断开线头风险已记录：该工装在修复、绝缘、万用表确认 pinout 前禁止上电或接手。
 - [ ] 已向供应商确认 NERO J6 是否支持 LinkerHand L6、是否需要 Linker/LBOT 控制器或固件选项。
 - [ ] 若改走手部直连 bench-test，一只手断开 NERO J6 后已按单独 checklist 做 24V/CAN 极性核对和只读身份/状态读取。
+- [ ] bench-test 工装所有裸露线头已正确压接/绝缘，且已确认 V+/GND/CAN_H/CAN_L 与 L6 手册一致。
 - [ ] S14.3J 过滤 Revo2 帧复验已完成：`timeout 20s candump -tz can_arm_a,1B0:7F0,1C0:7F0`。（仅在 S14.3K 结论后继续。）
 - [ ] S14.3J J6 末端供电通讯线和手端接头已重新断电复插并复验。
 - [ ] 若未来改回手部直连 bench-test，S14.3L LinkerHand 左/右手串码、版本、state/current/temperature/fault 只读结果已记录。

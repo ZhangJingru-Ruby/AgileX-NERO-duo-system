@@ -245,3 +245,28 @@ time, with the robot hand cable disconnected from NERO J6, bench supply set to
 manual-confirmed `24 V`, polarity and XT30(2+2) pinout verified against the L6
 manual, one USB-CAN adapter connected to the hand CAN pair at `1 Mbps`, and only
 read-only LinkerHand identity/status checks run before any finger motion.
+
+Additional wiring risk from `灵巧手连接设备03.jpeg`:
+
+- A red/orange conductor with exposed stranded/shield-like metal is visible near
+  the bench supply and loose harness area.
+- The photo does not prove whether this is V+, GND, shield/drain, or an unused
+  conductor.
+- Treat it as an unsafe live conductor until proven otherwise.
+- The bench-test kit must not be energized or connected to a hand while any
+  conductor remains bare, frayed, unidentified, or able to touch the power
+  binding posts, CAN terminals, chassis, or another wire.
+
+Bench-test wiring repair requirements:
+
+1. Power supply unplugged and output disabled.
+2. Identify every conductor by continuity test, not by color alone.
+3. Map the harness to the L6 manual XT30(2+2) pinout: V+, GND, CAN_H, CAN_L.
+4. Confirm no short between V+/GND, CAN_H/CAN_L, CAN to V+, or CAN to GND.
+5. If the exposed conductor is shield/drain and the manual does not require a
+   termination point, insulate it individually with heat-shrink or equivalent.
+6. If the conductor is functional, terminate it with a proper crimp/ferrule or
+   connector; no loose strands are acceptable in screw terminals.
+7. Add strain relief so hand/cable motion cannot pull bare wire back out.
+8. Verify polarity at the hand-side plug with the hand disconnected before any
+   hand is powered.
