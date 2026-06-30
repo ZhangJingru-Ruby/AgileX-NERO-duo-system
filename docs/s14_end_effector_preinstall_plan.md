@@ -521,6 +521,10 @@ S14 SDK health result:
   values.
 - Next gate is `scripts/s14_linkerhand_l6_sdk_motion_gate.py --mode open-anchor`
   dry-run.
+- The open-anchor dry-run was accepted on 2026-06-30; see
+  `docs/s14_left_hand_open_anchor_dry_run_result_20260630.md`.
+- The next gate is the explicit open-anchor execute command, which sends one
+  SDK `open` preset to the left hand on `can1`.
 
 Blocking wiring issue before any bench-test:
 

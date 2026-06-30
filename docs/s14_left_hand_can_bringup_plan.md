@@ -192,6 +192,18 @@ Recommended first motion sequence:
    ```
 
    Add `--execute` only after the dry-run is reviewed.
+   The dry-run was accepted on 2026-06-30; see
+   `docs/s14_left_hand_open_anchor_dry_run_result_20260630.md`.
+
+   Next authorized command:
+
+   ```bash
+   .venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_motion_gate.py \
+     --execute \
+     --can can1 \
+     --side left \
+     --mode open-anchor
+   ```
 3. If the open-anchor command is accepted, run a small index micro-motion:
 
    ```bash
