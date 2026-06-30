@@ -545,6 +545,9 @@ S14 SDK health result:
 - Inventory result: `can1` is accepted left hand; `can2` is right-hand
   candidate and was DOWN during inventory. Activate `can2` at `1000000` before
   right-hand SDK health.
+- Right-hand SDK health was accepted on `can2` on 2026-06-30; see
+  `docs/s14_right_hand_sdk_health_result_20260630.md`.
+- Next gate is right-hand open-anchor dry-run only.
 
 Blocking wiring issue before any bench-test:
 

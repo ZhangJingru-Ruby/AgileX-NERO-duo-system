@@ -93,6 +93,16 @@ Acceptance:
 - Temperature and current raw values are stable.
 - No physical motion occurs.
 
+Live result:
+
+- Accepted on 2026-06-30; see
+  `docs/s14_right_hand_sdk_health_result_20260630.md`.
+- `can2` is UP/ERROR-ACTIVE at `1000000`.
+- SDK identified hand ID `0x27`, serial `LHL6-03-240-R-B-1-C`, embedded version
+  `[2, 3, 7]`.
+- Three fault samples were all zero.
+- Temperature/current raw values were stable.
+
 ## S14.9R.2 Open-Anchor Dry Run
 
 ```bash
