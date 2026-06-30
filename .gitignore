@@ -13,6 +13,10 @@ __pycache__/
 # Reproducible upstream clones. See README.md for required URLs and commits.
 upstream/
 
+# Large vendor document/source bundles downloaded for local review.
+# Commit the review notes/manifests instead of raw archives and extracted trees.
+docs/vendor/
+
 # ROS and build outputs
 build/
 install/

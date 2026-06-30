@@ -43,7 +43,7 @@ Last updated: 2026-06-30
 | S11 双臂实验基线 | Complete / accepted | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Accepted static TF values are `lab_world -> arm_a/world: x=0, y=0, z=0, roll=0, pitch=-1.5707963, yaw=0` and `lab_world -> arm_b/world: x=0.260, y=0, z=0, roll=3.1415926, pitch=-1.5707963, yaw=0`. Operator reports RViz matches the physical layout and follows both arms when they move. Post-TF snapshot `20260626_055339` is clean, and X11 access was restored to local-user only. |
 | S12 控制隔离与日志闭环 | Complete / accepted | Arm A `joint1 +30 deg` and Arm B `joint1 -30 deg` isolation tests both passed and returned. Passive-arm deviations were `0.005 deg` for Arm B during Arm A motion and `0.008 deg` for Arm A during Arm B motion. Post-motion snapshots `20260626_080809` and `20260626_083210` are clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
 | S13 低风险双臂协同原语 | Complete / accepted | Corrected Arm A `joint1 +30 deg` / Arm B `joint1 +30 deg` execution passed and operator confirmed visible direction matched expectation. Earlier final-snapshot attempts `20260626_093414` and `20260629_043358` were not accepted because duplicate publishers produced about `400 Hz` feedback. After cleanup, publisher count was `1` for both A/B joint-state topics, and final snapshot `20260629_043441` is clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
-| S14 末端执行器 | Active; J6-integrated hand path under Revo2 frame / J6 bridge diagnosis | Both dexterous hands are mechanically installed and stable. Arm A = right hand, Arm B = left hand. S14.1 no-motion snapshot `20260629_074337` is accepted for communication/read-only health: A/B `Publisher count: 1`, failed captures `0`, about `200 Hz`, `err_status: 0`, no joint-limit flags, and no joint-communication flags. Observation: A/B `arm_status=3`, documented upstream as `奇异点`; do not start wrist, Cartesian, or finger motion from this state without a separate posture/safety decision. AgileX Revo2 ROS endpoints appeared but did not produce physical hand status. The provided `upstream/linkerhand_sdk/` source identifies the hands as LinkerHand L6 devices, but the current robot installation connects the hand through the NERO J6 end-effector cable, not a direct PCAN-USB hand bus. Web screenshots show current end-effector config `强脑灵巧手`, hand page `普通灵巧手`, model `revo2`, mode `位置控制`, and enable without error. A 2026-06-30 Web small send on Arm A produced no Web error and no hand motion; external `can_arm_a` sample showed normal NERO arm/gripper/J7 frames (`0x251-0x257`, `0x2A8`, `0x2A9`) but no Revo2 `0x1B*` command or `0x1C*` feedback in the provided sample. Next gate: filtered Revo2-frame capture plus J6 accessory cable/power/communication diagnosis. |
+| S14 末端执行器 | Active; Linker/LBOT read-only controller probe pending | Both dexterous hands are mechanically installed and stable. Arm A = right hand, Arm B = left hand. S14.1 no-motion snapshot `20260629_074337` is accepted for communication/read-only health: A/B `Publisher count: 1`, failed captures `0`, about `200 Hz`, `err_status: 0`, no joint-limit flags, and no joint-communication flags. Observation: A/B `arm_status=3`, documented upstream as `奇异点`; do not start wrist, Cartesian, or finger motion from this state without a separate posture/safety decision. Web screenshots show current end-effector config `强脑灵巧手`, hand page `普通灵巧手`, model `revo2`, mode `位置控制`, and enable without error, but Web single-finger send produced no hand motion. New Drive docs reviewed in `docs/s14_linker_drive_review.md` confirm LinkerHand L6 and introduce a Linker/LBOT controller stack at `192.168.10.21` / `http://192.168.10.21:8000`. Next gate: check whether that controller exists with read-only network/API probes before continuing Revo2/J6 assumptions. No finger motion is authorized. |
 
 ## S0 Evidence
 
@@ -120,18 +120,22 @@ S2 offline environment result:
 
 S13 is complete. S14 is active. S14.0 mechanical/cable review, S14.1
 no-motion arm read-only verification, and S14.2 model/parameter decision are
-recorded. The LinkerHand SDK source is now available at
-`upstream/linkerhand_sdk/` and reviewed in
-`docs/s14_linkerhand_sdk_review.md`. The current installation routes the hand
+recorded. The local LinkerHand SDK review is in
+`docs/s14_linkerhand_sdk_review.md`, and the newer Drive document review is in
+`docs/s14_linker_drive_review.md`. The current installation routes the hand
 through the NERO J6 end-effector port, so direct LinkerHand PCAN assumptions do
 not apply unless the hand is moved back to a bench-test adapter. The immediate
-next step is S14.3J Web end-effector configuration and J6 hand enable-only
-diagnosis. Do not actuate the hand until S14
-records:
+next step is S14.3K: check whether the Linker/LBOT controller described by the
+new docs is reachable at `192.168.10.21` / `http://192.168.10.21:8000`. Do not
+actuate the hand until S14 records:
 
 - which arm J6 hand cable is connected to;
 - Web `6.8.5 末端执行器配置` evidence showing `强脑灵巧手`;
-- exact Web failure message if hand enable fails;
+- whether the Linker/LBOT controller is reachable;
+- if reachable, a custom read-only API probe result for API version, controller
+  info, and current state only;
+- if unreachable, vendor guidance on whether NERO J6 supports LinkerHand L6
+  directly or requires another controller/firmware option;
 - passive arm-CAN evidence around a small Web hand send, especially Revo2
   `0x1B*` command and `0x1C*` feedback frames;
 - Web log evidence around the same send;

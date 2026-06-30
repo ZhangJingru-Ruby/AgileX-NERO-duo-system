@@ -6052,3 +6052,62 @@ timeout 20s candump -tz can_arm_a,1B0:7F0,1C0:7F0
 If no frames are printed and the hand still does not move, stop Web hand motion
 attempts and re-check J6/hand cable seating and accessory power/communication
 before escalating to vendor/device-side support.
+
+## 2026-06-30 - Linker Drive Document Set Review
+
+Phase: S14 末端执行器接入
+
+Goal:
+Download and review the newer Linker/LinkerHand documents supplied through the
+Drive folder, then correct the S14 hand bring-up route if the new evidence
+changes the control-path assumptions.
+
+Actions:
+
+- Downloaded all eight files from the supplied Google Drive folder into
+  `docs/vendor/linker_drive_20260630/raw/`.
+- Validated the raw PDFs/zips and recorded SHA256 values in
+  `docs/s14_linker_drive_review.md`.
+- Extracted:
+  - `api_lk73_v1.0.4_1.zip`;
+  - `linkerta_v2_1.0.3.zip`;
+  - `Teleop-gloves_1.zip`.
+- Generated text from all PDFs with `pdftotext -layout`.
+- Reviewed the L6 product manual, LinkerHand Python SDK, LBOT Python/C SDK,
+  Web platform documentation, and control-interface documentation.
+
+Key findings:
+
+- The installed hands should continue to be treated as LinkerHand L6 devices.
+- L6 product facts: CAN/RS485, `24 V`, max current `1.4 A`, direct command
+  values `0..255`.
+- The newer LinkerHand Python SDK confirms direct-CAN right hand ID `0x27` and
+  left hand ID `0x28`, but the current robot installation is through NERO J6,
+  not a direct hand PCAN/USB-CAN bench setup.
+- `api_lk73_v1.0.4` describes a separate Linker/LBOT controller stack with
+  default controller IP `192.168.10.21` and Web platform
+  `http://192.168.10.21:8000`.
+- The LBOT SDK exposes L6 APIs through `LbotRobot("192.168.10.21")`, including
+  `l6_set_position`, `l6_set_velocity`, and `l6_set_effort`.
+- Vendor demos are unsafe for S14 because they include hand motion, arm motion,
+  zero setting, enable/disable, e-stop, and joint-limit modification examples.
+
+Deployment choice:
+
+- Do not continue with Revo2-only assumptions as the first next step.
+- New next gate is `S14.3K Linker/LBOT read-only controller probe`:
+  `ping -c 2 192.168.10.21` and
+  `curl -I --max-time 3 http://192.168.10.21:8000`.
+- If reachable, write a custom read-only `LbotRobot` probe for API version,
+  controller info, and current state only.
+- If unreachable, ask the vendor whether this NERO J6 installation supports
+  LinkerHand L6 directly, or whether a Linker/LBOT controller or firmware option
+  is required.
+
+Artifacts:
+
+- Review: `docs/s14_linker_drive_review.md`.
+- Updated: `docs/s14_end_effector_preinstall_plan.md`.
+- Updated: `docs/current_bringup_status.md`.
+- Updated: `docs/bringup_checklist.md`.
+- Updated: `docs/机器人部署与调试行动路线.md`.

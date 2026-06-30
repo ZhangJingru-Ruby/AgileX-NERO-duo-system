@@ -198,3 +198,25 @@ S14.3 should be replaced by `S14.3L LinkerHand read-only identification`:
    and fault values are normal.
 
 No finger movement is authorized by this review.
+
+## 2026-06-30 Linker Drive Update
+
+A newer Drive document set has now been downloaded and reviewed in
+`docs/s14_linker_drive_review.md`.
+
+Additional conclusions:
+
+- The newer documents confirm the hand-side device class as LinkerHand L6:
+  CAN/RS485, 24 V, direct SDK values `0..255`, right hand ID `0x27`, left hand
+  ID `0x28`.
+- They also introduce a separate Linker/LBOT robot controller stack with
+  default controller IP `192.168.10.21` and Web platform
+  `http://192.168.10.21:8000`.
+- Because our accepted NERO path currently uses direct host USB-CAN arm
+  interfaces and NERO Web at `http://192.168.31.1/#/welcome`, the next
+  highest-value check is whether that `192.168.10.21` controller exists on the
+  actual machine.
+
+This supersedes the previous Revo2-first next gate. The next live S14 check is
+`S14.3K Linker/LBOT read-only controller probe`. Do not run vendor demo motion
+scripts.

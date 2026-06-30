@@ -1,6 +1,6 @@
 # S14 End-Effector Installation Plan
 
-Status: S14.3L LinkerHand L6 read-only identification pending; AgileX Revo2 path is no longer the preferred hand path.
+Status: S14.3K Linker/LBOT read-only controller probe pending; LinkerHand L6 is now the hand fact source, and AgileX Revo2 is no longer the preferred first diagnostic path.
 
 S14 starts after S13 closed the bare-arm low-risk dual-arm primitive. Installing
 the dexterous hands changes mass, TCP, cable routing, collision envelope, and
@@ -376,7 +376,47 @@ Current interpretation:
   fault/compatibility, Web command not being sent to the Revo2 bridge, or an
   internal controller-to-hand bridge issue.
 
-Next S14.3J gate:
+New Drive document review on 2026-06-30:
+
+- Downloaded and reviewed the newer Linker document set from the supplied
+  Google Drive folder.
+- Review record: `docs/s14_linker_drive_review.md`.
+- The documents confirm LinkerHand L6 as a CAN/RS485 hand with `24 V` power and
+  native `0..255` L6 commands.
+- The direct LinkerHand SDK uses right hand CAN ID `0x27` and left hand CAN ID
+  `0x28`.
+- The `api_lk73_v1.0.4` package describes a Linker/LBOT robot controller stack:
+  default controller IP `192.168.10.21`, Web platform
+  `http://192.168.10.21:8000`, and L6 APIs
+  `l6_set_position`, `l6_set_velocity`, and `l6_set_effort`.
+- This controller stack is not proven to be present on the current NERO
+  installation, whose accepted arm path is direct host USB-CAN plus NERO Web at
+  `http://192.168.31.1/#/welcome`.
+- Therefore the next diagnostic should first check whether the Linker/LBOT
+  controller exists before continuing Revo2-specific assumptions.
+
+Updated next gate: `S14.3K Linker/LBOT read-only controller probe`.
+
+Read-only checks:
+
+```bash
+ip -br addr
+ping -c 2 192.168.10.21
+curl -I --max-time 3 http://192.168.10.21:8000
+```
+
+Accept the gate if the result is recorded either way:
+
+- reachable: write a custom read-only `LbotRobot("192.168.10.21")` probe for
+  API version, controller info, and current state only;
+- unreachable: treat the new SDK as evidence for a different/additional
+  controller stack and ask the vendor whether NERO J6 supports LinkerHand L6
+  directly or requires a Linker/LBOT controller or firmware option.
+
+Do not run vendor demos from `api_lk73_v1.0.4`; some demos command hand motion,
+arm motion, zero setting, enable/disable, e-stop, and joint-limit changes.
+
+Deferred S14.3J Revo2/J6 gate:
 
 1. Confirm which arm J6 the connected hand cable is plugged into.
 2. Keep Web `6.8.5 末端执行器配置` as `强脑灵巧手`; do not change load/TCP values
@@ -387,8 +427,9 @@ Next S14.3J gate:
 4. Record whether any `0x1B*` command or `0x1C*` feedback appears.
 5. Re-check physical cable seating at J6 and the hand connector, using the
    manual references `2.1.2` and `2.3.2`.
-6. If no Revo2 frames and no hand motion are observed, escalate from software
-   settings to J6 accessory power/communication and vendor/device-side support.
+6. If the Linker/LBOT controller is not present, and no Revo2 frames or hand
+   motion are observed, escalate from software settings to J6 accessory
+   power/communication and vendor/device-side support.
 
 ### S14.4 First Finger Motion
 
