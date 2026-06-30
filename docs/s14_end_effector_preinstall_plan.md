@@ -301,6 +301,50 @@ Field update on 2026-06-29:
   `--allow-arm-can` is explicitly supplied. Do not use that override before a
   documented bus review.
 
+Correction on 2026-06-30:
+
+- Operator clarified that the installed hands are not connected directly to the
+  computer through USB-CAN/PCAN adapters. They are connected to the NERO arm
+  through the J6 end-effector power/communication cable.
+- The direct LinkerHand CAN path in `upstream/linkerhand_sdk/` describes a
+  previous bench/debug setup, not the current robot installation.
+- Do not run `scripts/s14_linkerhand_identify_can.sh` on `can_arm_a` or
+  `can_arm_b` for the current J6-integrated setup.
+
+Observed evidence on 2026-06-30:
+
+- `ip -br link show type can` shows only:
+  - `can_arm_a` UP;
+  - `can_arm_b` UP.
+- Passive `candump -tz can_arm_a` showed normal NERO arm feedback frames such as
+  `0x2A1`, `0x2A2`, `0x2A3`, `0x2A4`, and `0x261..0x267`.
+- No direct LinkerHand-style `0x27`, `0x28`, `0x2F`, or `0x30` frames were
+  observed in the provided sample.
+- Operator can enable/control the arm in Web, but cannot enable/control the
+  hand in Web.
+
+Current interpretation:
+
+- External arm CAN is healthy.
+- The provided passive sample does not prove that J6 end-effector CAN is
+  forwarded to the external arm CAN bus.
+- Web hand enable failure now points first to J6 hand power/communication,
+  Web end-effector configuration, hand compatibility, or hand-side fault.
+
+Next S14.3J gate:
+
+1. Confirm which arm J6 the connected hand cable is plugged into.
+2. In that arm's Web UI, inspect `6.8.5 末端执行器配置` and record whether the
+   end effector is still `默认（无加载）` or has a hand-specific option.
+3. If the current Web end-effector type is still `默认（无加载）`, change only
+   the end-effector type to the documented hand option if available; do not
+   command finger movement.
+4. Return to the Web `6.3 灵巧手` page and try enable-only if the UI exposes a
+   separate enable button, with no slider movement and no `应用` motion command.
+5. Screenshot or copy the exact Web failure message if enable still fails.
+6. Re-check physical cable seating at J6 and the hand connector, using the
+   manual references `2.1.2` and `2.3.2`.
+
 ### S14.4 First Finger Motion
 
 Deferred. Requires a separate dry-run/safety gate. First finger motion should be

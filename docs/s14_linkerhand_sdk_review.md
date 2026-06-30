@@ -145,8 +145,22 @@ Therefore the expected logical mapping is likely:
 - Arm A hand = right LinkerHand L6 = SDK `hand_type="right"`;
 - Arm B hand = left LinkerHand L6 = SDK `hand_type="left"`.
 
-The actual CAN interfaces must be verified on the live system before any command
-or read probe.
+Correction on 2026-06-30:
+
+- The SDK README describes the previous bench/debug setup, where LinkerHand L6
+  devices were controlled directly from the computer through PEAK PCAN-USB
+  adapters.
+- The current robot installation is different: the hand cable is connected to
+  the NERO arm J6 end-effector port through the accessory power/communication
+  cable.
+- Therefore the live system should not be expected to expose a separate
+  `can0`/`can1` hand interface on the computer.
+- The LinkerHand direct-CAN scripts remain useful protocol evidence, but they
+  are not the immediate control path for the installed robot unless the hand is
+  disconnected from J6 and placed back on a direct bench-test CAN adapter.
+
+The actual J6-integrated hand communication path must be verified through the
+NERO controller/Web/arm-CAN evidence before any command or read probe.
 
 ## Safety Notes
 
@@ -169,12 +183,16 @@ or read probe.
 S14.3 should be replaced by `S14.3L LinkerHand read-only identification`:
 
 1. Stop any AgileX Revo2 driver terminal used for hand tests.
-2. Verify whether additional PEAK PCAN-USB adapters are connected.
-3. Identify hand CAN interfaces and map them to left/right hands without
-   touching arm CAN interfaces.
-4. Read LinkerHand serial/version/state/fault/temperature/current for each
-   hand.
-5. Accept S14.3L only if the serials match:
+2. Verify the physical J6 hand cable, orientation, and seating on the selected
+   arm and hand.
+3. Verify Web end-effector configuration and the Web hand page in read-only or
+   enable-only mode, without changing finger positions.
+4. Check arm external CAN only passively. Do not expect direct LinkerHand
+   `0x27`/`0x28` frames unless NERO forwards end-effector CAN to the external
+   bus.
+5. Accept the J6-integrated read-only path only if Web/controller evidence can
+   identify the hand or report a healthy hand status. If direct LinkerHand
+   serials are exposed, they should match:
    - left: `LHL6-03-253-L-B-1-C`;
    - right: `LHL6-03-240-R-B-1-C`;
    and fault values are normal.

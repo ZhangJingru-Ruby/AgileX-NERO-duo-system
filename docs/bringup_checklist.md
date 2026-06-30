@@ -293,8 +293,12 @@
 - [x] LinkerHand SDK 已下载并移入 `upstream/linkerhand_sdk/`；审阅记录见 `docs/s14_linkerhand_sdk_review.md`。
 - [x] S14 手部事实源已改为 LinkerHand L6 优先；AgileX Revo2 ROS `hand_status` 不再作为这些手的主验收路径。
 - [x] 已新增目标接口 LinkerHand 识别脚本：`scripts/s14_linkerhand_identify_can.sh`。
-- [ ] S14.3L LinkerHand 左/右手 CAN 接口已识别，且未误向 `can_arm_a`/`can_arm_b` 发手部扫描帧。
-- [ ] S14.3L LinkerHand 左/右手串码、版本、state/current/temperature/fault 只读结果已记录。
+- [x] 现场已澄清当前装机路径为手部三排线接 NERO J6 末端接口，不是电脑直连手部 USB-CAN。
+- [x] 2026-06-30 `can_arm_a` 被动抓包仅见臂本体反馈；Web 可使能手臂但不能使能机械手。
+- [x] S14.3L 直连 LinkerHand CAN 识别已判定为当前装机形态不适用；不在 `can_arm_a`/`can_arm_b` 上运行。
+- [ ] S14.3J Web `6.8.5 末端执行器配置` 已截图/记录，确认是否仍为默认无加载。
+- [ ] S14.3J Web `6.3 灵巧手` enable-only 失败信息已截图/记录。
+- [ ] 若未来改回手部直连 bench-test，S14.3L LinkerHand 左/右手串码、版本、state/current/temperature/fault 只读结果已记录。
 - [ ] 夹爪 `0x2A8` 或上层反馈正常。
 - [ ] 低速小行程动作正常。
 - [ ] 无过流、过温、传感器异常。

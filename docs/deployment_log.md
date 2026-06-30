@@ -5897,3 +5897,61 @@ Next live work:
    interface.
 3. Activate that candidate interface at `1000000` bitrate if needed.
 4. Run the targeted LinkerHand identification script on the candidate interface.
+
+## 2026-06-30 - S14 J6 Integrated Hand Path Correction
+
+Phase: S14 末端执行器接入
+
+Goal:
+Correct the hand communication assumption after the operator clarified the
+physical connection.
+
+Action:
+Operator clarified that the hands are not directly connected to the computer by
+USB-CAN/PCAN adapters. The available hand-side cable is connected from the hand
+to the NERO arm J6 end-effector port. Operator then provided passive `can_arm_a`
+evidence and Web behavior.
+
+Manual evidence:
+
+- User manual section `2.1.2` says the J6 end connector provides 24 V, 2 A max
+  and CAN for supported end-effectors.
+- User manual section `2.3.2` says after installing the dexterous hand, connect
+  the accessory power/communication cable between the J6 end connector and the
+  hand.
+- User manual section `6.3` documents a Web dexterous-hand control page with 6
+  independent degrees of freedom.
+
+Live evidence:
+
+- `ip -br link show type can`:
+  - `can_arm_a` UP;
+  - `can_arm_b` UP.
+- Passive `candump -tz can_arm_a` sample shows NERO arm feedback frames:
+  - `0x2A1`, `0x2A2`, `0x2A3`, `0x2A4`;
+  - `0x261` through `0x267`.
+- No direct LinkerHand bench-test IDs such as `0x27`, `0x28`, `0x2F`, or
+  `0x30` were present in the sample.
+- Operator reports Web can enable/control the arm, but cannot enable/control
+  the hand.
+
+Interpretation:
+
+- The previous direct LinkerHand CAN assumption is not valid for the current
+  robot installation.
+- The external arm CAN link is healthy, but the sample does not show direct
+  LinkerHand frames.
+- J6 hand communication may be internal to the arm controller and not forwarded
+  to the external CAN bus.
+- Web hand enable failure now points first to Web end-effector configuration,
+  J6/hand cable seating, J6 end-effector power/communication, hand compatibility,
+  or hand-side fault.
+
+Deployment choices:
+
+- Do not run `scripts/s14_linkerhand_identify_can.sh` on `can_arm_a` or
+  `can_arm_b` in the current J6-integrated setup.
+- Keep LinkerHand SDK as protocol evidence and previous bench-debug evidence,
+  not the immediate live control path.
+- Next gate is `S14.3J`: Web end-effector configuration and J6 hand enable-only
+  diagnosis.
