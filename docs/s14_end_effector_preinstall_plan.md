@@ -343,6 +343,26 @@ Additional Web evidence on 2026-06-30:
 - Operator reports enable produced no Web error, but finger control did not move
   the hand.
 
+Additional Web-send/CAN evidence on 2026-06-30:
+
+- Operator ran a Web small single-finger send while passively logging
+  `can_arm_a`.
+- Web did not show an error.
+- The hand still did not move.
+- The provided external CAN sample included:
+  - `0x2A1`, `0x2A2`, `0x2A3`, `0x2A4`;
+  - `0x251` through `0x257`;
+  - `0x261` through `0x267`;
+  - `0x2A5`, `0x2A6`, `0x2A7`, `0x2A8`, `0x2A9`.
+- Local protocol notes and upstream parser code identify:
+  - `0x251-0x257` as NERO joint high-speed feedback;
+  - `0x2A8` as gripper feedback;
+  - `0x2A9` as J7 angle feedback;
+  - Revo2 command frames as `0x1B1`, `0x1B2`, `0x1B3`, `0x1B5`;
+  - Revo2 feedback frames as `0x1C0`, `0x1C1`, `0x1C2`, `0x1C3`.
+- The provided sample did not show Revo2 `0x1B*` command or `0x1C*` feedback
+  frames.
+
 Current interpretation:
 
 - External arm CAN is healthy.
@@ -350,27 +370,25 @@ Current interpretation:
   forwarded to the external arm CAN bus.
 - Web end-effector configuration is no longer the primary suspected blocker
   because the screenshots show `强脑灵巧手` as current configuration.
+- Web can accept a hand send without visible error, but no physical hand motion
+  has been observed.
 - The remaining likely blockers are J6 hand power/communication, hand-side
-  fault/compatibility, Web command not being sent/applied, or an internal
-  controller-to-hand bridge issue.
+  fault/compatibility, Web command not being sent to the Revo2 bridge, or an
+  internal controller-to-hand bridge issue.
 
 Next S14.3J gate:
 
 1. Confirm which arm J6 the connected hand cable is plugged into.
 2. Keep Web `6.8.5 末端执行器配置` as `强脑灵巧手`; do not change load/TCP values
    during this diagnostic step.
-3. On the Web `6.3 灵巧手` page, run a single-finger small position command only
-   while collecting evidence:
-   - start passive `candump -tz can_arm_a`;
-   - enable hand if needed;
-   - change only one clearly visible finger by a small value;
-   - press `发送`;
-   - return that finger to the original value.
-4. Record whether Web logs show any hand command/error.
-5. Screenshot or copy the exact Web message if the send fails or silently does
-   nothing.
-6. Re-check physical cable seating at J6 and the hand connector, using the
+3. Run a filtered passive CAN check during another Web small single-finger
+   send, focused on Revo2 frames:
+   `timeout 20s candump -tz can_arm_a,1B0:7F0,1C0:7F0`.
+4. Record whether any `0x1B*` command or `0x1C*` feedback appears.
+5. Re-check physical cable seating at J6 and the hand connector, using the
    manual references `2.1.2` and `2.3.2`.
+6. If no Revo2 frames and no hand motion are observed, escalate from software
+   settings to J6 accessory power/communication and vendor/device-side support.
 
 ### S14.4 First Finger Motion
 

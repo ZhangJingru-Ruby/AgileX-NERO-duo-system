@@ -5999,3 +5999,56 @@ Next live diagnostic:
 Run a small single-finger Web send while passively logging `can_arm_a`, and
 capture Web `日志` around the same action. Do not use LinkerHand direct-CAN
 scripts or ROS `/control/hand`.
+
+## 2026-06-30 - S14 Web Hand Send Has No Motion And No Revo2 Frames In Sample
+
+Phase: S14 末端执行器接入
+
+Goal:
+Interpret the first Web small single-finger send capture after Web hand
+configuration was confirmed.
+
+Evidence:
+
+- Operator reports:
+  - Web did not show an error;
+  - the dexterous hand still did not move.
+- The provided `can_arm_a` passive sample includes normal NERO external CAN
+  feedback/control-state frames, including:
+  - `0x2A1`, `0x2A2`, `0x2A3`, `0x2A4`;
+  - `0x251` through `0x257`;
+  - `0x261` through `0x267`;
+  - `0x2A5`, `0x2A6`, `0x2A7`, `0x2A8`, `0x2A9`.
+- Existing local protocol notes identify:
+  - `0x251-0x257` as joint high-speed feedback;
+  - `0x2A8` as gripper feedback;
+  - `0x2A9` as J7 angle feedback.
+- Upstream Revo2 code identifies:
+  - command frames: `0x1B1`, `0x1B2`, `0x1B3`, `0x1B5`;
+  - feedback frames: `0x1C0`, `0x1C1`, `0x1C2`, `0x1C3`.
+- The provided sample did not show Revo2 command or feedback IDs.
+
+Interpretation:
+
+- Web end-effector configuration remains plausible, but the live send did not
+  produce a visible hand response.
+- The provided external CAN sample does not show Revo2 hand-frame evidence.
+- Because NERO's J6 accessory bus may be bridged internally, absence of these
+  frames on `can_arm_a` alone is not a final hardware-failure proof.
+- The next diagnostic should distinguish between:
+  - Web/controller not issuing Revo2 commands;
+  - J6 accessory power/communication wiring problem;
+  - internal bridge not reaching the hand;
+  - hand-side compatibility or fault.
+
+Next live diagnostic:
+
+Run a filtered passive capture during one Web small single-finger send:
+
+```bash
+timeout 20s candump -tz can_arm_a,1B0:7F0,1C0:7F0
+```
+
+If no frames are printed and the hand still does not move, stop Web hand motion
+attempts and re-check J6/hand cable seating and accessory power/communication
+before escalating to vendor/device-side support.

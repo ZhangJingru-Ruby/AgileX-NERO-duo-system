@@ -298,7 +298,9 @@
 - [x] S14.3L 直连 LinkerHand CAN 识别已判定为当前装机形态不适用；不在 `can_arm_a`/`can_arm_b` 上运行。
 - [x] S14.3J Web `6.8.5 末端执行器配置` 已截图/记录：当前配置为 `强脑灵巧手`，不是默认无加载。
 - [x] S14.3J Web `6.3 灵巧手` 已截图/记录：`普通灵巧手`、`revo2`、`位置控制`、enable 无报错。
-- [ ] S14.3J Web 小幅单指 `发送` 同步 `candump` 与 Web 日志证据已记录。
+- [x] S14.3J Web 小幅单指 `发送` 同步 `candump` 证据已记录：Web 无报错但手未动，样本未见 Revo2 `0x1B*` / `0x1C*` 帧。
+- [ ] S14.3J 过滤 Revo2 帧复验已完成：`timeout 20s candump -tz can_arm_a,1B0:7F0,1C0:7F0`。
+- [ ] S14.3J J6 末端供电通讯线和手端接头已重新断电复插并复验。
 - [ ] 若未来改回手部直连 bench-test，S14.3L LinkerHand 左/右手串码、版本、state/current/temperature/fault 只读结果已记录。
 - [ ] 夹爪 `0x2A8` 或上层反馈正常。
 - [ ] 低速小行程动作正常。
