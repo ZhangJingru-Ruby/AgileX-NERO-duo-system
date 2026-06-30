@@ -1,0 +1,114 @@
+# S14 Dual LinkerHand L6 Synchronization Plan
+
+Date: 2026-06-30
+
+## Goal
+
+Start the first dual-hand coordination gates after both hands have passed
+independent CAN identity and first-motion checks.
+
+The goal is not high-performance manipulation yet. The first goal is to prove
+that one project script can address the left hand on `can1` and the right hand
+on `can2`, apply the correct side-specific presets, and preserve zero-fault
+health before and after a very small coordinated command.
+
+## Preconditions
+
+- Left hand accepted:
+  - `docs/s14_left_hand_index_micro_result_20260630.md`
+  - Interface: `can1`
+  - Serial: `LHL6-03-253-L-B-1-C`
+- Right hand accepted from SDK/software health:
+  - `docs/s14_right_hand_index_micro_result_20260630.md`
+  - Interface: `can2`
+  - Serial: `LHL6-03-240-R-B-1-C`
+- Right-hand physical index response must be recorded before any dual-hand
+  execute.
+- No SDK GUI, demo, gesture loop, or other hand-control process may be running.
+- No object is in either hand.
+- Bench power and hand CAN cables are stable and easy to cut power from.
+
+## S14.10.0 Control Source Check
+
+Before any dual-hand execute:
+
+```bash
+bash scripts/s10_control_source_audit.sh
+```
+
+For hand-only bench testing, the important acceptance point is that no unrelated
+SDK demo, GUI, or stale motion process is running. The NERO arm CAN interfaces
+may remain UP but must not be used for LinkerHand commands.
+
+## S14.10.1 Dual Open-Anchor Dry Run
+
+```bash
+.venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_dual_motion_gate.py \
+  --left-can can1 \
+  --right-can can2 \
+  --mode open-anchor
+```
+
+Acceptance:
+
+- `execute=False`.
+- Left base pose is `[255, 179, 255, 255, 255, 255]`.
+- Right base pose is `[255, 70, 255, 255, 255, 255]`.
+- Sequence is `send_both_base_poses_once`.
+- No SDK connection or motion command is requested by the dry-run.
+
+## S14.10.2 Dual Open-Anchor Execute
+
+Only after S14.10.1 is reviewed and both hands have normal physical observations:
+
+```bash
+.venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_dual_motion_gate.py \
+  --execute \
+  --left-can can1 \
+  --right-can can2 \
+  --mode open-anchor
+```
+
+Acceptance:
+
+- SDK identifies both hands.
+- Pre/post faults are all zero for both hands.
+- Temperature/current raw values remain stable.
+- Both hands remain open or make only a small open-pose correction.
+- No abnormal sound, heat, smell, vibration, or power jump occurs.
+- The script reports send time delta for the paired command.
+
+## S14.10.3 Dual Index-Micro Dry Run
+
+Only after dual open-anchor execute is accepted:
+
+```bash
+.venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_dual_motion_gate.py \
+  --left-can can1 \
+  --right-can can2 \
+  --mode index-micro \
+  --joint index \
+  --left-delta -10 \
+  --right-delta -10 \
+  --speed 30
+```
+
+Acceptance:
+
+- Left target is `[255, 179, 245, 255, 255, 255]`.
+- Right target is `[255, 70, 245, 255, 255, 255]`.
+- Sequence is target for both hands, then return both hands to open.
+
+## S14.10.4 Dual Index-Micro Execute
+
+Deferred until S14.10.3 dry-run is accepted and the operator confirms both
+hands are clear.
+
+## Boundaries
+
+- This stage does not authorize grasping objects.
+- This stage does not authorize full gesture sequences.
+- This stage does not authorize moving the NERO arms while hand sync tests run.
+- This stage does not yet prove hard real-time synchronization. The script sends
+  commands through two Python threads and reports the send time delta as a
+  practical first coordination metric.

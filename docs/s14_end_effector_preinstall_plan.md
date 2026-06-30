@@ -554,8 +554,10 @@ S14 SDK health result:
   control.
 - Right-hand index-micro passed from SDK/software health on 2026-06-30; see
   `docs/s14_right_hand_index_micro_result_20260630.md`.
-- Physical observation of right index response is still pending. Do not start
-  synchronized hand control until it is recorded.
+- Physical observation of right index response was confirmed by the operator.
+- Dual-hand synchronization planning is recorded in
+  `docs/s14_dual_hand_sync_plan.md`; the first allowed software step is
+  dual open-anchor dry-run only.
 
 Blocking wiring issue before any bench-test:
 

@@ -94,12 +94,12 @@ Accepted from SDK/software health:
 - Current raw values stayed low and stable in the SDK samples.
 - The wrapper exited cleanly.
 
-Physical observation is still pending:
+## Physical Observation
 
-- Record whether the right index finger visibly moved during the target step.
-- Record whether it returned to open.
-- Record whether bench supply voltage/current stayed normal and whether there
-  was any abnormal sound, heat, smell, vibration, or unexpected motion.
+Operator update on 2026-06-30:
 
-Synchronized control remains blocked until the physical observation confirms
-the right index response or a follow-up diagnosis is completed.
+- Right index response was confirmed after the index-micro execute gate.
+- The result is accepted as the right-hand first index-motion baseline.
+
+Synchronized control may proceed to dry-run planning, but synchronized execute
+still requires its own dry-run acceptance and safety gate.
