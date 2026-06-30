@@ -7,7 +7,7 @@ Last updated: 2026-06-30
 | Item | Current value |
 | --- | --- |
 | Current end effector | Dual LinkerHand L6 dexterous hands installed mechanically; Arm A right hand, Arm B left hand |
-| Planned end effector state | S14.8C left LinkerHand SDK index-micro dry-run pending; no accepted index motion yet |
+| Planned end effector state | S14.8C left LinkerHand SDK index-micro accepted from SDK health; physical observation note pending |
 | Physical arm count | Two NERO arms, independently powered |
 | Arm A | Web verified; hotspot `agx-7ax-armA`; planned CAN `can_arm_a`; ROS namespace `arm_a` |
 | Arm B | Web verified; hotspot `agx-7ax-armB`; planned CAN `can_arm_b`; ROS namespace `arm_b` |
@@ -43,7 +43,7 @@ Last updated: 2026-06-30
 | S11 双臂实验基线 | Complete / accepted | `lab_world` is defined with Arm A center as origin and `+X` from Arm A to Arm B. Accepted static TF values are `lab_world -> arm_a/world: x=0, y=0, z=0, roll=0, pitch=-1.5707963, yaw=0` and `lab_world -> arm_b/world: x=0.260, y=0, z=0, roll=3.1415926, pitch=-1.5707963, yaw=0`. Operator reports RViz matches the physical layout and follows both arms when they move. Post-TF snapshot `20260626_055339` is clean, and X11 access was restored to local-user only. |
 | S12 控制隔离与日志闭环 | Complete / accepted | Arm A `joint1 +30 deg` and Arm B `joint1 -30 deg` isolation tests both passed and returned. Passive-arm deviations were `0.005 deg` for Arm B during Arm A motion and `0.008 deg` for Arm A during Arm B motion. Post-motion snapshots `20260626_080809` and `20260626_083210` are clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
 | S13 低风险双臂协同原语 | Complete / accepted | Corrected Arm A `joint1 +30 deg` / Arm B `joint1 +30 deg` execution passed and operator confirmed visible direction matched expectation. Earlier final-snapshot attempts `20260626_093414` and `20260629_043358` were not accepted because duplicate publishers produced about `400 Hz` feedback. After cleanup, publisher count was `1` for both A/B joint-state topics, and final snapshot `20260629_043441` is clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
-| S14 末端执行器 | Active; left-hand SDK health, open-anchor dry-run, and open-anchor execute accepted from SDK health; index-micro dry-run pending | Both dexterous hands are mechanically installed and stable. Arm A = right hand, Arm B = left hand. S14.1 no-motion snapshot `20260629_074337` is accepted for arm communication/read-only health. Web screenshots show current end-effector config `强脑灵巧手`, hand page `普通灵巧手`, model `revo2`, mode `位置控制`, and enable without error, but Web single-finger send produced no hand motion. New Drive docs reviewed in `docs/s14_linker_drive_review.md` confirm LinkerHand L6; the live network probe did not reach `192.168.10.21`, and photos under `docs/pics/灵巧手连接设备/` show a bench DC supply plus USB-CAN debug hardware, not an IP controller. The left hand is now disconnected from arm/J6 and powered independently. Host checks found PEAK-System `XCAN-USB` on SocketCAN `can1`, USB path `1-3.4.4:1.0`; `can1` is UP/ERROR-ACTIVE at `1000000`. The original probe confirmed left serial `LHL6-03-253-L-B-1-C`, plausible temperatures `[33,35,35,35,35,35]`, and all-zero faults, but the operator observed physical hand opening during the probe. Therefore `0x01` is no longer accepted as safe read-only, and passive `candump` later produced no idle frames while voltage/current stayed stable at about `24 V` and `0.135 A`. SDK health and open-anchor dry-run are accepted. Open-anchor execute sent one SDK `open` preset `[255,179,255,255,255,255]` at speed `30`; pre/post faults were all zero and temperature was stable. The final `Bad file descriptor` line is treated as SDK receive-thread shutdown noise after completion, not a hand fault. Next gate: index-micro dry-run only; do not run GUI/demo/full gesture scripts. |
+| S14 末端执行器 | Active; left-hand first index micro-motion accepted from SDK/software health | Both dexterous hands are mechanically installed and stable. Arm A = right hand, Arm B = left hand. S14.1 no-motion snapshot `20260629_074337` is accepted for arm communication/read-only health. Web screenshots show current end-effector config `强脑灵巧手`, hand page `普通灵巧手`, model `revo2`, mode `位置控制`, and enable without error, but Web single-finger send produced no hand motion. New Drive docs reviewed in `docs/s14_linker_drive_review.md` confirm LinkerHand L6; the live network probe did not reach `192.168.10.21`, and photos under `docs/pics/灵巧手连接设备/` show a bench DC supply plus USB-CAN debug hardware, not an IP controller. The left hand is now disconnected from arm/J6 and powered independently. Host checks found PEAK-System `XCAN-USB` on SocketCAN `can1`, USB path `1-3.4.4:1.0`; `can1` is UP/ERROR-ACTIVE at `1000000`. The original probe confirmed left serial `LHL6-03-253-L-B-1-C`, plausible temperatures `[33,35,35,35,35,35]`, and all-zero faults, but the operator observed physical hand opening during the probe. Therefore `0x01` is no longer accepted as safe read-only, and passive `candump` later produced no idle frames while voltage/current stayed stable at about `24 V` and `0.135 A`. SDK health, open-anchor, and left index micro-motion are accepted from SDK/software health. Index micro-motion changed only index raw value `255 -> 245`, then returned to open; pre/post faults were all zero, temperature/current raw values stayed stable, and the wrapper exited cleanly. Next gate: record operator physical observation and bench supply behavior before widening motion or moving to the right hand; do not run GUI/demo/full gesture scripts. |
 
 ## S0 Evidence
 
@@ -123,25 +123,15 @@ CAN bench-test branch and is disconnected from NERO J6. SDK-backed health
 validation with the local tuned repository is accepted; see
 `docs/s14_left_hand_sdk_health_result_20260630.md`.
 
-The open-anchor execute gate is accepted from SDK/software health; see
-`docs/s14_left_hand_open_anchor_execute_result_20260630.md`.
+The left index micro-motion gate is accepted from SDK/software health; see
+`docs/s14_left_hand_index_micro_result_20260630.md`.
 
-The immediate next step is the index-micro dry-run:
-
-```bash
-.venv/nero-sdk/bin/python scripts/s14_linkerhand_l6_sdk_motion_gate.py \
-  --can can1 \
-  --side left \
-  --mode index-micro \
-  --joint index \
-  --delta -10 \
-  --speed 30
-```
-
-This dry-run prints the planned index target and does not move the hand. Before
-any index-micro execute, confirm the physical observation and bench power
-stability from the open-anchor execute. Full SDK demos, GUI, gesture loops,
-`get_state()`, and `get_torque()` remain blocked.
+The immediate next step is not a new command: first record operator physical
+observation and bench power behavior for the open-anchor and index-micro
+executions. After that, choose between repeating the same bench process on the
+right hand or planning a larger left-hand single-finger test with another
+dry-run first. Full SDK demos, GUI, gesture loops, `get_state()`, and
+`get_torque()` remain blocked.
 
 Until S14 has its own gates accepted, do not run Cartesian, MoveIt execute,
 contact, handoff, full dexterous-hand actuation, or close-proximity

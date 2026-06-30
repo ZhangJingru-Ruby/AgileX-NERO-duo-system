@@ -226,6 +226,18 @@ Recommended first motion sequence:
    unexpected jump, heat, noise, nonzero fault, or motion inconsistent with the
    printed target pose.
 
+Live S14 index-micro result:
+
+- Accepted from SDK/software health on 2026-06-30; see
+  `docs/s14_left_hand_index_micro_result_20260630.md`.
+- Dry-run target was `[255, 179, 245, 255, 255, 255]`, changing only `index`
+  from `255` to `245`.
+- Execute sent target then returned to `[255, 179, 255, 255, 255, 255]`.
+- Pre/post fault values were all zero.
+- Temperature and current raw values stayed stable.
+- Physical observation and bench supply behavior still need to be explicitly
+  recorded before widening the motion envelope or moving to the second hand.
+
 Do not use `test_hand.py`, `gestures.py`, `dual_gui.py`, or SDK demo scripts for
 the first motion.
 

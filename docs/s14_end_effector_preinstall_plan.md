@@ -531,7 +531,12 @@ S14 SDK health result:
 - The final `Bad file descriptor` line occurred after completion and is treated
   as SDK receive-thread shutdown noise. The wrapper now joins the receive thread
   before shutting down the bus.
-- Next gate is index-micro dry-run only.
+- The left index micro-motion dry-run and execute gates were accepted from
+  SDK/software health on 2026-06-30; see
+  `docs/s14_left_hand_index_micro_result_20260630.md`.
+- Before any broader gesture, larger delta, or right-hand reproduction, record
+  the operator's physical observation and bench supply behavior from the
+  open-anchor and index-micro executions.
 
 Blocking wiring issue before any bench-test:
 
