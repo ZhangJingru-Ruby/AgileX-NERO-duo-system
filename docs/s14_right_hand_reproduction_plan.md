@@ -185,6 +185,17 @@ Acceptance:
 - Temperature/current remain stable.
 - Bench supply remains near 24 V without abnormal current jump.
 
+Live result:
+
+- Accepted from SDK/software health on 2026-06-30; see
+  `docs/s14_right_hand_index_micro_result_20260630.md`.
+- Dry-run and execute both used target pose `[255, 70, 245, 255, 255, 255]`,
+  changing only right index raw value `255 -> 245`, then returning to open.
+- Pre/post fault values were all zero and temperature/current raw values were
+  stable.
+- Physical observation is still pending. Synchronized control remains blocked
+  until the right index visible response is confirmed or diagnosed.
+
 ## After Right-Hand Acceptance
 
 The next stage is synchronized control planning:

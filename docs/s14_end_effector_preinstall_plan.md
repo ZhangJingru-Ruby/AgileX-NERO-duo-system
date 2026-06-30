@@ -552,6 +552,10 @@ S14 SDK health result:
 - Operator observed non-index finger motion but no visible index motion.
   Resolve with right-hand index-micro verification before any synchronized
   control.
+- Right-hand index-micro passed from SDK/software health on 2026-06-30; see
+  `docs/s14_right_hand_index_micro_result_20260630.md`.
+- Physical observation of right index response is still pending. Do not start
+  synchronized hand control until it is recorded.
 
 Blocking wiring issue before any bench-test:
 
