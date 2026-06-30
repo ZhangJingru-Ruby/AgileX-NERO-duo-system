@@ -547,7 +547,11 @@ S14 SDK health result:
   right-hand SDK health.
 - Right-hand SDK health was accepted on `can2` on 2026-06-30; see
   `docs/s14_right_hand_sdk_health_result_20260630.md`.
-- Next gate is right-hand open-anchor dry-run only.
+- Right-hand open-anchor was accepted from SDK/software health on 2026-06-30;
+  see `docs/s14_right_hand_open_anchor_result_20260630.md`.
+- Operator observed non-index finger motion but no visible index motion.
+  Resolve with right-hand index-micro verification before any synchronized
+  control.
 
 Blocking wiring issue before any bench-test:
 

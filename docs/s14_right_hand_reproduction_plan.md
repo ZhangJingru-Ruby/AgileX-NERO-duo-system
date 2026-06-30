@@ -136,6 +136,16 @@ Acceptance:
 - Physical behavior is no motion or only a small open-pose correction.
 - No abnormal bench supply behavior.
 
+Live result:
+
+- Accepted from SDK/software health on 2026-06-30; see
+  `docs/s14_right_hand_open_anchor_result_20260630.md`.
+- Operator observed thumb, middle, ring, and pinky motion.
+- Operator did not observe visible index motion.
+- The missing index visible motion is not yet a confirmed fault because the
+  open-anchor target for index is already `255`, but it must be resolved by the
+  next index-micro gate before synchronized control.
+
 ## S14.9R.4 Index-Micro Dry Run
 
 ```bash
