@@ -17,6 +17,10 @@ upstream/
 # Commit the review notes/manifests instead of raw archives and extracted trees.
 docs/vendor/
 
+# Large local manuals/CAD asset bundles.
+# Keep these on the robot/workstation; do not push raw assets to GitHub.
+docs/assets/
+
 # ROS and build outputs
 build/
 install/
