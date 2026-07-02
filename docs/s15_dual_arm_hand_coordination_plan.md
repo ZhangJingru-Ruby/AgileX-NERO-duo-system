@@ -155,6 +155,10 @@ Implemented scripts:
 - `scripts/launch_s15_dual_arm_hand_observe.sh`
 - `scripts/ros_s15_arm_hand_sequence.py`
 
+`launch_s15_dual_arm_hand_observe.sh` defaults to `--readonly`; use that for
+RViz validation and dry-run. Relaunch it with `--active` only before execute
+gates.
+
 The default target is absolute `joint1=30 deg`, `joint2=90 deg`,
 `joint3=30 deg`, followed by hand open -> close -> open and arm return. The
 first execution order is:

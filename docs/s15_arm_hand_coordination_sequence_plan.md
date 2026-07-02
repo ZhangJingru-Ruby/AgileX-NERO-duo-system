@@ -30,17 +30,21 @@ This is why the S15 motion script maps `--side left` to `arm_b/can1`, and
 Observation and control-source session:
 
 ```bash
-scripts/launch_s15_dual_arm_hand_observe.sh
+scripts/launch_s15_dual_arm_hand_observe.sh [--readonly|--active]
 ```
 
 This starts:
 
-- S13 dual-active ROS arm drivers;
+- either dual-arm ROS read-only drivers or S13 dual-active ROS arm drivers;
 - S11 accepted static TF publishers;
 - S11 dual model RobotStatePublisher instances;
 - RViz with fixed frame `lab_world`.
 
 It does not publish motion commands.
+
+Default mode is `--readonly`. Use read-only mode for RViz validation and all
+dry-runs. Stop the read-only session and relaunch with `--active` only before
+an execute gate.
 
 Coordinated sequence:
 
@@ -94,12 +98,12 @@ folded postures before command publication.
 
 ## Execution Order
 
-Terminal 1, observation session:
+Terminal 1, observation session for dry-run:
 
 ```bash
 NERO_CONTAINER_NAME=nero-humble-s15-observe \
   bash scripts/run_humble_container.sh --allow-xhost \
-    bash /workspace/nero/scripts/launch_s15_dual_arm_hand_observe.sh
+    bash /workspace/nero/scripts/launch_s15_dual_arm_hand_observe.sh --readonly
 ```
 
 Terminal 2, left side dry-run:
@@ -112,6 +116,16 @@ NERO_CONTAINER_NAME=nero-humble-s15-left-dryrun \
 ```
 
 Terminal 2, left side execute only after dry-run acceptance:
+
+Stop the read-only observation session, then restart Terminal 1 in active mode:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-observe \
+  bash scripts/run_humble_container.sh --allow-xhost \
+    bash /workspace/nero/scripts/launch_s15_dual_arm_hand_observe.sh --active
+```
+
+Then execute:
 
 ```bash
 NERO_CONTAINER_NAME=nero-humble-s15-left-execute \

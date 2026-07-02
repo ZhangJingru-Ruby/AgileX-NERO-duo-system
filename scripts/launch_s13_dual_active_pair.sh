@@ -16,6 +16,7 @@ arm_b_can="${NERO_ARM_B_CAN_PORT:-can_arm_b}"
 effector="${NERO_EFFECTOR_TYPE:-none}"
 tcp_offset="${NERO_TCP_OFFSET:-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}"
 speed_percent="${NERO_S13_SPEED_PERCENT:-5}"
+enable_timeout="${NERO_S13_ENABLE_TIMEOUT:-5.0}"
 
 if ! command -v ros2 >/dev/null 2>&1; then
   echo "ros2 is not available. Run this script inside the Humble container." >&2
@@ -36,6 +37,7 @@ echo "Starting S13 dual-active driver pair."
 echo "Arm A: namespace=$arm_a_ns can_port=$arm_a_can auto_enable=true control_enabled=true"
 echo "Arm B: namespace=$arm_b_ns can_port=$arm_b_can auto_enable=true control_enabled=true"
 echo "Speed percent for both driver instances: $speed_percent"
+echo "Enable timeout for both driver instances: $enable_timeout"
 echo "This script does not publish motion commands."
 
 cleanup() {
@@ -52,6 +54,7 @@ ros2 launch agx_arm_ctrl start_single_agx_arm.launch.py \
   effector_type:="$effector" \
   auto_enable:=true \
   control_enabled:=true \
+  enable_timeout:="$enable_timeout" \
   speed_percent:="$speed_percent" \
   tcp_offset:="$tcp_offset" &
 pid_a=$!
@@ -63,6 +66,7 @@ ros2 launch agx_arm_ctrl start_single_agx_arm.launch.py \
   effector_type:="$effector" \
   auto_enable:=true \
   control_enabled:=true \
+  enable_timeout:="$enable_timeout" \
   speed_percent:="$speed_percent" \
   tcp_offset:="$tcp_offset" &
 pid_b=$!
