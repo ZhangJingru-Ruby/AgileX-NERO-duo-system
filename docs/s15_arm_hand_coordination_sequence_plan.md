@@ -264,6 +264,54 @@ accepted should `--side both` be dry-run and executed.
   `scripts/ros_s15_elbow_curl_demo.py`: first `J1 -2 deg`, `J4 +2 deg` with
   `--skip-hand`, then the formal `J1 -10 deg`, `J4 +10 deg` hand
   open/close/open demo after acceptance.
+- The left-side and right-side smoother elbow-curl/fist demos were accepted.
+  The script now supports `--side both` with per-side deltas. For the first
+  dual-arm gate, use left Arm B semantic `J1 -10 deg`, right Arm A semantic
+  `J1 -20 deg`, and `J4 +15 deg` on both sides. Because `J1` defaults to the
+  `lab_world X` semantic frame, dry-run should show raw Arm B `joint1=-10 deg`
+  and raw Arm A `joint1=+20 deg`.
+
+Dual-arm dry-run:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-both-elbow-demo \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_elbow_curl_demo.py \
+      --side both \
+      --left-j1-delta-deg -10 \
+      --right-j1-delta-deg -20 \
+      --left-j4-delta-deg 15 \
+      --right-j4-delta-deg 15 \
+      --arm-profile single-target \
+      --hand-timing during-curl \
+      --hand-start-delay 0.4 \
+      --hand-dwell 0.8 \
+      --hand-close-fraction 0.5 \
+      --hold-seconds 0.5
+```
+
+Dual-arm execute after dry-run acceptance:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-both-elbow-demo \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_elbow_curl_demo.py \
+      --side both \
+      --left-j1-delta-deg -10 \
+      --right-j1-delta-deg -20 \
+      --left-j4-delta-deg 15 \
+      --right-j4-delta-deg 15 \
+      --arm-profile single-target \
+      --hand-timing during-curl \
+      --hand-start-delay 0.4 \
+      --hand-dwell 0.8 \
+      --hand-close-fraction 0.5 \
+      --hold-seconds 0.5 \
+      --allow-wide-motion \
+      --execute \
+      --confirm-clearance \
+      --confirm-rviz-visible
+```
 
 ## Acceptance Criteria
 
@@ -271,7 +319,9 @@ For each side and for the final `both` test:
 
 - RViz is open and follows the moving arm or arms.
 - The script prints the expected side mapping.
-- The target posture is segmented, not sent as one large jump.
+- The target motion profile matches the accepted dry-run. For the smoother
+  elbow-curl demo this is `--arm-profile single-target`, not the older
+  segmented inspection profile.
 - No non-commanded arm moves beyond tolerance.
 - The passive arm remains within tolerance during single-side tests.
 - Hand open/close/open commands complete with zero pre/post faults.

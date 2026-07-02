@@ -47,7 +47,7 @@ Last updated: 2026-07-02
 | S13 低风险双臂协同原语 | Complete / accepted | Corrected Arm A `joint1 +30 deg` / Arm B `joint1 +30 deg` execution passed and operator confirmed visible direction matched expectation. Earlier final-snapshot attempts `20260626_093414` and `20260629_043358` were not accepted because duplicate publishers produced about `400 Hz` feedback. After cleanup, publisher count was `1` for both A/B joint-state topics, and final snapshot `20260629_043441` is clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
 | S14 末端执行器 | Complete for low-risk dual-hand bring-up; S15 hybrid arm+hand planning active | Both dexterous hands are mechanically installed and stable. Arm A = right hand, Arm B = left hand. Left hand on `can1` and right hand on `can2` passed SDK health, open-anchor, and index micro-motion. Dual open-anchor and dual index-micro gates passed from SDK/software health. The dual index micro used left target `[255,179,235,255,255,255]` and right target `[255,70,235,255,255,255]`, then returned both to open; pre/post faults were all zero and temperature/current were stable. S15 decision: arms should use ROS2 `agx_arm_ros`, hands should keep using LinkerHand SDK wrappers for now. Full gestures, grasping, simultaneous arm+hand motion, and arm motion during hand sync remain blocked until S15 gates pass. |
 | S15 USB-C CAN 拓扑 | Activation and ROS read-only revalidation accepted | Arm A official USB-CAN moved to USB-C hub bus-info `1-3.4.1:1.0` and was restored from temporary `can3` to `can_arm_a`. Arm B official USB-CAN moved to `1-3.4.3:1.0` and was restored from temporary `can0` to `can_arm_b`. Left/right hand interfaces remain `can1`/`can2`. All four CAN interfaces are UP and ERROR-ACTIVE at 1 Mbps. A loose Arm B cable caused a no-response failure; after reseating and waiting about 20 s after power/reconnect, A/B ROS joint-state feedback both returned at about 200 Hz. |
-| S15 双臂双手协调脚本 | Left/Right elbow-curl semantics accepted; J1 frame unified | New scripts `launch_s15_dual_arm_hand_observe.sh`, `ros_s15_arm_hand_sequence.py`, `ros_s15_return_to_initial.py`, and `ros_s15_elbow_curl_demo.py` provide RViz observation, selectable read-only/active ROS arm drivers, static TF, segmented or single-target arm motion, LinkerHand SDK hand open/close/open, conservative posture guards, dry-run default, and explicit execution confirmations. On 2026-07-02 raw RViz showed horizontal arms while the real arms were hanging; the anchored RViz visual path was added and operator accepted visual pose/follow. Operator returned to the initial posture successfully, found by Web control that left-side Arm B `J1 -10 deg` plus `J4 +10..15 deg` better matches the demo intent, and reported the S15 elbow-curl/fist semantic action matched expectation. The smoother single-target/during-curl mode was added after the segmented mode showed visible stop-start behavior. Arm A reproduction was also smooth and semantically acceptable, but raw Arm A `J1 -20 deg` moved toward `lab_world +X`; the script now defaults J1 to `lab_world X` semantics and flips Arm A raw J1 internally. Next gate: rerun Arm A dry-run and execute with unified J1 semantics, then close right-side acceptance. |
+| S15 双臂双手协调脚本 | Single-side elbow-curl accepted; dual-arm gate prepared | New scripts `launch_s15_dual_arm_hand_observe.sh`, `ros_s15_arm_hand_sequence.py`, `ros_s15_return_to_initial.py`, and `ros_s15_elbow_curl_demo.py` provide RViz observation, selectable read-only/active ROS arm drivers, static TF, segmented or single-target arm motion, LinkerHand SDK hand open/close/open, conservative posture guards, dry-run default, and explicit execution confirmations. On 2026-07-02 raw RViz showed horizontal arms while the real arms were hanging; the anchored RViz visual path was added and operator accepted visual pose/follow. Operator returned to the initial posture successfully, found by Web control that left-side Arm B `J1 -10 deg` plus `J4 +10..15 deg` better matches the demo intent, and reported the S15 elbow-curl/fist semantic action matched expectation. The smoother single-target/during-curl mode was added after the segmented mode showed visible stop-start behavior. Arm A reproduction was smooth and semantically acceptable after `J1` was unified to `lab_world X` semantics; Arm A raw J1 is flipped internally. Next gate: `--side both` dry-run and execute with left Arm B semantic `J1 -10/J4 +15`, right Arm A semantic `J1 -20/J4 +15`, and both hands open -> half close -> open. |
 
 ## S0 Evidence
 
@@ -122,44 +122,18 @@ S2 offline environment result:
 
 ## Immediate Next Step
 
-S13 is complete. S14 is active. The left hand has moved to a one-hand independent
-CAN bench-test branch and is disconnected from NERO J6. SDK-backed health
-validation with the local tuned repository is accepted; see
-`docs/s14_left_hand_sdk_health_result_20260630.md`.
+S14 low-risk dual-hand bring-up is complete, and S15 single-side arm+hand
+elbow-curl/fist reproduction is accepted on both sides.
 
-The left index micro-motion gate is accepted from SDK/software health and field
-observation; see `docs/s14_left_hand_index_micro_result_20260630.md`.
+The next concrete gate is the S15 dual-arm coordinated elbow-curl/fist dry-run,
+then execute after RViz and clearance confirmation:
+`docs/s15_return_to_initial_and_elbow_curl_design.md`.
 
-The immediate next step is to fix hand CAN positions, then start right-hand
-independent reproduction: `docs/s14_right_hand_reproduction_plan.md`.
-
-```bash
-bash scripts/s14_hand_can_inventory.sh
-```
-
-Right-hand index micro-motion is accepted from SDK/software health and physical
-observation; see `docs/s14_right_hand_index_micro_result_20260630.md`.
-
-Dual-hand open-anchor and dual index-micro are accepted from SDK/software
-health; see `docs/s14_dual_open_anchor_result_20260630.md` and
-`docs/s14_dual_index_micro_result_20260630.md`.
-
-The next phase is S15 dual arm + dual hand coordination planning:
-`docs/s15_dual_arm_hand_coordination_plan.md`.
-
-USB-C hub CAN re-activation is accepted; see
-`docs/s15_usb_c_can_activation_result_20260702.md`.
-
-The next concrete gate is the S15 coordinated sequence dry-run, documented in
-`docs/s15_arm_hand_coordination_sequence_plan.md`.
-
-Recommended architecture: arms via ROS2, hands via LinkerHand SDK wrappers.
-Full SDK demos, GUI, gesture loops, `get_state()`, `get_torque()`, full-hand
-presets, grasping, and simultaneous arm+hand motion remain blocked.
-
-Until S14 has its own gates accepted, do not run Cartesian, MoveIt execute,
-contact, handoff, full dexterous-hand actuation, or close-proximity
-manipulation.
+Recommended architecture remains unchanged: arms via ROS2 `agx_arm_ros`, hands
+via LinkerHand SDK wrappers. This gate is still a bring-up demo, not a contact
+manipulation primitive. Do not run Cartesian, MoveIt execute, grasping,
+handoff, or close-proximity manipulation until the dual-arm S15 gate is
+accepted and logged.
 
 ## S2 Discovery Result
 

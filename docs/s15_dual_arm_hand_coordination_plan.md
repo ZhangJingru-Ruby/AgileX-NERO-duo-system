@@ -207,6 +207,32 @@ The first execution order is now:
 4. only after left-side acceptance, mirror the same process for the right side
    and then both sides.
 
+2026-07-02 single-side result:
+
+- Left-side Arm B + left hand and right-side Arm A + right hand elbow-curl/fist
+  demos were accepted by operator observation.
+- The smoother mode is `--arm-profile single-target --hand-timing during-curl`.
+- Arm A raw J1 sign differed from Arm B in `lab_world X`; this is now handled
+  in `ros_s15_elbow_curl_demo.py` by defaulting to `--j1-delta-frame lab-world-x`.
+
+Next dual-arm gate:
+
+```bash
+python3 /workspace/nero/scripts/ros_s15_elbow_curl_demo.py \
+  --side both \
+  --left-j1-delta-deg -10 \
+  --right-j1-delta-deg -20 \
+  --left-j4-delta-deg 15 \
+  --right-j4-delta-deg 15 \
+  --arm-profile single-target \
+  --hand-timing during-curl \
+  --hand-close-fraction 0.5
+```
+
+In dry-run, verify that Arm B commands raw `joint1=-10 deg` and Arm A commands
+raw `joint1=+20 deg`. Execute only after RViz, clearance, and active-driver
+state are confirmed.
+
 Full procedure and acceptance criteria:
 `docs/s15_arm_hand_coordination_sequence_plan.md`.
 

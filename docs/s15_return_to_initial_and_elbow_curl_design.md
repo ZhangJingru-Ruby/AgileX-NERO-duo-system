@@ -282,6 +282,83 @@ Full fist remains a separate confirmation:
 
 Do not probe J6/J7 for this gesture until the cable clearance plan is improved.
 
+## Dual-Arm Elbow-Curl Gate
+
+After left-side and right-side single-arm reproduction were accepted, the next
+gate is a simultaneous dual-arm version of the same semantic gesture.
+
+Use `--side both` and per-side deltas:
+
+- Left side / Arm B / left hand `can1`: semantic `J1 -10 deg`, raw `J1 -10 deg`,
+  `J4 +15 deg`.
+- Right side / Arm A / right hand `can2`: semantic `J1 -20 deg`, raw `J1 +20 deg`,
+  `J4 +15 deg`.
+
+This keeps the operator-facing meaning of `J1` consistent in `lab_world X` and
+uses the Arm A sign flip internally to stay away from the support column.
+
+Dry-run first:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-both-elbow-demo \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_elbow_curl_demo.py \
+      --side both \
+      --left-j1-delta-deg -10 \
+      --right-j1-delta-deg -20 \
+      --left-j4-delta-deg 15 \
+      --right-j4-delta-deg 15 \
+      --arm-profile single-target \
+      --hand-timing during-curl \
+      --hand-start-delay 0.4 \
+      --hand-dwell 0.8 \
+      --hand-close-fraction 0.5 \
+      --hold-seconds 0.5
+```
+
+Expected dry-run evidence:
+
+- `left_mapping=arm_b/can1`
+- `right_mapping=arm_a/can2`
+- `command_delta_deg` shows Arm B `joint1=-10`, `joint4=15` and Arm A
+  `joint1=20`, `joint4=15`.
+- `waypoint_count=1` when `--arm-profile single-target` is used.
+
+Execute only after RViz is visible, the sweep areas are clear, and the dry-run
+target summaries are accepted:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-both-elbow-demo \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_elbow_curl_demo.py \
+      --side both \
+      --left-j1-delta-deg -10 \
+      --right-j1-delta-deg -20 \
+      --left-j4-delta-deg 15 \
+      --right-j4-delta-deg 15 \
+      --arm-profile single-target \
+      --hand-timing during-curl \
+      --hand-start-delay 0.4 \
+      --hand-dwell 0.8 \
+      --hand-close-fraction 0.5 \
+      --hold-seconds 0.5 \
+      --allow-wide-motion \
+      --execute \
+      --confirm-clearance \
+      --confirm-rviz-visible
+```
+
+Acceptance:
+
+- Both arms start moving from the same command gate rather than one arm after
+  the other.
+- Both hands perform open -> half close -> open during the arm curl.
+- Both arms return to their starting joint states.
+- Final A/B arm statuses have `err_status=0`, no joint-limit flags, and no
+  joint-communication flags.
+- If either arm turns toward the support column or the two arms approach each
+  other unexpectedly, stop and do not rerun until the command/output is reviewed.
+
 ## Likely Gesture Construction
 
 Build the action in this order:

@@ -6723,3 +6723,35 @@ Next:
 Rerun Arm A dry-run with the same operator-facing semantic command
 `--side right --j1-delta-deg -20 --j4-delta-deg 15`. The dry-run should print
 `command_delta_deg={'joint1': 20.0, 'joint4': 15.0}` before execute.
+
+## 2026-07-02 - S15 Dual-Arm Elbow-Curl Gate Prepared
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Move from accepted single-side elbow-curl/fist demos to the first simultaneous
+dual-arm version.
+
+Operator result:
+
+- Arm A/right-side reproduction with unified `lab_world X` J1 semantics was
+  accepted by field observation.
+- The previous Arm A raw-sign mismatch is resolved at the script level: Arm A
+  raw J1 is flipped when `--j1-delta-frame lab-world-x` is active.
+
+Implementation update:
+
+- `scripts/ros_s15_elbow_curl_demo.py` now accepts `--side both`.
+- Per-side deltas were added:
+  `--left-j1-delta-deg`, `--right-j1-delta-deg`,
+  `--left-j4-delta-deg`, and `--right-j4-delta-deg`.
+- In dual mode, both arm targets are published in the same waypoint gate.
+- Hand open/close/open can run on both LinkerHand SDK connections during the
+  curl through one worker thread per hand.
+
+Next:
+
+Dry-run the dual-arm demo with left Arm B semantic `J1 -10/J4 +15` and right
+Arm A semantic `J1 -20/J4 +15`. The dry-run should show raw Arm B
+`joint1=-10 deg` and raw Arm A `joint1=+20 deg`. Execute only after RViz,
+clearance, and active-driver state are confirmed.
