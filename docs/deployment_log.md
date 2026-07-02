@@ -6534,3 +6534,44 @@ Next:
 Retry S15 left-side execute only after rechecking active observation, RViz
 visibility, Web/driver enable state, Arm B sweep clearance, left-hand closing
 clearance, and J6/J7 cable slack.
+
+## 2026-07-02 - S15 Gesture Target Redesign Started
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Respond to operator feedback that the attempted S15 motion did not match the
+intended human-like elbow-curl/fist gesture.
+
+Observation:
+
+The numeric target `joint1=30 deg`, `joint2=90 deg`, `joint3=30 deg` was valid
+as a raw joint command, but it was not a validated semantic gesture. The motion
+did not match the operator's expected human-like elbow curl.
+
+Decision:
+
+- Stop treating the absolute J1/J2/J3 target as the elbow-curl gesture.
+- Add a return-to-initial script that can open both hands and return the arms to
+  the S15 field `park` posture.
+- Build the elbow-curl/fist action from empirical joint-mapping probes instead
+  of assumed joint numbers.
+
+Files added:
+
+- `scripts/ros_s15_return_to_initial.py`
+- `docs/s15_return_to_initial_and_elbow_curl_design.md`
+
+Deployment choices:
+
+- `S15 park` is not factory zero and not Web zero calibration.
+- `S15 park` is the accepted field posture from the current S15 setup:
+  arms hanging/prepared and hands open.
+- The first elbow-curl mapping will use Arm B because left side maps to
+  Arm B + left LinkerHand on `can1`.
+
+Next:
+
+Run return-to-initial dry-run, then execute only after clearance review. After
+that, run small Arm B J2/J3/J4 probes to determine which joint and sign produce
+the visible elbow-curl effect.

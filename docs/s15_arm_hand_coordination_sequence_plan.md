@@ -251,6 +251,13 @@ accepted should `--side both` be dry-run and executed.
 - The small Arm B J1 `+2 deg` command-path probe passed by operator report.
   The next gate is retrying S15 left-side execute with active observation
   running, RViz visible, and physical clearance rechecked.
+- A later operator report said the commanded motion did not match the intended
+  human-like elbow-curl/fist gesture because the assumed joint-number mapping
+  was wrong. Do not continue using the absolute `joint1=30`, `joint2=90`,
+  `joint3=30` target as the gesture definition. Use
+  `scripts/ros_s15_return_to_initial.py` to return to S15 park, then run the
+  joint-mapping probes in
+  `docs/s15_return_to_initial_and_elbow_curl_design.md`.
 
 ## Acceptance Criteria
 

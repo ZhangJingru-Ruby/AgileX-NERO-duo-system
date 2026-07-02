@@ -205,9 +205,12 @@ class S15ArmHandNode(Node):
                 indices = target_joint_indices[arm]
 
                 non_commanded_dev = max(
-                    abs(current - start)
-                    for idx, (current, start) in enumerate(zip(sample.positions, starts[arm]))
-                    if idx not in indices
+                    (
+                        abs(current - start)
+                        for idx, (current, start) in enumerate(zip(sample.positions, starts[arm]))
+                        if idx not in indices
+                    ),
+                    default=0.0,
                 )
                 if non_commanded_dev > non_commanded_tolerance_rad:
                     raise S15SafetyError(
