@@ -169,6 +169,22 @@ likely causes are missing `robot_state_publisher` subscription to
 `/arm_*/feedback/joint_states`, missing S11 static TF, or a stale duplicate
 session.
 
+2026-07-02 diagnostic correction:
+
+- The S15 diagnostic run proved that the feedback publishers/subscribers and
+  accepted S11 static TF were present.
+- The remaining mismatch is a raw joint-state visual-convention mismatch:
+  current raw feedback places `link7` horizontally in the URDF even though the
+  real arms are hanging.
+- `launch_s15_dual_arm_hand_observe.sh` therefore defaults to an RViz-only
+  visual anchor that publishes `/arm_a/visual/joint_states` and
+  `/arm_b/visual/joint_states` from live feedback plus an S11 accepted visual
+  reference offset.
+- These visual topics are only for RViz observation. Do not use them for arm
+  control, MoveIt planning, joint limits, calibration, or acceptance of real
+  controller semantics.
+- Use `--raw-rviz` only when deliberately reproducing the raw mismatch.
+
 The default target is absolute `joint1=30 deg`, `joint2=90 deg`,
 `joint3=30 deg`, followed by hand open -> close -> open and arm return. The
 first execution order is:

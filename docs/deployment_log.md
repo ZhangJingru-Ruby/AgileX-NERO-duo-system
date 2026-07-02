@@ -6192,3 +6192,56 @@ Required before bench-test use:
    terminated.
 7. Verify 24 V polarity at the hand-side connector with the hand disconnected.
 8. Only then proceed to one-hand read-only identity/status checks.
+
+## 2026-07-02 - S15 RViz Raw Joint-State Visual Mismatch Diagnosed
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Diagnose why RViz showed both arms horizontal while the real arms were hanging
+vertically during S15 observation.
+
+Evidence:
+
+- Operator ran `scripts/s15_rviz_pose_diagnostics.sh`.
+- `/arm_a/feedback/joint_states` and `/arm_b/feedback/joint_states` each had
+  one publisher and one `robot_state_publisher` subscriber.
+- Accepted S11 static TF values were active:
+  - `lab_world -> arm_a/world`: `0,0,0,0,-1.5707963,0`
+  - `lab_world -> arm_b/world`: `0.260,0,0,3.1415926,-1.5707963,0`
+- Live `link7` TFs were horizontal in `lab_world`:
+  - Arm A approximately `x=-0.713 m`, `z=0.007 m`
+  - Arm B approximately `x=0.977 m`, `z=-0.018 m`
+
+Interpretation:
+
+- This is not a missing feedback topic, not a missing
+  `robot_state_publisher` subscription, and not a missing S11 root transform.
+- The current raw arm joint feedback no longer matches the visual convention
+  used by the accepted S11 RViz posture.
+
+Action:
+
+- Added `scripts/ros_s15_joint_state_visual_anchor.py`.
+- Updated `scripts/launch_s11_dual_model_view.sh` so RViz/RSP joint-state topics
+  are configurable.
+- Updated `scripts/launch_s15_dual_arm_hand_observe.sh` so S15 observation
+  defaults to RViz-only anchored topics:
+  - `/arm_a/visual/joint_states`
+  - `/arm_b/visual/joint_states`
+- Updated `scripts/s15_rviz_pose_diagnostics.sh` and S15 documentation.
+
+Deployment choice:
+
+- Keep raw `/arm_*/feedback/joint_states` as the only source for control and
+  logging.
+- Use `/arm_*/visual/joint_states` only for RViz observation in this S15
+  bring-up branch.
+- Do not use visual-anchor topics for control, MoveIt planning, joint limits, or
+  calibration.
+
+Next:
+
+Relaunch S15 observation in default anchored RViz mode and verify that the
+models match the real hanging posture before running any S15 dry-run or motion
+execute gate.

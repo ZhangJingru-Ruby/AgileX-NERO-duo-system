@@ -73,7 +73,7 @@ NERO_CONTAINER_NAME=nero-humble-s15-diagnostics \
     bash /workspace/nero/scripts/s15_rviz_pose_diagnostics.sh
 ```
 
-Expected evidence:
+Expected evidence in raw RViz mode:
 
 - `/arm_a/feedback/joint_states` and `/arm_b/feedback/joint_states` each have
   a live publisher and a `robot_state_publisher` subscriber.
@@ -82,6 +82,31 @@ Expected evidence:
   S11 root transforms.
 - `lab_world -> arm_a/link7` and `lab_world -> arm_b/link7` reflect the current
   physical posture, not URDF zero pose.
+
+Expected evidence in anchored RViz mode:
+
+- `/arm_a/feedback/joint_states` and `/arm_b/feedback/joint_states` each have
+  a live publisher and an `s15_joint_state_visual_anchor` subscriber.
+- `/arm_a/visual/joint_states` and `/arm_b/visual/joint_states` each have the
+  visual anchor as publisher and `robot_state_publisher` as subscriber.
+- One visual joint-state sample is available from each arm.
+- `lab_world -> arm_a/world` and `lab_world -> arm_b/world` still match the
+  accepted S11 root transforms.
+- `lab_world -> arm_a/link7` and `lab_world -> arm_b/link7` visually match the
+  current physical posture.
+
+2026-07-02 result:
+
+- The feedback subscribers and S11 root transforms were present.
+- The remaining mismatch was the raw joint-state visual convention. Raw
+  `link7` TFs were live but horizontal in `lab_world`.
+- S15 observation now defaults to the RViz-only visual anchor:
+  `/arm_a/visual/joint_states` and `/arm_b/visual/joint_states`.
+- The visual anchor uses the S11 accepted snapshot
+  `docs/s9_ros_snapshots/20260626_055339/` as a reference and preserves live
+  joint deltas after startup.
+- Visual anchor topics must not be used for control, planning, limits, or
+  calibration.
 
 Coordinated sequence:
 

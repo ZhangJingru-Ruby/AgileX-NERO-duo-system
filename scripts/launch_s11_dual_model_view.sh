@@ -22,6 +22,8 @@ fi
 pkg_prefix="$(ros2 pkg prefix agx_arm_description)"
 model_path="${pkg_prefix}/share/agx_arm_description/agx_arm_urdf/nero/urdf/nero_description.urdf"
 rviz_config="/workspace/nero/rviz/s11_dual_arm.rviz"
+arm_a_joint_states_topic="${NERO_S11_ARM_A_JOINT_STATES_TOPIC:-/arm_a/feedback/joint_states}"
+arm_b_joint_states_topic="${NERO_S11_ARM_B_JOINT_STATES_TOPIC:-/arm_b/feedback/joint_states}"
 
 if [ ! -f "$model_path" ]; then
   echo "NERO model not found: $model_path" >&2
@@ -78,12 +80,12 @@ write_rsp_params "/arm_b/robot_state_publisher" "arm_b/" "$params_b"
 
 sample_a="${tmp_dir}/arm_a_joint_state.yaml"
 sample_b="${tmp_dir}/arm_b_joint_state.yaml"
-wait_for_joint_state "/arm_a/feedback/joint_states" "$sample_a"
-wait_for_joint_state "/arm_b/feedback/joint_states" "$sample_b"
+wait_for_joint_state "$arm_a_joint_states_topic" "$sample_a"
+wait_for_joint_state "$arm_b_joint_states_topic" "$sample_b"
 
 echo "Starting S11 dual model view."
-echo "Subscribing arm_a model to /arm_a/feedback/joint_states"
-echo "Subscribing arm_b model to /arm_b/feedback/joint_states"
+echo "Subscribing arm_a model to $arm_a_joint_states_topic"
+echo "Subscribing arm_b model to $arm_b_joint_states_topic"
 echo "RViz fixed frame: lab_world"
 echo "This script does not publish control commands."
 echo "Arm A robot_state_publisher params: $params_a"
@@ -95,14 +97,14 @@ ros2 run robot_state_publisher robot_state_publisher \
   --ros-args \
   -r __ns:=/arm_a \
   --params-file "$params_a" \
-  -r joint_states:=/arm_a/feedback/joint_states &
+  -r joint_states:="$arm_a_joint_states_topic" &
 pid_a=$!
 
 ros2 run robot_state_publisher robot_state_publisher \
   --ros-args \
   -r __ns:=/arm_b \
   --params-file "$params_b" \
-  -r joint_states:=/arm_b/feedback/joint_states &
+  -r joint_states:="$arm_b_joint_states_topic" &
 pid_b=$!
 
 rviz2 -d "$rviz_config" &
