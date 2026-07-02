@@ -107,6 +107,9 @@ Expected evidence in anchored RViz mode:
   joint deltas after startup.
 - Visual anchor topics must not be used for control, planning, limits, or
   calibration.
+- The operator subsequently confirmed that robot positions in anchored RViz are
+  correct and visual following is correct. S15 RViz visual revalidation is
+  accepted for the current session.
 
 Coordinated sequence:
 

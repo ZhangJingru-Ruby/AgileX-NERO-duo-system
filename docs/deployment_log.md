@@ -6245,3 +6245,33 @@ Next:
 Relaunch S15 observation in default anchored RViz mode and verify that the
 models match the real hanging posture before running any S15 dry-run or motion
 execute gate.
+
+## 2026-07-02 - S15 Anchored RViz Revalidation Accepted
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Revalidate RViz after adding the S15 visual-only joint-state anchor.
+
+Evidence:
+
+- Operator relaunched the S15 observation path with anchored RViz.
+- Operator report:
+  - robot positions are correct;
+  - visual following is correct.
+
+Result:
+
+S15 RViz visual revalidation is accepted for the current session.
+
+Deployment choices:
+
+- Continue treating `/arm_a/visual/joint_states` and
+  `/arm_b/visual/joint_states` as RViz-only observation topics.
+- Raw `/arm_a/feedback/joint_states` and `/arm_b/feedback/joint_states` remain
+  the authoritative feedback topics for control, logs, and safety checks.
+
+Route update:
+
+The next gate is S15 `--side left` dry-run with the observation session still in
+read-only mode. Do not execute motion until the dry-run plan is reviewed.
