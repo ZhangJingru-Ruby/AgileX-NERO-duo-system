@@ -248,6 +248,9 @@ accepted should `--side both` be dry-run and executed.
   event is likely explained by the arm not being enabled at execute time. If Web
   enable did not change, run a small Arm B J1 `+2 deg` command-path probe before
   retrying the wide S15 sequence.
+- The small Arm B J1 `+2 deg` command-path probe passed by operator report.
+  The next gate is retrying S15 left-side execute with active observation
+  running, RViz visible, and physical clearance rechecked.
 
 ## Acceptance Criteria
 

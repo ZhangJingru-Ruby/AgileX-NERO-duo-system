@@ -6499,3 +6499,38 @@ Next:
 
 Do not retry the wide S15 left execute immediately. First run a small Arm B
 J1 `+2 deg` ROS command-path probe using the accepted S12 isolation script.
+
+## 2026-07-02 - S15 Arm B Command-Path Probe Accepted
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Verify the current active ROS command path with a small Arm B motion before
+retrying the wide S15 left-side sequence.
+
+Procedure:
+
+- Dry-run and execute Arm B J1 `+2 deg` using the accepted S12 isolation script.
+- Keep RViz visible.
+- Verify Arm B moves and returns while Arm A remains passive.
+
+Result:
+
+The operator reported that the probe passed.
+
+Detailed terminal output was not provided in this turn, so the acceptance is
+recorded from operator observation. If exact numeric values are needed later,
+append the terminal output to `docs/s15_arm_b_command_path_probe_result_20260702.md`.
+
+Interpretation:
+
+The current active ROS command path can execute a small Arm B command. This
+supports the hypothesis that the earlier S15 left execute no-motion timeout was
+caused by the arm not being fully enabled at the time of that attempt, especially
+if Web enable was changed afterward.
+
+Next:
+
+Retry S15 left-side execute only after rechecking active observation, RViz
+visibility, Web/driver enable state, Arm B sweep clearance, left-hand closing
+clearance, and J6/J7 cable slack.
