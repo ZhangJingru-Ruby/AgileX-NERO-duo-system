@@ -319,8 +319,8 @@
 - [x] S15 RViz 视觉姿态重新验收通过：真实双臂垂悬时，RViz 使用当前会话的观测链显示同样姿态。
 - [x] 已确认 `/arm_*/visual/joint_states` 只用于 RViz 观察，不用于控制、规划、限位或标定。
 - [x] S15 初始化脚本已通过现场运行确认，可回到当前 field park 姿态并打开手。
-- [ ] S15 曲肘候选动作已按 Web 观察修正为左侧 Arm B `J1 -10 deg` / `J4 +10 deg`；仍需通过 `2 deg` 慢速探针确认 ROS 执行路径。
-- [ ] S15 曲肘握拳正式动作已通过：`J1 -10 deg` / `J4 +10 deg`，手 open -> close -> open，并返回初始位。
+- [x] S15 曲肘候选动作已按 Web/ROS 观察修正为左侧 Arm B `J1 -10 deg` / `J4 +10..15 deg`，语义动作符合预期。
+- [ ] S15 曲肘握拳正式动作的连续性已通过：single-target arm motion + hand during-curl，手 open -> close -> open，并返回初始位。
 - [ ] MoveIt 先规划不执行，轨迹可达且不越限。
 - [ ] 应用节点有速度、加速度、限位保护。
 - [ ] rosbag 或日志记录已配置。

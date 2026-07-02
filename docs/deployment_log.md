@@ -6616,3 +6616,43 @@ Next:
 
 Run the arm-only `2 deg` probe with `--skip-hand`. If accepted, run the formal
 left-side demo with `J1 -10 deg`, `J4 +10 deg`, and half-fist first.
+
+## 2026-07-02 - S15 Elbow-Curl Semantic Motion Accepted, Continuity Issue Found
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Record the first accepted elbow-curl/fist semantic motion and explain the
+observed stop-start behavior.
+
+Operator result:
+
+- The operator executed left-side Arm B with `J1 -10 deg`, `J4 +15 deg`,
+  `hand_close_fraction=0.5`.
+- The action matched the intended demo semantics.
+- The operator observed that the arm and hand were not visually continuous:
+  the motion looked like repeated stop/start steps.
+
+Reason:
+
+- The safe segmented script used `waypoint_count=8`.
+- For every waypoint, the script published one `move_j`, waited until feedback
+  reached the waypoint, then applied `waypoint_dwell=0.5`.
+- This forces the controller to decelerate/stop at each intermediate target.
+- The hand sequence was also serial: it started only after the curl posture was
+  reached and after SDK connection/health/speed setup completed.
+
+Implementation update:
+
+- Added `--arm-profile {segmented,single-target}`.
+- `segmented` remains the default safe inspection mode.
+- `single-target` sends the arm curl target once, letting the controller
+  perform one continuous point-to-point move.
+- Added `--hand-timing {after-curl,during-curl}`.
+- `during-curl` pre-connects the LinkerHand SDK, sets speed, anchors the open
+  pose, then closes/opens the hand in a worker thread during the arm curl.
+
+Next:
+
+Run the same accepted left-side gesture in dry-run and then execute with:
+`--arm-profile single-target --hand-timing during-curl`.

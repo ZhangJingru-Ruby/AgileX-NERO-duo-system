@@ -167,6 +167,37 @@ NERO_CONTAINER_NAME=nero-humble-s15-elbow-demo \
       --confirm-rviz-visible
 ```
 
+The first formal demo above intentionally uses the safe segmented profile. If
+the motion is semantically correct but visually stop-start, that is expected:
+the script sends one `move_j` waypoint at a time, waits for that waypoint to be
+reached, and then applies `waypoint_dwell`.
+
+For a smoother demo after the segmented version is accepted, use the single
+target arm profile and run the hand during the curl:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-elbow-demo \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_elbow_curl_demo.py \
+      --side left \
+      --j1-delta-deg -10 \
+      --j4-delta-deg 15 \
+      --arm-profile single-target \
+      --hand-timing during-curl \
+      --hand-start-delay 0.4 \
+      --hand-dwell 0.8 \
+      --hand-close-fraction 0.5 \
+      --hold-seconds 0.5 \
+      --allow-wide-motion \
+      --execute \
+      --confirm-clearance \
+      --confirm-rviz-visible
+```
+
+This is still not a hard real-time synchronization primitive. It is a smoother
+demo mode: arm target is sent once, while hand commands are sent from the
+LinkerHand SDK after a small delay.
+
 Full fist remains a separate confirmation:
 
 ```bash
