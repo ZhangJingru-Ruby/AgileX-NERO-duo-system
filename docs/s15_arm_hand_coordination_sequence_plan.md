@@ -228,6 +228,17 @@ NERO_CONTAINER_NAME=nero-humble-s15-left-execute \
 Then repeat for `--side right`. Only after left and right single-side tests are
 accepted should `--side both` be dry-run and executed.
 
+2026-07-02 first execute result:
+
+- Left-side execute published waypoint `1/9`.
+- Arm B feedback did not change from the starting values before timeout.
+- No hand command was sent.
+- The script called A/B emergency stop after the timeout.
+- Do not retry execute immediately. Restart S15 active observation and run
+  `scripts/s15_motion_block_diagnostics.sh` first.
+- The script now checks active-arm `/control/move_j` subscription counts before
+  future execute attempts.
+
 ## Acceptance Criteria
 
 For each side and for the final `both` test:

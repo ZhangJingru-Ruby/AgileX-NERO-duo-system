@@ -156,6 +156,27 @@ class S15ArmHandNode(Node):
             rclpy.spin_once(self, timeout_sec=0.05)
             time.sleep(0.05)
 
+    def command_subscription_counts(self) -> dict[str, int]:
+        return {
+            arm: self._move_publishers[arm].get_subscription_count()
+            for arm in ARMS
+        }
+
+    def wait_command_subscribers(self, active_arms: list[str], timeout: float) -> dict[str, int]:
+        deadline = time.monotonic() + timeout
+        counts = self.command_subscription_counts()
+        while rclpy.ok() and time.monotonic() < deadline:
+            if all(counts[arm] > 0 for arm in active_arms):
+                return counts
+            rclpy.spin_once(self, timeout_sec=0.05)
+            counts = self.command_subscription_counts()
+        missing = {arm: counts[arm] for arm in active_arms if counts[arm] <= 0}
+        raise SystemExit(
+            "No ROS driver subscriber for active move_j command topic(s): "
+            f"{missing}. Start the S15 observation terminal in --active mode and "
+            "verify /arm_*/control/move_j topic subscriptions before execute."
+        )
+
     def wait_for_waypoint(
         self,
         active_arms: list[str],
@@ -480,6 +501,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--allow-wide-motion", action="store_true")
     parser.add_argument("--joint-limit-margin-deg", type=float, default=3.0)
     parser.add_argument("--feedback-timeout", type=float, default=5.0)
+    parser.add_argument("--command-subscriber-timeout", type=float, default=2.0)
     parser.add_argument("--motion-timeout", type=float, default=20.0)
     parser.add_argument("--target-tolerance-deg", type=float, default=1.2)
     parser.add_argument("--passive-tolerance-deg", type=float, default=1.0)
@@ -696,6 +718,7 @@ def main() -> int:
         )
         for arm in ARMS:
             print(f"{arm}_status={format_status(node.statuses[arm])}")
+        print(f"command_subscriber_counts={node.command_subscription_counts()}")
         print(f"max_planned_joint_delta_deg={max_delta:.3f}")
         if max_delta > args.wide_motion_threshold_deg:
             print(
@@ -711,6 +734,8 @@ def main() -> int:
                 f"Planned arm motion requires {max_delta:.2f} deg max joint change. "
                 f"Add --allow-wide-motion only after dry-run review."
             )
+        counts = node.wait_command_subscribers(active_arms, args.command_subscriber_timeout)
+        print(f"execute_command_subscriber_counts={counts}")
 
         execute_arm_path(args, node, active_arms, passive_arms, names, starts, targets, indices, waypoints)
         run_hand_sequence(args, active_sides)

@@ -6356,3 +6356,52 @@ Next:
 Before left-side execute, confirm Arm B sweep clearance, left-hand closing
 clearance, RViz visibility, and J6/J7 cable slack. If any item is not clear,
 reduce the target or hand close fraction and rerun dry-run.
+
+## 2026-07-02 - S15 Left Execute Timed Out Before Motion
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Analyze the first S15 left-side execute attempt.
+
+Command:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-left-execute \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_arm_hand_sequence.py \
+      --side left \
+      --execute \
+      --allow-wide-motion \
+      --allow-full-fist \
+      --confirm-clearance \
+      --confirm-rviz-visible
+```
+
+Result:
+
+- The script entered execute mode and published Arm B waypoint `1/9`.
+- Arm B feedback did not move from the starting values before timeout:
+  - `joint1 last=0.82 target=4.07`
+  - `joint2 last=0.13 target=10.12`
+  - `joint3 last=101.70 target=93.74`
+- The script called A/B emergency stop after timeout.
+- The hand sequence was not reached.
+
+Interpretation:
+
+The command did not produce observable motion at all. This points first to
+active-driver command reception or driver state, not to mid-trajectory tracking.
+
+Action:
+
+- Added execute preflight checking for active-arm `/control/move_j` subscription
+  counts in `scripts/ros_s15_arm_hand_sequence.py`.
+- Added `scripts/s15_motion_block_diagnostics.sh` to inspect command-topic
+  subscriptions, feedback topics, arm status, and current joint feedback.
+
+Next:
+
+Do not retry execute immediately. Stop/restart the S15 active observation
+terminal after the emergency stop, then run the diagnostics script and confirm
+the active driver subscribes to `/arm_b/control/move_j`.
