@@ -2,6 +2,8 @@
 
 Date: 2026-06-30
 
+Last updated: 2026-07-02
+
 ## Decision
 
 Use a hybrid control architecture for the next stage:
@@ -59,13 +61,24 @@ During S15:
 
 | Device | CAN / Interface | Controller owner |
 | --- | --- | --- |
-| Arm A | `can_arm_a` | ROS2 `agx_arm_ros` under namespace `/arm_a` |
-| Arm B | `can_arm_b` | ROS2 `agx_arm_ros` under namespace `/arm_b` |
-| Left hand | `can1` | LinkerHand SDK safety wrappers |
-| Right hand | `can2` | LinkerHand SDK safety wrappers |
+| Arm A | `can_arm_a`, USB bus-info `1-3.4.1:1.0` | ROS2 `agx_arm_ros` under namespace `/arm_a` |
+| Arm B | `can_arm_b`, USB bus-info `1-3.4.3:1.0` | ROS2 `agx_arm_ros` under namespace `/arm_b` |
+| Left hand | `can1`, USB bus-info `1-3.4.4:1.0` | LinkerHand SDK safety wrappers |
+| Right hand | `can2`, USB bus-info `1-3.4.2:1.0` | LinkerHand SDK safety wrappers |
 
 Do not run arm SDK motion scripts while ROS arm control is active. Do not run
 LinkerHand GUI/demo/gesture scripts while project hand wrappers are active.
+
+2026-07-02 USB-C hub topology update:
+
+- Arm A official USB-CAN moved to bus-info `1-3.4.1:1.0`; temporary kernel
+  interface observed as `can3`.
+- Arm B official USB-CAN moved to bus-info `1-3.4.3:1.0`; temporary kernel
+  interface observed as `can0`.
+- Left and right hand CAN paths stayed at `can1`/`1-3.4.4:1.0` and
+  `can2`/`1-3.4.2:1.0`.
+- Run the re-activation gate in
+  `docs/s15_usb_c_can_topology_result_20260702.md` before S15.0.
 
 ## S15.0 No-Motion Integration Health
 

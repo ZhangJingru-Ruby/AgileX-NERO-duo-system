@@ -1,6 +1,6 @@
 # NERO Current Bring-Up Status
 
-Last updated: 2026-06-30
+Last updated: 2026-07-02
 
 ## Confirmed Configuration
 
@@ -11,11 +11,13 @@ Last updated: 2026-06-30
 | Physical arm count | Two NERO arms, independently powered |
 | Arm A | Web verified; hotspot `agx-7ax-armA`; planned CAN `can_arm_a`; ROS namespace `arm_a` |
 | Arm B | Web verified; hotspot `agx-7ax-armB`; planned CAN `can_arm_b`; ROS namespace `arm_b` |
-| USB-CAN modules | Two official modules confirmed; one per arm |
-| Arm A USB-CAN bus-info | `1-5:1.0` |
-| Arm B USB-CAN bus-info | `1-11:1.0` |
-| Arm A USB physical port | Vertical USB port |
-| Arm B USB physical port | Horizontal USB port |
+| USB-CAN modules | Two official arm modules plus two hand PEAK/XCAN adapters on the USB-C hub |
+| Arm A USB-CAN bus-info | `1-3.4.1:1.0` after USB-C hub move; previous `1-5:1.0` |
+| Arm B USB-CAN bus-info | `1-3.4.3:1.0` after USB-C hub move; previous `1-11:1.0` |
+| Arm A USB physical port | USB-C hub path `1-3.4.1:1.0`; temporary interface observed as `can3` |
+| Arm B USB physical port | USB-C hub path `1-3.4.3:1.0`; temporary interface observed as `can0` |
+| Left hand USB-CAN bus-info | `1-3.4.4:1.0`; interface `can1` |
+| Right hand USB-CAN bus-info | `1-3.4.2:1.0`; interface `can2` |
 | Installation pose | Table upright / horizontal upright |
 | Power supply | Original factory adapter |
 | Web UI | Reachable at `http://192.168.31.1/#/welcome` |
@@ -44,6 +46,7 @@ Last updated: 2026-06-30
 | S12 控制隔离与日志闭环 | Complete / accepted | Arm A `joint1 +30 deg` and Arm B `joint1 -30 deg` isolation tests both passed and returned. Passive-arm deviations were `0.005 deg` for Arm B during Arm A motion and `0.008 deg` for Arm A during Arm B motion. Post-motion snapshots `20260626_080809` and `20260626_083210` are clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
 | S13 低风险双臂协同原语 | Complete / accepted | Corrected Arm A `joint1 +30 deg` / Arm B `joint1 +30 deg` execution passed and operator confirmed visible direction matched expectation. Earlier final-snapshot attempts `20260626_093414` and `20260629_043358` were not accepted because duplicate publishers produced about `400 Hz` feedback. After cleanup, publisher count was `1` for both A/B joint-state topics, and final snapshot `20260629_043441` is clean: failed captures `0`, A/B about `200 Hz`, A/B `err_status: 0`, no joint-limit flags, and no joint-communication flags. |
 | S14 末端执行器 | Complete for low-risk dual-hand bring-up; S15 hybrid arm+hand planning active | Both dexterous hands are mechanically installed and stable. Arm A = right hand, Arm B = left hand. Left hand on `can1` and right hand on `can2` passed SDK health, open-anchor, and index micro-motion. Dual open-anchor and dual index-micro gates passed from SDK/software health. The dual index micro used left target `[255,179,235,255,255,255]` and right target `[255,70,235,255,255,255]`, then returned both to open; pre/post faults were all zero and temperature/current were stable. S15 decision: arms should use ROS2 `agx_arm_ros`, hands should keep using LinkerHand SDK wrappers for now. Full gestures, grasping, simultaneous arm+hand motion, and arm motion during hand sync remain blocked until S15 gates pass. |
+| S15 USB-C CAN 拓扑 | Discovery complete, activation/revalidation pending | Arm A official USB-CAN moved to USB-C hub bus-info `1-3.4.1:1.0` and appeared as temporary `can3`; Arm B official USB-CAN moved to `1-3.4.3:1.0` and appeared as temporary `can0`. Left/right hand interfaces remain `can1`/`can2`. Next gate is to activate Arm A/B back to deterministic names `can_arm_a`/`can_arm_b`, then re-run arm ROS read-only and hand SDK health. |
 
 ## S0 Evidence
 
@@ -142,6 +145,14 @@ health; see `docs/s14_dual_open_anchor_result_20260630.md` and
 
 The next phase is S15 dual arm + dual hand coordination planning:
 `docs/s15_dual_arm_hand_coordination_plan.md`.
+
+Before S15.0 integration health, finish the USB-C hub CAN re-activation from
+`docs/s15_usb_c_can_topology_result_20260702.md`:
+
+```bash
+bash scripts/activate_can.sh can_arm_a 1000000 "1-3.4.1:1.0"
+bash scripts/activate_can.sh can_arm_b 1000000 "1-3.4.3:1.0"
+```
 
 Recommended architecture: arms via ROS2, hands via LinkerHand SDK wrappers.
 Full SDK demos, GUI, gesture loops, `get_state()`, `get_torque()`, full-hand
