@@ -59,6 +59,30 @@ Before S15 observation or motion tests:
 This rule was added after a loose Arm B cable caused an active-driver startup
 failure on 2026-07-02.
 
+## RViz Pose Diagnostic Rule
+
+If RViz shows both arms in the horizontal/URDF-zero posture while the real arms
+are hanging, do not execute motion. This means the S11 visual chain is not
+accepted for the current session.
+
+Run:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-diagnostics \
+  bash scripts/run_humble_container.sh \
+    bash /workspace/nero/scripts/s15_rviz_pose_diagnostics.sh
+```
+
+Expected evidence:
+
+- `/arm_a/feedback/joint_states` and `/arm_b/feedback/joint_states` each have
+  a live publisher and a `robot_state_publisher` subscriber.
+- One joint-state sample is available from each arm.
+- `lab_world -> arm_a/world` and `lab_world -> arm_b/world` match the accepted
+  S11 root transforms.
+- `lab_world -> arm_a/link7` and `lab_world -> arm_b/link7` reflect the current
+  physical posture, not URDF zero pose.
+
 Coordinated sequence:
 
 ```bash

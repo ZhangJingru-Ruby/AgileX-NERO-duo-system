@@ -163,6 +163,12 @@ Before either mode, confirm the arm cables are seated and wait about `20 s`
 after arm power-on or CAN/power reconnect before judging `candump` or ROS topic
 checks. This rule comes from the 2026-07-02 Arm B loose-cable recovery.
 
+If RViz shows the arms horizontal while the physical arms are hanging, stop
+before any motion and run `scripts/s15_rviz_pose_diagnostics.sh`. The most
+likely causes are missing `robot_state_publisher` subscription to
+`/arm_*/feedback/joint_states`, missing S11 static TF, or a stale duplicate
+session.
+
 The default target is absolute `joint1=30 deg`, `joint2=90 deg`,
 `joint3=30 deg`, followed by hand open -> close -> open and arm return. The
 first execution order is:

@@ -43,6 +43,18 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
+wait_for_joint_state() {
+  local topic="$1"
+  local out_file="$2"
+
+  echo "Waiting for one joint-state sample on $topic..."
+  if ! timeout 10s ros2 topic echo --once "$topic" >"$out_file"; then
+    echo "No joint-state sample received on $topic within 10s." >&2
+    echo "Start the dual-arm ROS driver first and verify the feedback topic rate." >&2
+    exit 1
+  fi
+}
+
 robot_description="$(xacro "$model_path")"
 
 write_rsp_params() {
@@ -64,6 +76,11 @@ params_b="${tmp_dir}/arm_b_rsp.yaml"
 write_rsp_params "/arm_a/robot_state_publisher" "arm_a/" "$params_a"
 write_rsp_params "/arm_b/robot_state_publisher" "arm_b/" "$params_b"
 
+sample_a="${tmp_dir}/arm_a_joint_state.yaml"
+sample_b="${tmp_dir}/arm_b_joint_state.yaml"
+wait_for_joint_state "/arm_a/feedback/joint_states" "$sample_a"
+wait_for_joint_state "/arm_b/feedback/joint_states" "$sample_b"
+
 echo "Starting S11 dual model view."
 echo "Subscribing arm_a model to /arm_a/feedback/joint_states"
 echo "Subscribing arm_b model to /arm_b/feedback/joint_states"
@@ -71,6 +88,8 @@ echo "RViz fixed frame: lab_world"
 echo "This script does not publish control commands."
 echo "Arm A robot_state_publisher params: $params_a"
 echo "Arm B robot_state_publisher params: $params_b"
+echo "Arm A first joint-state sample: $sample_a"
+echo "Arm B first joint-state sample: $sample_b"
 
 ros2 run robot_state_publisher robot_state_publisher \
   --ros-args \
