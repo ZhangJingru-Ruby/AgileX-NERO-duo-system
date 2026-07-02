@@ -20,6 +20,12 @@ docs/vendor/
 # Large local manuals/CAD asset bundles.
 # Keep these on the robot/workstation; do not push raw assets to GitHub.
 docs/assets/
+*.STEP
+*.step
+*.STP
+*.stp
+*.STL
+*.stl
 
 # ROS and build outputs
 build/
