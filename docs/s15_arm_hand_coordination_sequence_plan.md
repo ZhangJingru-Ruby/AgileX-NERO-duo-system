@@ -255,8 +255,8 @@ accepted should `--side both` be dry-run and executed.
   human-like elbow-curl/fist gesture because the assumed joint-number mapping
   was wrong. Do not continue using the absolute `joint1=30`, `joint2=90`,
   `joint3=30` target as the gesture definition. Use
-  `scripts/ros_s15_return_to_initial.py` to return to S15 park, then run the
-  joint-mapping probes in
+  `scripts/ros_s15_return_to_initial.py` to return to the accepted initial
+  posture, then run the joint-mapping probes in
   `docs/s15_return_to_initial_and_elbow_curl_design.md`.
 - The operator then confirmed the initialization path succeeded and found by
   Web control that left-side Arm B `J1 -10 deg` plus `J4 +10 deg` better
@@ -312,6 +312,16 @@ NERO_CONTAINER_NAME=nero-humble-s15-both-elbow-demo \
       --confirm-clearance \
       --confirm-rviz-visible
 ```
+
+2026-07-02 dual-arm result:
+
+- The dual-arm/dual-hand coordinated elbow-curl/fist gate ran through by
+  operator report.
+- The remaining correction is return-to-initial semantics: the return script
+  now defaults to `--pose zero`, commanding both arms to
+  `joint1..joint7 = 0 deg` while opening both hands.
+- The older S15 field park remains available only through explicit
+  `--pose s15-park`.
 
 ## Acceptance Criteria
 

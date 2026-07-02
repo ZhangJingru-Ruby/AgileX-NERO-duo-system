@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Return S15 NERO arms and LinkerHand L6 hands to the accepted park posture.
+"""Return S15 NERO arms and LinkerHand L6 hands to the initial posture.
 
-This is not factory zero calibration. The default target is the S15 field
-``park`` posture recorded from the accepted anchored-RViz/current-state checks:
-arms hanging in the local setup and both hands open.
+The default arm target is the operator-accepted joint zero posture:
+joint1..joint7 = 0 deg for both arms. This is a commanded joint-space posture,
+not a Web zero calibration or automatic zero-setting operation.
+
+The earlier S15 field ``park`` posture is still available as ``--pose s15-park``
+for reproducing older S15 checks.
 """
 
 from __future__ import annotations
@@ -38,6 +41,18 @@ S15_PARK_DEG = {
     "arm_a": [2.651, -0.774, -95.039, -6.746, 92.13, -2.174, 9.687],
     "arm_b": [0.824, 0.132, 101.705, -1.078, -91.63, 0.259, -3.628],
 }
+ZERO_DEG = {
+    "arm_a": [0.0] * 7,
+    "arm_b": [0.0] * 7,
+}
+POSE_TARGETS_DEG = {
+    "zero": ZERO_DEG,
+    "s15-park": S15_PARK_DEG,
+}
+POSE_DEFINITIONS = {
+    "zero": "all arm joints commanded to 0 deg; not Web zero calibration",
+    "s15-park": "legacy S15 field park posture; not factory zero calibration",
+}
 
 JOINT_NAMES = [f"joint{i}" for i in range(1, 8)]
 SIDES = ("left", "right")
@@ -46,7 +61,7 @@ SIDES = ("left", "right")
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--arm", choices=["both", "arm_a", "arm_b"], default="both")
-    parser.add_argument("--pose", choices=["s15-park"], default="s15-park")
+    parser.add_argument("--pose", choices=sorted(POSE_TARGETS_DEG), default="zero")
     parser.add_argument("--arm-a-namespace", default="arm_a")
     parser.add_argument("--arm-b-namespace", default="arm_b")
     parser.add_argument("--left-can", default=SIDE_TO_CAN_DEFAULT["left"])
@@ -96,9 +111,14 @@ def max_delta_deg(starts: dict[str, list[float]], targets: dict[str, list[float]
     return value
 
 
-def build_targets(samples: dict[str, Any], arms: list[str]) -> tuple[dict[str, list[float]], dict[str, list[int]]]:
+def build_targets(
+    samples: dict[str, Any],
+    arms: list[str],
+    pose: str,
+) -> tuple[dict[str, list[float]], dict[str, list[int]]]:
     targets: dict[str, list[float]] = {}
     indices: dict[str, list[int]] = {}
+    pose_targets = POSE_TARGETS_DEG[pose]
     for arm in arms:
         sample = samples[arm]
         missing = [joint for joint in JOINT_NAMES if joint not in sample.names]
@@ -106,7 +126,7 @@ def build_targets(samples: dict[str, Any], arms: list[str]) -> tuple[dict[str, l
             raise SystemExit(f"{arm} feedback is missing joints: {missing}")
         target = list(sample.positions)
         arm_indices = []
-        for joint_name, target_deg in zip(JOINT_NAMES, S15_PARK_DEG[arm]):
+        for joint_name, target_deg in zip(JOINT_NAMES, pose_targets[arm]):
             idx = sample.names.index(joint_name)
             target[idx] = math.radians(target_deg)
             arm_indices.append(idx)
@@ -125,7 +145,7 @@ def print_plan(
 ) -> None:
     print("S15 NERO return-to-initial")
     print(f"execute={args.execute} pose={args.pose} arms={arms} skip_arms={args.skip_arms} skip_hands={args.skip_hands}")
-    print("pose_definition=s15-park field posture, not factory zero calibration")
+    print(f"pose_definition={POSE_DEFINITIONS[args.pose]}")
     print(f"hand_open_left={list(PRESETS['open']['left'])}")
     print(f"hand_open_right={list(PRESETS['open']['right'])}")
     if samples is not None and targets is not None:
@@ -235,7 +255,7 @@ def main() -> int:
         max_delta = 0.0
         waypoint_count = 0
         if arms:
-            targets, indices = build_targets(samples, arms)
+            targets, indices = build_targets(samples, arms, args.pose)
             starts = {arm: list(samples[arm].positions) for arm in ARMS}
             max_delta = max_delta_deg(starts, targets, arms)
             waypoint_count = len(build_waypoints(starts, targets, indices, arms, args.max_step_deg))

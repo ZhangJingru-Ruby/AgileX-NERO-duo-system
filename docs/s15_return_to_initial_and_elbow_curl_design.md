@@ -21,7 +21,7 @@ S15 visual-anchor path.
 
 Therefore the correct workflow is:
 
-1. Return to a known field `park` posture.
+1. Return to the accepted initial posture.
 2. Probe each candidate joint with small deltas.
 3. Record the observed semantic effect.
 4. Build the gesture from those observed effects, preferably in delta mode.
@@ -36,10 +36,10 @@ scripts/ros_s15_return_to_initial.py
 
 Default target:
 
-- Arm A S15 park:
-  `[2.651, -0.774, -95.039, -6.746, 92.13, -2.174, 9.687] deg`
-- Arm B S15 park:
-  `[0.824, 0.132, 101.705, -1.078, -91.63, 0.259, -3.628] deg`
+- Arm A zero pose:
+  `[0, 0, 0, 0, 0, 0, 0] deg`
+- Arm B zero pose:
+  `[0, 0, 0, 0, 0, 0, 0] deg`
 - Left hand open:
   `[255, 179, 255, 255, 255, 255]`
 - Right hand open:
@@ -47,10 +47,12 @@ Default target:
 
 Important:
 
-- This is not factory zero.
-- This is not Web zero calibration.
-- This is the S15 field park posture recorded from the accepted S15
-  anchored-RViz/current-state checks.
+- This is a normal joint-space command to `0 deg`, not Web zero calibration and
+  not automatic zero setting.
+- The previous S15 field park posture remains available with
+  `--pose s15-park` for reproducing older S15 checks.
+- The zero pose is now the default because the accepted current initial posture
+  for the dual-arm/dual-hand demo is the all-joint-zero posture.
 
 Dry-run:
 
@@ -72,18 +74,27 @@ NERO_CONTAINER_NAME=nero-humble-s15-init \
       --confirm-rviz-visible
 ```
 
-The script opens both hands first, then moves selected arms back to S15 park in
-segmented waypoints.
+The script opens both hands first, then moves selected arms back to the selected
+pose in segmented waypoints. The default selected pose is `zero`.
+
+Legacy S15 park can still be selected explicitly:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-init \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_return_to_initial.py \
+      --pose s15-park
+```
 
 ## Human-Like Elbow-Curl Gesture Definition
 
 Desired visible action:
 
-1. Start from S15 park.
+1. Start from the accepted initial posture.
 2. Keep the upper arm/shoulder posture visually stable.
 3. Flex the forearm toward the body, like bending an elbow.
 4. Close the hand into a fist.
-5. Optionally return hand open and arm park.
+5. Optionally return hand open and arm zero.
 
 The first mistake to avoid is using absolute `joint2=90, joint3=30` as the
 gesture definition. Those are just raw joint values; they do not guarantee the
@@ -105,8 +116,8 @@ observation in the current setup.
 
 ## Operator-Observed Joint Mapping
 
-After returning to the initial S15 park posture, the operator used Web control
-to check the visible gesture mapping directly.
+After returning to the initial posture, the operator used Web control to check
+the visible gesture mapping directly.
 
 Accepted current candidate for the left-side demo:
 
@@ -363,7 +374,7 @@ Acceptance:
 
 Build the action in this order:
 
-1. Return to S15 park.
+1. Return to the accepted initial posture, currently all arm joints at `0 deg`.
 2. Run the `J1 -2 deg`, `J4 +2 deg` arm-only probe.
 3. If accepted, run the `J1 -10 deg`, `J4 +10 deg` arm motion with hand
    open/close/open.

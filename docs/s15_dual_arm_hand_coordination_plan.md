@@ -233,6 +233,14 @@ In dry-run, verify that Arm B commands raw `joint1=-10 deg` and Arm A commands
 raw `joint1=+20 deg`. Execute only after RViz, clearance, and active-driver
 state are confirmed.
 
+2026-07-02 dual-arm result:
+
+- The dual-arm/dual-hand elbow-curl/fist gate ran through by operator report.
+- The return-to-initial script was then corrected so its default target is the
+  accepted all-joint-zero posture, not the older S15 field park.
+- Use `--pose s15-park` only when explicitly reproducing older S15 field-park
+  checks.
+
 Full procedure and acceptance criteria:
 `docs/s15_arm_hand_coordination_sequence_plan.md`.
 

@@ -6755,3 +6755,33 @@ Dry-run the dual-arm demo with left Arm B semantic `J1 -10/J4 +15` and right
 Arm A semantic `J1 -20/J4 +15`. The dry-run should show raw Arm B
 `joint1=-10 deg` and raw Arm A `joint1=+20 deg`. Execute only after RViz,
 clearance, and active-driver state are confirmed.
+
+## 2026-07-02 - S15 Dual-Arm Coordination Accepted And Zero Return Corrected
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Record the accepted dual-arm/dual-hand demo result and correct the return
+script's default target.
+
+Operator result:
+
+- The dual-hand/dual-arm coordinated elbow-curl/fist demo ran through.
+- The final return-to-initial behavior needed correction: the intended default
+  initial posture is the current all-joint-zero posture, not the older S15
+  field park.
+
+Implementation update:
+
+- `scripts/ros_s15_return_to_initial.py` now defaults to `--pose zero`.
+- `--pose zero` commands Arm A and Arm B `joint1..joint7 = 0 deg` and opens
+  both hands.
+- The previous recorded field park remains available as `--pose s15-park` for
+  reproducing older S15 checks.
+- The script output now prints an explicit `pose_definition` so dry-runs show
+  whether the target is `zero` or `s15-park`.
+
+Safety note:
+
+- `zero` here is a normal joint-space command target. It is not Web zero
+  calibration and not automatic zero setting.

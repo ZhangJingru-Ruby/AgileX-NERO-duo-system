@@ -318,12 +318,12 @@
 
 - [x] S15 RViz 视觉姿态重新验收通过：真实双臂垂悬时，RViz 使用当前会话的观测链显示同样姿态。
 - [x] 已确认 `/arm_*/visual/joint_states` 只用于 RViz 观察，不用于控制、规划、限位或标定。
-- [x] S15 初始化脚本已通过现场运行确认，可回到当前 field park 姿态并打开手。
+- [x] S15 初始化脚本已修正：默认 `--pose zero`，回到 A/B `joint1..joint7 = 0 deg` 并打开手；旧 field park 仅通过 `--pose s15-park` 显式使用。
 - [x] S15 曲肘候选动作已按 Web/ROS 观察修正为左侧 Arm B `J1 -10 deg` / `J4 +10..15 deg`，语义动作符合预期。
 - [x] S15 曲肘握拳正式动作的连续性已通过：single-target arm motion + hand during-curl，手 open -> close -> open，并返回初始位。
 - [x] S15 Arm A / right hand 复刻动作顺滑且手臂/手语义符合预期；发现 raw Arm A `J1 -20 deg` 世界方向相反。
 - [x] S15 J1 已按 `lab_world X` 语义复验通过：`--side right --j1-delta-deg -20` dry-run 打印 Arm A raw `joint1 +20 deg`，执行时朝 `lab_world -X` 避开中间支撑柱。
-- [ ] S15 双臂协同曲肘握拳已通过：`--side both`，左侧 Arm B semantic `J1 -10/J4 +15`，右侧 Arm A semantic `J1 -20/J4 +15`，双手 open -> half close -> open，并返回初始位。
+- [x] S15 双臂协同曲肘握拳已通过：`--side both`，左侧 Arm B semantic `J1 -10/J4 +15`，右侧 Arm A semantic `J1 -20/J4 +15`，双手 open -> half close -> open，并返回初始位。
 - [ ] MoveIt 先规划不执行，轨迹可达且不越限。
 - [ ] 应用节点有速度、加速度、限位保护。
 - [ ] rosbag 或日志记录已配置。
