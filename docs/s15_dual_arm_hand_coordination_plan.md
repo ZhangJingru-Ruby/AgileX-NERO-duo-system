@@ -77,8 +77,8 @@ LinkerHand GUI/demo/gesture scripts while project hand wrappers are active.
   interface observed as `can0`.
 - Left and right hand CAN paths stayed at `can1`/`1-3.4.4:1.0` and
   `can2`/`1-3.4.2:1.0`.
-- Run the re-activation gate in
-  `docs/s15_usb_c_can_topology_result_20260702.md` before S15.0.
+- Re-activation passed on 2026-07-02; see
+  `docs/s15_usb_c_can_activation_result_20260702.md`.
 
 ## S15.0 No-Motion Integration Health
 
@@ -147,6 +147,24 @@ Recommended first hybrid motion:
    hands open -> arm micro motion -> hands index micro -> return hands open.
 
 Do not start with simultaneous arm and hand motion.
+
+## S15.3 Segmented Arm + Hand Coordination Script
+
+Implemented scripts:
+
+- `scripts/launch_s15_dual_arm_hand_observe.sh`
+- `scripts/ros_s15_arm_hand_sequence.py`
+
+The default target is absolute `joint1=30 deg`, `joint2=90 deg`,
+`joint3=30 deg`, followed by hand open -> close -> open and arm return. The
+first execution order is:
+
+1. dry-run and execute `--side left` (`arm_b` + `can1`);
+2. dry-run and execute `--side right` (`arm_a` + `can2`);
+3. dry-run and execute `--side both`.
+
+Full procedure and acceptance criteria:
+`docs/s15_arm_hand_coordination_sequence_plan.md`.
 
 ## Why Not Full Synchronization Yet
 
