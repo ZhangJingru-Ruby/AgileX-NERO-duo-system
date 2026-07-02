@@ -6405,3 +6405,52 @@ Next:
 Do not retry execute immediately. Stop/restart the S15 active observation
 terminal after the emergency stop, then run the diagnostics script and confirm
 the active driver subscribes to `/arm_b/control/move_j`.
+
+## 2026-07-02 - S15 Motion-Block Diagnostics Shows Topic Graph Healthy
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Review the first motion-block diagnostics output after the S15 left execute
+timeout.
+
+Result:
+
+- ROS nodes include both arm drivers, both robot-state publishers, RViz, static
+  TF publishers, and the S15 joint-state visual anchor.
+- `/arm_a/control/move_j` and `/arm_b/control/move_j` each have one subscriber
+  from the corresponding `agx_arm_ctrl_single_node`.
+- `/arm_a/feedback/joint_states` and `/arm_b/feedback/joint_states` each have
+  one publisher from the corresponding arm driver.
+- Arm A and Arm B statuses are normal:
+  - `ctrl_mode=1`
+  - `arm_status=0`
+  - `mode_feedback=1`
+  - `motion_status=0`
+  - `err_status=0`
+  - no joint-limit flags
+  - no joint communication flags
+
+Interpretation:
+
+The ROS command topic subscription exists, so a missing subscriber is not the
+current blocker. However, read-only arm drivers also create `/control/move_j`
+subscribers while being launched with `control_enabled=false`. Topic topology
+alone is not enough to prove execute readiness.
+
+Action:
+
+Updated `scripts/s15_motion_block_diagnostics.sh` to print driver parameters:
+
+- `can_port`
+- `arm_type`
+- `auto_enable`
+- `control_enabled`
+- `speed_percent`
+- `enable_timeout`
+
+Next:
+
+Rerun the updated diagnostics while the observation terminal is in intended
+active mode. Before any execute retry, confirm the active Arm B node reports
+`control_enabled=true` and `auto_enable=true`.

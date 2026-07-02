@@ -238,6 +238,10 @@ accepted should `--side both` be dry-run and executed.
   `scripts/s15_motion_block_diagnostics.sh` first.
 - The script now checks active-arm `/control/move_j` subscription counts before
   future execute attempts.
+- Follow-up diagnostics showed `/arm_b/control/move_j` has a subscriber and arm
+  status is normal. This still does not prove active mode because read-only
+  drivers also create command subscribers. Confirm `control_enabled=true` and
+  `auto_enable=true` from driver parameters before retrying execute.
 
 ## Acceptance Criteria
 
