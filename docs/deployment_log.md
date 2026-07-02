@@ -6275,3 +6275,43 @@ Route update:
 
 The next gate is S15 `--side left` dry-run with the observation session still in
 read-only mode. Do not execute motion until the dry-run plan is reviewed.
+
+## 2026-07-02 - S15 Left Dry-Run Node Attribute Bug Fixed
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Handle the first S15 left-side dry-run failure.
+
+Evidence:
+
+- Command:
+  `NERO_CONTAINER_NAME=nero-humble-s15-left-dryrun bash scripts/run_humble_container.sh python3 /workspace/nero/scripts/ros_s15_arm_hand_sequence.py --side left`
+- Error:
+  `AttributeError: can't set attribute 'publishers'`
+
+Cause:
+
+`rclpy.node.Node` already has a read-only `publishers` property. The S15 script
+attempted to assign `self.publishers = {}` during node initialization.
+
+Action:
+
+- Renamed the script's internal motion-publisher dictionary to
+  `self._move_publishers`.
+- Renamed the emergency-stop client dictionary to `self._estop_clients` for
+  consistency.
+
+Safety assessment:
+
+No arm or hand command was sent. The failure happened before the script entered
+the dry-run planning output stage.
+
+Verification:
+
+- `python3 -m py_compile scripts/ros_s15_arm_hand_sequence.py`
+- `git diff --check`
+
+Next:
+
+Retry the same `--side left` dry-run command. Do not add `--execute`.

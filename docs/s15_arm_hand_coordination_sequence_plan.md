@@ -180,6 +180,14 @@ NERO_CONTAINER_NAME=nero-humble-s15-left-dryrun \
       --side left
 ```
 
+2026-07-02 first retry note:
+
+- The first left-side dry-run attempt failed before any command publication
+  because the script used `self.publishers`, which conflicts with a read-only
+  `rclpy.node.Node` attribute.
+- The member was renamed to `self._move_publishers`; retry the same dry-run
+  command.
+
 Terminal 2, left side execute only after dry-run acceptance:
 
 Stop the read-only observation session, then restart Terminal 1 in active mode:

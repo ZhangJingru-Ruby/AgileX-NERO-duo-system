@@ -84,8 +84,8 @@ class S15ArmHandNode(Node):
         }
         self.samples: dict[str, Sample | None] = {arm: None for arm in ARMS}
         self.statuses: dict[str, object | None] = {arm: None for arm in ARMS}
-        self.publishers = {}
-        self.estop_clients = {}
+        self._move_publishers = {}
+        self._estop_clients = {}
 
         for arm, ns in self.namespaces.items():
             prefix = f"/{ns}" if ns else ""
@@ -102,10 +102,10 @@ class S15ArmHandNode(Node):
                     self._make_status_cb(arm),
                     1,
                 )
-            self.publishers[arm] = self.create_publisher(
+            self._move_publishers[arm] = self.create_publisher(
                 JointState, f"{prefix}/control/move_j", 1
             )
-            self.estop_clients[arm] = self.create_client(Empty, f"{prefix}/emergency_stop")
+            self._estop_clients[arm] = self.create_client(Empty, f"{prefix}/emergency_stop")
 
     def _make_joint_cb(self, arm: str):
         def cb(msg: JointState) -> None:
@@ -152,7 +152,7 @@ class S15ArmHandNode(Node):
             stamp = self.get_clock().now().to_msg()
             for arm in active_arms:
                 msgs[arm].header.stamp = stamp
-                self.publishers[arm].publish(msgs[arm])
+                self._move_publishers[arm].publish(msgs[arm])
             rclpy.spin_once(self, timeout_sec=0.05)
             time.sleep(0.05)
 
@@ -233,7 +233,7 @@ class S15ArmHandNode(Node):
         raise TimeoutError("Timed out waiting for waypoint: " + "; ".join(details))
 
     def emergency_stop_all(self) -> None:
-        for arm, client in self.estop_clients.items():
+        for arm, client in self._estop_clients.items():
             if client.wait_for_service(timeout_sec=0.3):
                 future = client.call_async(Empty.Request())
                 rclpy.spin_until_future_complete(self, future, timeout_sec=0.8)
