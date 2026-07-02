@@ -41,6 +41,12 @@ from ros_s15_arm_hand_sequence import (  # noqa: E402
 
 DEMO_JOINTS = ("joint1", "joint4")
 MAX_DEMO_DELTA_DEG = 25.0
+J1_LAB_WORLD_X_TO_RAW_SIGN = {
+    # The arms face each other. Operator validation showed that the same raw
+    # J1 sign rotates Arm A and Arm B in opposite lab_world X directions.
+    "arm_a": -1.0,
+    "arm_b": 1.0,
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -51,6 +57,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--left-can", default=SIDE_TO_CAN_DEFAULT["left"])
     parser.add_argument("--right-can", default=SIDE_TO_CAN_DEFAULT["right"])
     parser.add_argument("--j1-delta-deg", type=float, default=-2.0)
+    parser.add_argument("--j1-delta-frame", choices=["lab-world-x", "raw-joint"], default="lab-world-x")
     parser.add_argument("--j4-delta-deg", type=float, default=2.0)
     parser.add_argument("--arm-profile", choices=["segmented", "single-target"], default="segmented")
     parser.add_argument("--max-step-deg", type=float, default=2.0)
@@ -110,7 +117,17 @@ def require_joint_limits_deg(target_summary: dict[str, float], margin_deg: float
             )
 
 
-def build_demo_target(sample: Any, args: argparse.Namespace) -> tuple[list[float], list[int], dict[str, float]]:
+def j1_raw_delta_deg(args: argparse.Namespace, arm: str) -> float:
+    if args.j1_delta_frame == "raw-joint":
+        return args.j1_delta_deg
+    return J1_LAB_WORLD_X_TO_RAW_SIGN[arm] * args.j1_delta_deg
+
+
+def build_demo_target(
+    sample: Any,
+    args: argparse.Namespace,
+    arm: str,
+) -> tuple[list[float], list[int], dict[str, float], dict[str, float]]:
     missing = [joint for joint in DEMO_JOINTS if joint not in sample.names]
     if missing:
         raise SystemExit(f"feedback is missing demo joints: {missing}")
@@ -118,8 +135,12 @@ def build_demo_target(sample: Any, args: argparse.Namespace) -> tuple[list[float
     target = list(sample.positions)
     summary = {}
     indices = []
+    command_delta_by_joint = {
+        "joint1": j1_raw_delta_deg(args, arm),
+        "joint4": args.j4_delta_deg,
+    }
     delta_by_joint = {
-        "joint1": args.j1_delta_deg,
+        "joint1": command_delta_by_joint["joint1"],
         "joint4": args.j4_delta_deg,
     }
     for joint_name in DEMO_JOINTS:
@@ -128,7 +149,7 @@ def build_demo_target(sample: Any, args: argparse.Namespace) -> tuple[list[float
         indices.append(idx)
         summary[joint_name] = math.degrees(target[idx])
     require_joint_limits_deg(summary)
-    return target, indices, summary
+    return target, indices, summary, command_delta_by_joint
 
 
 def max_demo_delta_deg(args: argparse.Namespace) -> float:
@@ -154,13 +175,16 @@ def print_plan(
     samples: dict[str, Any],
     target: list[float],
     target_summary: dict[str, float],
+    command_delta_by_joint: dict[str, float],
     waypoints: list[dict[str, list[float]]],
 ) -> None:
     side_can = args.left_can if args.side == "left" else args.right_can
     print("S15 NERO elbow-curl/fist demo")
     print(f"execute={args.execute} side={args.side} arm={arm} hand_can={side_can}")
-    print("gesture_delta_definition=joint1_delta + joint4_delta, discovered by operator Web test")
-    print(f"j1_delta_deg={args.j1_delta_deg} j4_delta_deg={args.j4_delta_deg}")
+    print("gesture_delta_definition=joint1_lab_world_x_delta + joint4_raw_delta")
+    print(f"j1_delta_frame={args.j1_delta_frame}")
+    print(f"requested_j1_delta_deg={args.j1_delta_deg} requested_j4_delta_deg={args.j4_delta_deg}")
+    print(f"command_delta_deg={command_delta_by_joint}")
     print(f"arm_profile={args.arm_profile}")
     print(f"waypoint_count={len(waypoints)} max_step_deg={args.max_step_deg} waypoint_dwell={args.waypoint_dwell}")
     print(f"hand_sequence={'skipped' if args.skip_hand else 'open -> close -> open'}")
@@ -301,12 +325,12 @@ def main() -> int:
 
         starts = {item: list(samples[item].positions) for item in ARMS}
         names = {item: samples[item].names for item in ARMS}
-        target, joint_indices, target_summary = build_demo_target(samples[arm], args)
+        target, joint_indices, target_summary, command_delta_by_joint = build_demo_target(samples[arm], args, arm)
         targets = {arm: target}
         indices = {arm: joint_indices}
         waypoints = plan_waypoints(starts, targets, indices, [arm], args)
 
-        print_plan(args, arm, passive_arms, samples, target, target_summary, waypoints)
+        print_plan(args, arm, passive_arms, samples, target, target_summary, command_delta_by_joint, waypoints)
         for item in ARMS:
             print(f"{item}_status={format_status(node.statuses[item])}")
         print(f"command_subscriber_counts={node.command_subscription_counts()}")

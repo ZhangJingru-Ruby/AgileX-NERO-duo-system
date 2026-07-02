@@ -206,9 +206,32 @@ Right side maps to Arm A and right hand:
 right side = Arm A + right hand can2
 ```
 
-For the first Arm A reproduction, the operator requested `J1 -20 deg` so Arm A
-stays away from the support column between the two arms. Keep J6/J7 unchanged
-because the hand cable still limits large wrist bends.
+The first Arm A reproduction exposed a coordinate-sign problem:
+
+- Arm B raw `J1 -10 deg` moved in the intended `lab_world -X` direction.
+- Arm A raw `J1 -20 deg` moved toward `lab_world +X`, not `lab_world -X`.
+
+Root cause:
+
+- Arm A and Arm B face each other.
+- J1 raw joint signs are local to each arm.
+- A raw J1 sign is not a shared world-frame direction.
+
+Decision:
+
+- `ros_s15_elbow_curl_demo.py` now interprets `--j1-delta-deg` in the
+  `lab_world X` semantic frame by default.
+- `--j1-delta-deg -20` means "move J1 toward `lab_world -X` by 20 deg".
+- Conversion:
+  - Arm B command raw J1 delta = requested J1 delta.
+  - Arm A command raw J1 delta = negative requested J1 delta.
+- Use `--j1-delta-frame raw-joint` only for low-level sign debugging.
+
+For the first Arm A reproduction, the operator requested semantic
+`J1 -20 deg` so Arm A stays away from the support column between the two arms.
+The script will command Arm A raw J1 `+20 deg` to achieve that semantic
+direction. Keep J6/J7 unchanged because the hand cable still limits large wrist
+bends.
 
 Dry-run first:
 
@@ -218,6 +241,7 @@ NERO_CONTAINER_NAME=nero-humble-s15-right-elbow-demo \
     python3 /workspace/nero/scripts/ros_s15_elbow_curl_demo.py \
       --side right \
       --j1-delta-deg -20 \
+      --j1-delta-frame lab-world-x \
       --j4-delta-deg 15 \
       --arm-profile single-target \
       --hand-timing during-curl \
@@ -236,6 +260,7 @@ NERO_CONTAINER_NAME=nero-humble-s15-right-elbow-demo \
     python3 /workspace/nero/scripts/ros_s15_elbow_curl_demo.py \
       --side right \
       --j1-delta-deg -20 \
+      --j1-delta-frame lab-world-x \
       --j4-delta-deg 15 \
       --arm-profile single-target \
       --hand-timing during-curl \

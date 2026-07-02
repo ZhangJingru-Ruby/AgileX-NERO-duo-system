@@ -6683,3 +6683,43 @@ Next:
 Run Arm A dry-run with `--side right --j1-delta-deg -20 --j4-delta-deg 15`,
 then execute only after the dry-run target summary, RViz, and physical clearance
 are accepted.
+
+## 2026-07-02 - S15 Arm A J1 World-Direction Sign Mismatch Found
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Resolve the mismatch between raw J1 joint signs and the shared `lab_world`
+direction semantics during Arm A reproduction.
+
+Operator result:
+
+- Arm A / right hand reproduction ran smoothly and matched the gesture
+  expectation.
+- The only mismatch was direction: Arm A raw `J1 -20 deg` rotated toward
+  `lab_world +X`, while the accepted Arm B left-side gesture used raw
+  `J1 -10 deg` to move toward `lab_world -X`.
+
+Cause:
+
+- Arm A and Arm B are mounted facing each other.
+- J1 raw signs are local joint signs, not shared world-frame signs.
+- The S13 direction-sign correction already showed that local joint sign and
+  world-visible direction must be explicitly calibrated.
+
+Implementation update:
+
+- `scripts/ros_s15_elbow_curl_demo.py` now defaults to
+  `--j1-delta-frame lab-world-x`.
+- In this mode, `--j1-delta-deg` is interpreted as a `lab_world X` semantic
+  delta:
+  - Arm B raw J1 delta = requested J1 delta.
+  - Arm A raw J1 delta = negative requested J1 delta.
+- `--j1-delta-frame raw-joint` remains available for explicit low-level
+  debugging.
+
+Next:
+
+Rerun Arm A dry-run with the same operator-facing semantic command
+`--side right --j1-delta-deg -20 --j4-delta-deg 15`. The dry-run should print
+`command_delta_deg={'joint1': 20.0, 'joint4': 15.0}` before execute.
