@@ -242,6 +242,12 @@ accepted should `--side both` be dry-run and executed.
   status is normal. This still does not prove active mode because read-only
   drivers also create command subscribers. Confirm `control_enabled=true` and
   `auto_enable=true` from driver parameters before retrying execute.
+- Updated diagnostics confirmed both drivers are active:
+  `auto_enable=True`, `control_enabled=True`, and `speed_percent=5`.
+  If Web enable changed after the failed execute attempt, the earlier no-motion
+  event is likely explained by the arm not being enabled at execute time. If Web
+  enable did not change, run a small Arm B J1 `+2 deg` command-path probe before
+  retrying the wide S15 sequence.
 
 ## Acceptance Criteria
 

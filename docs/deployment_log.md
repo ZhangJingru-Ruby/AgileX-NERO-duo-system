@@ -6454,3 +6454,48 @@ Next:
 Rerun the updated diagnostics while the observation terminal is in intended
 active mode. Before any execute retry, confirm the active Arm B node reports
 `control_enabled=true` and `auto_enable=true`.
+
+## 2026-07-02 - S15 Active Driver Parameters Confirmed
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Confirm whether the current S15 observation terminal is really running active
+drivers, not read-only drivers.
+
+Result:
+
+The updated diagnostics showed:
+
+- Arm A:
+  - `can_port=can_arm_a`
+  - `auto_enable=True`
+  - `control_enabled=True`
+  - `speed_percent=5`
+  - `enable_timeout=5.0`
+- Arm B:
+  - `can_port=can_arm_b`
+  - `auto_enable=True`
+  - `control_enabled=True`
+  - `speed_percent=5`
+  - `enable_timeout=5.0`
+- Both arms:
+  - `ctrl_mode=1`
+  - `arm_status=0`
+  - `err_status=0`
+  - no joint-limit flags
+  - no joint communication flags
+
+Interpretation:
+
+The current ROS session is active and healthy. Missing command subscription or
+read-only launch mode is not the current blocker.
+
+If Web enable was changed after the failed S15 left execute attempt, that likely
+explains why the first waypoint produced no motion. If Web enable was not
+changed, the cause is still unresolved.
+
+Next:
+
+Do not retry the wide S15 left execute immediately. First run a small Arm B
+J1 `+2 deg` ROS command-path probe using the accepted S12 isolation script.
