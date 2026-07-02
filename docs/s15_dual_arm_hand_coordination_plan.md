@@ -159,6 +159,10 @@ Implemented scripts:
 RViz validation and dry-run. Relaunch it with `--active` only before execute
 gates.
 
+Before either mode, confirm the arm cables are seated and wait about `20 s`
+after arm power-on or CAN/power reconnect before judging `candump` or ROS topic
+checks. This rule comes from the 2026-07-02 Arm B loose-cable recovery.
+
 The default target is absolute `joint1=30 deg`, `joint2=90 deg`,
 `joint3=30 deg`, followed by hand open -> close -> open and arm return. The
 first execution order is:

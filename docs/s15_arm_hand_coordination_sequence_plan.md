@@ -46,6 +46,19 @@ Default mode is `--readonly`. Use read-only mode for RViz validation and all
 dry-runs. Stop the read-only session and relaunch with `--active` only before
 an execute gate.
 
+## Preflight Ready-Time Rule
+
+Before S15 observation or motion tests:
+
+- confirm `can_arm_a`, `can_arm_b`, `can1`, and `can2` are physically seated;
+- after arm power-on or CAN/power reconnect, wait about `20 s` before treating
+  `candump` or ROS topic checks as authoritative;
+- if an arm interface is UP but `candump` or the ROS driver has no response,
+  first reseat the cable and repeat after the ready-time wait.
+
+This rule was added after a loose Arm B cable caused an active-driver startup
+failure on 2026-07-02.
+
 Coordinated sequence:
 
 ```bash

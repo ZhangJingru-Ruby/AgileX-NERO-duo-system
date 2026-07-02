@@ -65,3 +65,20 @@ Accepted for S15 preflight:
 
 Next gate: start the S15 observation session, verify ROS feedback, and run
 dry-runs before any coordinated motion.
+
+## Follow-Up Recovery Note
+
+During the first S15 active observation attempt, Arm B failed to auto-enable and
+later failed to return the firmware version. The operator found the physical
+cause: a loose cable.
+
+Operational note added from the recovery:
+
+- After power-on or reconnect, wait about `20 s` before using
+  `timeout ... candump` or ROS topic checks as acceptance evidence.
+- If `candump` shows no frames immediately after power/reconnect, first reseat
+  the CAN/power cable and wait for the controller to become ready before
+  concluding that the USB bus-info mapping is wrong.
+
+Read-only ROS revalidation after cable reseating is recorded in
+`docs/s15_ros_readonly_revalidation_result_20260702.md`.
