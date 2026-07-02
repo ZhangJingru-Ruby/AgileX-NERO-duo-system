@@ -6315,3 +6315,44 @@ Verification:
 Next:
 
 Retry the same `--side left` dry-run command. Do not add `--execute`.
+
+## 2026-07-02 - S15 Left-Side Dry-Run Accepted
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Review the S15 left-side dry-run before any real motion.
+
+Command:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-left-dryrun \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_arm_hand_sequence.py \
+      --side left
+```
+
+Result:
+
+- `execute=False`
+- `side_mapping=left->arm_b/can1 right->arm_a/can2`
+- active side: `left`
+- active arm: `arm_b`
+- passive arm: `arm_a`
+- requested target: `joint1=30 deg`, `joint2=90 deg`, `joint3=30 deg`
+- waypoint count: `9`
+- max planned joint delta: `89.868 deg`
+- wide motion required: `true`
+- hand open pose: `[255, 179, 255, 255, 255, 255]`
+- hand close pose: `[67, 151, 0, 0, 0, 0]`
+
+Assessment:
+
+The software dry-run gate passed. This is a wide-motion and full-fist plan, so
+execution still requires explicit operator clearance and script confirmations.
+
+Next:
+
+Before left-side execute, confirm Arm B sweep clearance, left-hand closing
+clearance, RViz visibility, and J6/J7 cable slack. If any item is not clear,
+reduce the target or hand close fraction and rerun dry-run.

@@ -188,6 +188,19 @@ NERO_CONTAINER_NAME=nero-humble-s15-left-dryrun \
 - The member was renamed to `self._move_publishers`; retry the same dry-run
   command.
 
+2026-07-02 accepted dry-run:
+
+- `--side left` maps to Arm B + left hand `can1`.
+- The dry-run completed with `execute=False`.
+- Planned target for Arm B:
+  `[30.0, 90.0, 30.0, -1.078, -91.627, 0.259, -3.635] deg`.
+- `waypoint_count=9`.
+- `max_planned_joint_delta_deg=89.868`.
+- Hand close pose is full fist: `[67, 151, 0, 0, 0, 0]`.
+- Execute requires `--allow-wide-motion`, `--allow-full-fist`,
+  `--confirm-clearance`, and `--confirm-rviz-visible` after physical clearance
+  review.
+
 Terminal 2, left side execute only after dry-run acceptance:
 
 Stop the read-only observation session, then restart Terminal 1 in active mode:
