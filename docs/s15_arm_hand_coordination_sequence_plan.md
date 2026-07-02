@@ -258,6 +258,12 @@ accepted should `--side both` be dry-run and executed.
   `scripts/ros_s15_return_to_initial.py` to return to S15 park, then run the
   joint-mapping probes in
   `docs/s15_return_to_initial_and_elbow_curl_design.md`.
+- The operator then confirmed the initialization path succeeded and found by
+  Web control that left-side Arm B `J1 -10 deg` plus `J4 +10 deg` better
+  matches the demo intent. The next executable gate is
+  `scripts/ros_s15_elbow_curl_demo.py`: first `J1 -2 deg`, `J4 +2 deg` with
+  `--skip-hand`, then the formal `J1 -10 deg`, `J4 +10 deg` hand
+  open/close/open demo after acceptance.
 
 ## Acceptance Criteria
 

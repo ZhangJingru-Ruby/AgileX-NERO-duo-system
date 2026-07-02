@@ -185,13 +185,27 @@ session.
   controller semantics.
 - Use `--raw-rviz` only when deliberately reproducing the raw mismatch.
 
-The default target is absolute `joint1=30 deg`, `joint2=90 deg`,
-`joint3=30 deg`, followed by hand open -> close -> open and arm return. The
-first execution order is:
+The first absolute target `joint1=30 deg`, `joint2=90 deg`, `joint3=30 deg`
+was useful as a software dry-run, but it did not match the intended
+human-like elbow-curl gesture during physical execution. Do not use it as the
+gesture definition.
 
-1. dry-run and execute `--side left` (`arm_b` + `can1`);
-2. dry-run and execute `--side right` (`arm_a` + `can2`);
-3. dry-run and execute `--side both`.
+The current operator-observed left-side candidate is delta-based:
+
+```text
+left side = Arm B + left hand can1
+Arm B joint1: -10 deg
+Arm B joint4: +10 deg
+hand: open -> close -> open
+```
+
+The first execution order is now:
+
+1. run `ros_s15_return_to_initial.py`;
+2. dry-run and execute the left-side `2 deg` arm-only probe;
+3. dry-run and execute the left-side `10 deg` half-fist demo;
+4. only after left-side acceptance, mirror the same process for the right side
+   and then both sides.
 
 Full procedure and acceptance criteria:
 `docs/s15_arm_hand_coordination_sequence_plan.md`.

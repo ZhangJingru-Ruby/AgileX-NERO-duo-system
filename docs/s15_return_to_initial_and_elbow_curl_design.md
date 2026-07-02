@@ -103,60 +103,86 @@ observation in the current setup.
 | J5 / `joint5` | wrist/palm orientation candidate | Useful to keep the palm/fist facing the desired direction. |
 | J6/J7 | wrist joints | Keep small because current hand cable routing limits large wrist bends. |
 
-## Required Joint-Mapping Probes
+## Operator-Observed Joint Mapping
 
-Use Arm B first because the left-side S15 sequence uses Arm B + left hand.
+After returning to the initial S15 park posture, the operator used Web control
+to check the visible gesture mapping directly.
 
-Dry-run and then execute one probe at a time:
+Accepted current candidate for the left-side demo:
 
-```bash
-NERO_CONTAINER_NAME=nero-humble-s15-map \
-  bash scripts/run_humble_container.sh \
-    python3 /workspace/nero/scripts/ros_s12_isolation_step.py \
-      --target arm_b \
-      --joint joint2 \
-      --delta-deg 10
+```text
+left side = Arm B + left hand can1
+Arm B J1: -10 deg
+Arm B J4: +10 deg
 ```
 
+Observed effect:
+
+- This combination is closer to the intended human-like elbow-curl/fist demo
+  than the previous absolute `joint1=30`, `joint2=90`, `joint3=30` target.
+- Because this result is based on field observation, the next command gate is a
+  small `2 deg` probe using the same J1/J4 signs, not a new wide J2/J3 search.
+
+Use this slow dry-run first:
+
 ```bash
-NERO_CONTAINER_NAME=nero-humble-s15-map \
+NERO_CONTAINER_NAME=nero-humble-s15-elbow-probe \
   bash scripts/run_humble_container.sh \
-    python3 /workspace/nero/scripts/ros_s12_isolation_step.py \
+    python3 /workspace/nero/scripts/ros_s15_elbow_curl_demo.py \
+      --side left \
+      --j1-delta-deg -2 \
+      --j4-delta-deg 2 \
+      --skip-hand
+```
+
+Then execute the same `2 deg` arm-only probe only if RViz, clearance, and Web or
+driver enable state are all confirmed:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-elbow-probe \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_elbow_curl_demo.py \
+      --side left \
+      --j1-delta-deg -2 \
+      --j4-delta-deg 2 \
+      --skip-hand \
       --execute \
-      --target arm_b \
-      --joint joint2 \
-      --delta-deg 10
+      --confirm-clearance \
+      --confirm-rviz-visible
 ```
 
-Repeat for:
+The formal first demo is:
 
-- `joint2 +10 deg`
-- `joint2 -10 deg`
-- `joint3 +10 deg`
-- `joint3 -10 deg`
-- `joint4 +10 deg`
-- `joint4 -10 deg`
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-elbow-demo \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_elbow_curl_demo.py \
+      --side left \
+      --j1-delta-deg -10 \
+      --j4-delta-deg 10 \
+      --hand-close-fraction 0.5 \
+      --allow-wide-motion \
+      --execute \
+      --confirm-clearance \
+      --confirm-rviz-visible
+```
 
-Record for each probe:
+Full fist remains a separate confirmation:
 
-| Probe | Observed motion | Useful for elbow curl? | Safe sign |
-| --- | --- | --- | --- |
-| Arm B J2 +10 | TBD | TBD | TBD |
-| Arm B J2 -10 | TBD | TBD | TBD |
-| Arm B J3 +10 | TBD | TBD | TBD |
-| Arm B J3 -10 | TBD | TBD | TBD |
-| Arm B J4 +10 | TBD | TBD | TBD |
-| Arm B J4 -10 | TBD | TBD | TBD |
+```bash
+--hand-close-fraction 1.0 --allow-full-fist
+```
 
 Do not probe J6/J7 for this gesture until the cable clearance plan is improved.
 
 ## Likely Gesture Construction
 
-After mapping probes, build the action in this order:
+Build the action in this order:
 
 1. Return to S15 park.
-2. Move the selected elbow-flex candidate joint by `10-20 deg`.
-3. Add a small wrist/palm compensation only if needed.
+2. Run the `J1 -2 deg`, `J4 +2 deg` arm-only probe.
+3. If accepted, run the `J1 -10 deg`, `J4 +10 deg` arm motion with hand
+   open/close/open.
 4. Close the hand with `hand_close_fraction=0.5` first.
 5. Only after the half close is accepted, try `hand_close_fraction=1.0`.
 
@@ -164,7 +190,8 @@ Recommended first gesture should be delta-based, not absolute:
 
 ```text
 arm_delta:
-  joint3: sign_from_probe * 15..25 deg
+  joint1: -10 deg
+  joint4: +10 deg
 hand:
   close_fraction: 0.5 first, then 1.0 after acceptance
 ```

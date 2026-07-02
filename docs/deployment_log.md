@@ -6575,3 +6575,44 @@ Next:
 Run return-to-initial dry-run, then execute only after clearance review. After
 that, run small Arm B J2/J3/J4 probes to determine which joint and sign produce
 the visible elbow-curl effect.
+
+## 2026-07-02 - S15 Slow Elbow-Curl Candidate Script Added
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Convert the operator-observed Web gesture into a slow ROS + SDK demo gate.
+
+Observation:
+
+- The return-to-initial script ran successfully by operator report.
+- Web control showed that left-side Arm B `J1 -10 deg` and `J4 +10 deg` better
+  match the intended human-like elbow-curl demo effect.
+- The operator requested a `2 deg` probe first, then a formal `10 deg` demo.
+- Speed must be slow.
+
+Implementation:
+
+- Added `scripts/ros_s15_elbow_curl_demo.py`.
+- Default dry-run motion is left side, Arm B, `J1 -2 deg`, `J4 +2 deg`.
+- Formal motion is supplied by arguments: `--j1-delta-deg -10
+  --j4-delta-deg 10`.
+- Slow controls:
+  - active S15 driver remains at `speed_percent=5`;
+  - script default `--max-step-deg 2`;
+  - script default `--waypoint-dwell 0.5`;
+  - hand default `--hand-speed 20`.
+- Execution still requires `--execute`, `--confirm-clearance`, and
+  `--confirm-rviz-visible`.
+- Deltas above `5 deg` require `--allow-wide-motion`.
+
+Deployment choice:
+
+The current accepted elbow-curl candidate is delta-based, not an absolute joint
+target. The old absolute `joint1=30 deg`, `joint2=90 deg`, `joint3=30 deg`
+sequence remains deprecated for this demo.
+
+Next:
+
+Run the arm-only `2 deg` probe with `--skip-hand`. If accepted, run the formal
+left-side demo with `J1 -10 deg`, `J4 +10 deg`, and half-fist first.
