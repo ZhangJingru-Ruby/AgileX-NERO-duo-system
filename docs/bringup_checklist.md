@@ -321,6 +321,7 @@
 - [x] S15 初始化脚本已通过现场运行确认，可回到当前 field park 姿态并打开手。
 - [x] S15 曲肘候选动作已按 Web/ROS 观察修正为左侧 Arm B `J1 -10 deg` / `J4 +10..15 deg`，语义动作符合预期。
 - [ ] S15 曲肘握拳正式动作的连续性已通过：single-target arm motion + hand during-curl，手 open -> close -> open，并返回初始位。
+- [ ] S15 Arm A / right hand 复刻已通过：`--side right`，Arm A `J1 -20 deg` 避开中间支撑柱，右手 `can2` open -> close -> open。
 - [ ] MoveIt 先规划不执行，轨迹可达且不越限。
 - [ ] 应用节点有速度、加速度、限位保护。
 - [ ] rosbag 或日志记录已配置。

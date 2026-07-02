@@ -40,6 +40,7 @@ from ros_s15_arm_hand_sequence import (  # noqa: E402
 
 
 DEMO_JOINTS = ("joint1", "joint4")
+MAX_DEMO_DELTA_DEG = 25.0
 
 
 def parse_args() -> argparse.Namespace:
@@ -81,8 +82,8 @@ def require_safe_args(args: argparse.Namespace) -> None:
         raise SystemExit("--max-step-deg must be in (0, 5] for the slow elbow-curl demo.")
     if args.waypoint_dwell < 0:
         raise SystemExit("--waypoint-dwell must be >= 0.")
-    if abs(args.j1_delta_deg) > 15 or abs(args.j4_delta_deg) > 15:
-        raise SystemExit("J1/J4 deltas must be <= 15 deg for this first demo script.")
+    if abs(args.j1_delta_deg) > MAX_DEMO_DELTA_DEG or abs(args.j4_delta_deg) > MAX_DEMO_DELTA_DEG:
+        raise SystemExit(f"J1/J4 deltas must be <= {MAX_DEMO_DELTA_DEG:g} deg for this demo script.")
     if args.hand_start_delay < 0:
         raise SystemExit("--hand-start-delay must be >= 0.")
     if args.hand_speed < 10 or args.hand_speed > 50:

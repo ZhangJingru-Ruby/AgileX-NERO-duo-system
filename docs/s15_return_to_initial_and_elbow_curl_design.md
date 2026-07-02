@@ -198,6 +198,57 @@ This is still not a hard real-time synchronization primitive. It is a smoother
 demo mode: arm target is sent once, while hand commands are sent from the
 LinkerHand SDK after a small delay.
 
+## Right-Side / Arm A Reproduction
+
+Right side maps to Arm A and right hand:
+
+```text
+right side = Arm A + right hand can2
+```
+
+For the first Arm A reproduction, the operator requested `J1 -20 deg` so Arm A
+stays away from the support column between the two arms. Keep J6/J7 unchanged
+because the hand cable still limits large wrist bends.
+
+Dry-run first:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-right-elbow-demo \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_elbow_curl_demo.py \
+      --side right \
+      --j1-delta-deg -20 \
+      --j4-delta-deg 15 \
+      --arm-profile single-target \
+      --hand-timing during-curl \
+      --hand-start-delay 0.4 \
+      --hand-dwell 0.8 \
+      --hand-close-fraction 0.5 \
+      --hold-seconds 0.5
+```
+
+Execute only after the dry-run target summary and physical clearance are
+accepted:
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-right-elbow-demo \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_elbow_curl_demo.py \
+      --side right \
+      --j1-delta-deg -20 \
+      --j4-delta-deg 15 \
+      --arm-profile single-target \
+      --hand-timing during-curl \
+      --hand-start-delay 0.4 \
+      --hand-dwell 0.8 \
+      --hand-close-fraction 0.5 \
+      --hold-seconds 0.5 \
+      --allow-wide-motion \
+      --execute \
+      --confirm-clearance \
+      --confirm-rviz-visible
+```
+
 Full fist remains a separate confirmation:
 
 ```bash

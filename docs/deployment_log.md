@@ -6656,3 +6656,30 @@ Next:
 
 Run the same accepted left-side gesture in dry-run and then execute with:
 `--arm-profile single-target --hand-timing during-curl`.
+
+## 2026-07-02 - S15 Arm A Reproduction Planned With Larger J1 Offset
+
+Phase: S15 双臂双手协调脚本
+
+Goal:
+Prepare the accepted elbow-curl/fist demo for Arm A / right hand.
+
+Operator decision:
+
+- Proceed from the accepted left-side demo to Arm A.
+- Use `--side right`, which maps to Arm A and right hand `can2`.
+- Set Arm A `J1` delta to `-20 deg` so the path stays away from the support
+  column between the two arms.
+
+Implementation update:
+
+- The S15 elbow-curl demo script previously limited J1/J4 deltas to `15 deg`.
+- The local demo cap is now `25 deg`.
+- The wide-motion gate remains active: any delta above `5 deg` still requires
+  `--allow-wide-motion`.
+
+Next:
+
+Run Arm A dry-run with `--side right --j1-delta-deg -20 --j4-delta-deg 15`,
+then execute only after the dry-run target summary, RViz, and physical clearance
+are accepted.
