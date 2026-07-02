@@ -31,6 +31,15 @@ log/
 # Accidental shell redirection artifact observed in this workspace
 /bash
 
+# Accidental CLI argument artifacts observed in this workspace
+/--joint
+/--left-can
+/--left-delta
+/--mode
+/--right-can
+/--right-delta
+/--speed
+
 # OS/editor noise
 .DS_Store
 __MACOSX/

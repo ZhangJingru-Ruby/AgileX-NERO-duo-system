@@ -1,6 +1,6 @@
 # NERO Agent Operating Rules
 
-Last updated: 2026-06-26
+Last updated: 2026-07-02
 
 This file defines how any agent, operator, or collaborator should continue the
 NERO arm deployment work in this repository.
@@ -18,17 +18,17 @@ as unknown and define how it will be verified.
 Use sources in this order:
 
 1. Local project documents and assets:
-   - `docs/机器人部署与调试行动路线.md`
-   - `docs/current_bringup_status.md`
-   - `docs/bringup_checklist.md`
-   - `docs/setup_framework.md`
-   - `docs/s2_hybrid_host_container_plan.md`
-   - `docs/s9_configuration_review.md`
-   - `docs/s11_dual_arm_experiment_baseline.md`
-   - `docs/s12_control_isolation_plan.md`
-   - `docs/nero 用户手册.md`
-   - `docs/机械臂通信协议V1.2.1.xlsx`
-   - `docs/pics/`
+   - `docs/phases/机器人部署与调试行动路线.md`
+   - `docs/status/current_bringup_status.md`
+   - `docs/status/bringup_checklist.md`
+   - `docs/status/setup_framework.md`
+   - `docs/phases/s2_hybrid_host_container_plan.md`
+   - `docs/phases/s9_configuration_review.md`
+   - `docs/phases/s11_dual_arm_experiment_baseline.md`
+   - `docs/phases/s12_control_isolation_plan.md`
+   - `docs/assets/manuals/nero 用户手册.md`
+   - `docs/assets/manuals/机械臂通信协议V1.2.1.xlsx`
+   - `docs/evidence/pics/`
    - `config/nero.env`
 2. Direct observations from this machine:
    - terminal output
@@ -68,12 +68,12 @@ the selected ROS2 host.
 
 ## Phase Discipline
 
-Follow the route in `docs/机器人部署与调试行动路线.md`.
+Follow the route in `docs/phases/机器人部署与调试行动路线.md`.
 
 Do not skip phase gates. A later phase may be prepared offline, but it must not
 be marked complete until its acceptance criteria are satisfied.
 
-Current phase state is tracked in `docs/current_bringup_status.md`.
+Current phase state is tracked in `docs/status/current_bringup_status.md`.
 
 ## Mandatory Work Cycle
 
@@ -84,10 +84,10 @@ For every deployment step, use this cycle:
 3. Execute the smallest useful step.
 4. Verify the result with a command, file check, screenshot, CAN capture, ROS
    output, or explicit user现场确认.
-5. Record the step in `docs/deployment_log.md`.
-6. Update `docs/current_bringup_status.md` if phase status, assumptions,
+5. Record the step in `docs/status/deployment_log.md`.
+6. Update `docs/status/current_bringup_status.md` if phase status, assumptions,
    blockers, or confirmed configuration changed.
-7. Update and correct `docs/机器人部署与调试行动路线.md` after the step:
+7. Update and correct `docs/phases/机器人部署与调试行动路线.md` after the step:
    - add newly learned facts
    - correct wrong assumptions
    - refine acceptance criteria
@@ -113,7 +113,7 @@ Every step record must preserve:
 - blockers or residual risk
 - next step
 
-Use this minimum format in `docs/deployment_log.md`:
+Use this minimum format in `docs/status/deployment_log.md`:
 
 ```markdown
 ## YYYY-MM-DD - Sx.y Short Title
@@ -165,22 +165,24 @@ These are the current deployment assumptions. Update them only when verified.
 
 | Item | Current value |
 | --- | --- |
-| Current end effector | Dual LinkerHand L6 dexterous hands mechanically installed |
-| Planned end effector | LinkerHand L6 read-only identification, then gated first finger motion |
+| Current end effector | Dual LinkerHand L6 dexterous hands installed; Arm A right hand, Arm B left hand |
+| Planned end effector | S15 dual-arm + dual-hand bring-up demo; not contact manipulation |
 | Physical arm count | `2`, independent power |
-| Arm A | Web verified; hotspot `agx-7ax-armA`; CAN `can_arm_a`; namespace `arm_a`; USB bus `1-5:1.0` |
-| Arm B | Web verified; hotspot `agx-7ax-armB`; CAN `can_arm_b`; namespace `arm_b`; USB bus `1-11:1.0` |
+| Arm A | Web verified; hotspot `agx-7ax-armA`; CAN `can_arm_a`; namespace `arm_a`; USB bus `1-3.4.1:1.0` |
+| Arm B | Web verified; hotspot `agx-7ax-armB`; CAN `can_arm_b`; namespace `arm_b`; USB bus `1-3.4.3:1.0` |
+| Left hand | LinkerHand L6 on `can1`; USB bus `1-3.4.4:1.0` |
+| Right hand | LinkerHand L6 on `can2`; USB bus `1-3.4.2:1.0` |
 | Initial ROS `effector_type` | `none` |
 | Installation pose | Table upright |
 | Power supply | Factory adapter |
-| CAN ports | `can_arm_a`, `can_arm_b` |
+| CAN ports | Arms: `can_arm_a`, `can_arm_b`; hands: `can1`, `can2` |
 | CAN bitrate | `1000000` |
 | Initial TCP offset | `[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]` |
 | Deployment mode | Ubuntu 20.04 host SDK/CAN-only + Docker ROS2 Humble |
-| Current live state | S14 active: LinkerHand SDK reviewed; S14.3L read-only CAN identification pending |
+| Current live state | S15 elbow-curl/fist gate accepted by operator report; zero-return revalidation is the next closure gate |
 | Observed Web model | `7ax`, interpreted as one NERO 7-axis arm/controller per physical arm |
 | Observed Web footer version | `v1.121`; current SDK firmware selector is `v112` |
-| Current next phase | S14.3L LinkerHand read-only CAN identification |
+| Current next phase | S15 closure and post-bring-up integration planning |
 
 Current Web evidence shows one set of joint tabs, `关节1` through `关节7`.
 Treat this as normal for one NERO 7-axis arm/controller. The physical setup has
@@ -195,7 +197,7 @@ to `true`.
 
 S10 dual-arm first motion is accepted and closed. Arm A and Arm B both passed
 the staged Web, SDK, and ROS low-speed single-joint checks. Final S10.8 audit
-`docs/s10_8_control_source_audit_live_20260625_155538.txt` reported both CAN
+`docs/results/s10_8_control_source_audit_live_20260625_155538.txt` reported both CAN
 interfaces UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker container, and no NERO host
 process.
 
@@ -210,8 +212,8 @@ values are:
   `roll=3.1415926`, `pitch=-1.5707963`, `yaw=0`.
 
 S11 evidence: successful RViz screenshot
-`docs/pics/S11_RViz_accepted_dual_arm_layout.png`; post-TF read-only snapshot
-`docs/s9_ros_snapshots/20260626_055339/` with `Failed capture commands: 0`,
+`docs/evidence/pics/S11_RViz_accepted_dual_arm_layout.png`; post-TF read-only snapshot
+`docs/evidence/ros_snapshots/20260626_055339/` with `Failed capture commands: 0`,
 A/B joint-state feedback at about 200 Hz, A/B `err_status: 0`, no joint-limit
 flags, and no joint communication flags. X11 cleanup was confirmed by `xhost`
 showing access control enabled and only `SI:localuser:lv-robotics`.
@@ -223,7 +225,7 @@ and git commit linkage must be unambiguous. Do not run Cartesian, MoveIt,
 MIT/JS, raw CAN motion, dexterous-hand actuation, or dual-arm coordinated
 motion until their later gates are explicitly accepted.
 
-S12 prepared path: use `docs/s12_control_isolation_plan.md`.
+S12 prepared path: use `docs/phases/s12_control_isolation_plan.md`.
 For visible field observation, the current S12 test target is a bounded J1
 `30 deg` move at `speed_percent=5`, still one active arm at a time. The inferred
 signs for a `lab_world -Y` sweep are Arm A `joint1 +30 deg` and Arm B
@@ -234,7 +236,7 @@ operator observation confirm it. If direction is uncertain, run the optional
 
 S12.1 Arm A is accepted and closed. Evidence: dry-run accepted in commit
 `c6a92eb`, execution core recorded in commit `3e4e2a0`, and post-motion
-snapshot `docs/s9_ros_snapshots/20260626_080809/` is clean. Arm A
+snapshot `docs/evidence/ros_snapshots/20260626_080809/` is clean. Arm A
 `joint1 +30 deg` matched the intended visible direction, Arm B did not visibly
 move, max passive deviation was `0.005 deg`, and A/B post-motion read-only
 status had `err_status: 0` with no joint-limit or joint-communication flags.
@@ -244,18 +246,18 @@ had `err_status: 0`. S12.2 Arm B execution core also passed: Arm B
 `joint1 -30 deg` matched the expected direction, Arm A did not visibly move,
 max passive deviation was `0.008 deg`, and A/B final statuses had
 `err_status: 0`. Post-motion snapshot
-`docs/s9_ros_snapshots/20260626_083210/` is clean.
+`docs/evidence/ros_snapshots/20260626_083210/` is clean.
 
 S12 is accepted and closed. Arm A isolation evidence is in commits `c6a92eb`,
-`3e4e2a0`, and snapshot `docs/s9_ros_snapshots/20260626_080809/`. Arm B
+`3e4e2a0`, and snapshot `docs/evidence/ros_snapshots/20260626_080809/`. Arm B
 isolation evidence is in commits `19e007e`, `64fe5a4`, and snapshot
-`docs/s9_ros_snapshots/20260626_083210/`. S12 accepted script output and
+`docs/evidence/ros_snapshots/20260626_083210/`. S12 accepted script output and
 read-only snapshots as equivalent logging evidence; no rosbag was recorded in
 S12. Intentional emergency-stop testing was not performed. Next phase is S13:
 simultaneous read-only stability, enable/hold, and very small non-contact
 joint-space dual-arm primitives only.
 
-S13 prepared path: use `docs/s13_low_risk_dual_arm_primitives_plan.md`.
+S13 prepared path: use `docs/phases/s13_low_risk_dual_arm_primitives_plan.md`.
 The first planned primitive keeps the same visible J1 amplitude from S12:
 Arm A `joint1 +30 deg`, Arm B `joint1 -30 deg`, `speed_percent=5`. The S13
 driver pair sets both arms `auto_enable=true` and `control_enabled=true`, but
@@ -278,7 +280,7 @@ direction-sign dry-run; do not repeat Arm A `+30 deg` / Arm B `-30 deg` as an
 "opposite direction" primitive.
 
 S13 post-motion read-only snapshot after the direction-semantics mismatch is
-accepted: `docs/s9_ros_snapshots/20260626_090214/` has `Failed capture
+accepted: `docs/evidence/ros_snapshots/20260626_090214/` has `Failed capture
 commands: 0`, A/B joint-state feedback at about `200 Hz`, A/B `err_status: 0`,
 all joint-limit flags `false`, and all joint-communication flags `false`. The
 next S13 gate is corrected direction-sign dry-run only, with the current
@@ -301,7 +303,7 @@ Arm A `30.459 deg` and Arm B `27.318 deg`; after-return J1 values were Arm A
 `1.737 deg` and Arm B `-1.394 deg`; final A/B `err_status: 0`; non-target
 deviations were about `0.006 deg` and `0.007 deg`.
 
-S13 final snapshot attempt `docs/s9_ros_snapshots/20260626_093414/` is not
+S13 final snapshot attempt `docs/evidence/ros_snapshots/20260626_093414/` is not
 accepted for closure. It has `Failed capture commands: 0`, A/B `err_status: 0`,
 no joint-limit flags, and no joint-communication flags, but A/B joint-state
 frequency is about `400 Hz`, not the expected about `200 Hz`. Treat this as a
@@ -310,10 +312,10 @@ running. Next gate: stop extra ROS drivers, verify a single feedback source, and
 rerun the corrected-execution final read-only snapshot.
 
 S13 is accepted and closed. A second frequency-anomaly snapshot
-`docs/s9_ros_snapshots/20260629_043358/` still showed about `400 Hz`, so it is
+`docs/evidence/ros_snapshots/20260629_043358/` still showed about `400 Hz`, so it is
 recorded as not accepted. The operator then verified `Publisher count: 1` for
 both `/arm_a/feedback/joint_states` and `/arm_b/feedback/joint_states`. Final
-snapshot `docs/s9_ros_snapshots/20260629_043441/` is accepted: `Failed capture
+snapshot `docs/evidence/ros_snapshots/20260629_043441/` is accepted: `Failed capture
 commands: 0`, A/B about `200 Hz`, A/B `err_status: 0`, all joint-limit flags
 `false`, and all joint-communication flags `false`. The accepted S13 primitive
 is Arm A `joint1 +30 deg` and Arm B `joint1 +30 deg`; Arm A `+30 deg` / Arm B
@@ -332,7 +334,7 @@ and do not command large J6/J7 wrist motions until S14 records the cable-safe
 envelope, load/TCP decisions, and a clean no-motion read-only path.
 
 S14.0 mechanical/cable review is accepted. The operator archived cable photos
-at `docs/pics/S14自然状态线束.jpeg` and `docs/pics/S14手腕弯折状态线束.jpeg`,
+at `docs/evidence/pics/S14自然状态线束.jpeg` and `docs/evidence/pics/S14手腕弯折状态线束.jpeg`,
 confirmed left/right mapping, and confirmed both hands are mechanically stable.
 The temporary J6/J7 cable rule remains active: no large wrist motion beyond the
 observed about `70 deg` cable-bend envelope. Next gate is S14.1 no-motion ROS
@@ -340,7 +342,7 @@ read-only verification with no Web hand controls and no finger actuation.
 
 S14.1 arm read-only verification is accepted with a posture warning. The
 operator confirmed `Publisher count: 1` for both A/B joint-state feedback topics.
-Snapshot `docs/s9_ros_snapshots/20260629_074337/` has `Failed capture
+Snapshot `docs/evidence/ros_snapshots/20260629_074337/` has `Failed capture
 commands: 0`, A/B about `200 Hz`, A/B `err_status: 0`, all joint-limit flags
 `false`, and all joint-communication flags `false`. A/B `arm_status=3`, which
 upstream maps to `SINGULARITY_POINT` / `奇异点`; A/B `motion_status=1`, not
@@ -370,7 +372,7 @@ separate S14.4 motion/safety gate.
 New S14 field evidence changes the preferred hand path. The operator provided
 the previously used `linkerhand_sdk` source tree, now stored at
 `upstream/linkerhand_sdk/` and reviewed in
-`docs/s14_linkerhand_sdk_review.md`. It identifies the installed hands as a
+`docs/upstream/s14_linkerhand_sdk_review.md`. It identifies the installed hands as a
 dual LinkerHand L6 setup, not the AgileX Revo2 path: left hand default `can0`,
 serial `LHL6-03-253-L-B-1-C`, CAN ID `0x28`; right hand default `can1`,
 serial `LHL6-03-240-R-B-1-C`, CAN ID `0x27`; bitrate `1000000`.
@@ -380,22 +382,22 @@ AgileX `/control/hand` before the S14.4 motion gate.
 The script passed local syntax checking. A Codex-session run saw no NERO-related
 host process but could not see `can_arm_a` or `can_arm_b`; the live
 desktop-terminal audit then passed on 2026-06-25 and is saved at
-`docs/s10_4_control_source_audit_live_20260625_150438.txt`. S10.4 is accepted
+`docs/results/s10_4_control_source_audit_live_20260625_150438.txt`. S10.4 is accepted
 with handoff state `handoff_to_arm_b`.
 
 S10.5 Arm B status: accepted. Pre-motion audit
-`docs/s10_5_control_source_audit_live_20260625_152039.txt` is clean,
-post-Web/read-only snapshot `docs/s9_ros_snapshots/20260625_072129/` is clean,
+`docs/results/s10_5_control_source_audit_live_20260625_152039.txt` is clean,
+post-Web/read-only snapshot `docs/evidence/ros_snapshots/20260625_072129/` is clean,
 and the operator confirmed Arm B Web motion was normal.
 
 S10.6 Arm B status: accepted. SDK dry-run used `can_arm_b`, firmware `v112`,
 J1 `+2 deg`, speed `5%`, and target differed only in J1. Operator confirmed SDK
 real motion was observed successfully and execution was smooth. Post-SDK
-snapshot `docs/s9_ros_snapshots/20260625_074048/` is clean. Full SDK execute
+snapshot `docs/evidence/ros_snapshots/20260625_074048/` is clean. Full SDK execute
 terminal output was not pasted, so exact `after_step_deg` and `after_return_deg`
 values are not recorded.
 
-S10.7 prepared path: use `docs/s10_7_arm_b_ros_motion_plan.md`. Stop the
+S10.7 prepared path: use `docs/phases/s10_7_arm_b_ros_motion_plan.md`. Stop the
 dual-arm read-only driver, start only the Arm B ROS control driver with
 `namespace:=arm_b`, `can_port:=can_arm_b`, `auto_enable:=true`,
 `control_enabled:=true`, `speed_percent:=5`, then run the `/arm_b` dry-run
@@ -405,19 +407,19 @@ S10.7 Arm B status: accepted. ROS execute moved Arm B `joint1` from about
 `32.798 deg` to `34.553 deg`, returned to about `33.026 deg` within script
 tolerance, and final status was `ctrl_mode=1`, `arm_status=0`,
 `mode_feedback=1`, `motion_status=0`. Post-ROS snapshot
-`docs/s9_ros_snapshots/20260625_074953/` is clean; sampled Arm B J1 is about
+`docs/evidence/ros_snapshots/20260625_074953/` is clean; sampled Arm B J1 is about
 `32.797 deg`, consistent with settled return. Next step is S10.8 closure:
 stop/account for Arm B ROS control and audit active control sources before any
 broader motion phase.
 
 S10.8 status: accepted. Final control-source audit
-`docs/s10_8_control_source_audit_live_20260625_155538.txt` shows A/B CAN
+`docs/results/s10_8_control_source_audit_live_20260625_155538.txt` shows A/B CAN
 UP/ERROR-ACTIVE at 1 Mbps, no NERO Docker containers, and no NERO host
 processes. S10 is complete. Next phase is S11 dual-arm experiment baseline:
 define `lab_world`, measure both base transforms, establish static TF, and
 create logging/rosbag rules before any coordinated dual-arm motion.
 
-S11 prepared path: use `docs/s11_dual_arm_experiment_baseline.md`. S11 is a
+S11 prepared path: use `docs/phases/s11_dual_arm_experiment_baseline.md`. S11 is a
 coordinate, TF, TCP, and logging baseline phase, not a motion-expansion phase.
 Keep `effector_type:=none` and TCP offset zero until an end effector is
 installed and measured. End-effector installation is now S14, not S11.
@@ -440,7 +442,7 @@ Before sending any raw CAN command:
 - confirm the arm mode
 - confirm emergency stop behavior
 - watch `0x2A1` and the relevant feedback IDs
-- record the command and result in `docs/deployment_log.md`
+- record the command and result in `docs/status/deployment_log.md`
 
 Never send undocumented `cansend` commands during bring-up.
 
@@ -450,9 +452,9 @@ Never send undocumented `cansend` commands during bring-up.
 - Keep changes scoped to the current phase.
 - Do not delete or rewrite source documents.
 - Do not modify generated CAD/model assets unless explicitly required.
-- Do not treat `docs/bringup_checklist.md` as a permanent log. It is a reusable
-  checklist; durable evidence belongs in `docs/deployment_log.md` and
-  `docs/current_bringup_status.md`.
+- Do not treat `docs/status/bringup_checklist.md` as a permanent log. It is a reusable
+  checklist; durable evidence belongs in `docs/status/deployment_log.md` and
+  `docs/status/current_bringup_status.md`.
 - If a script or command changes deployment behavior, document the reason and
   update the route.
 

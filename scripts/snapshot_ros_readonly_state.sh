@@ -22,7 +22,7 @@ fi
 arm_a_ns="${NERO_ARM_A_ROS_NAMESPACE:-arm_a}"
 arm_b_ns="${NERO_ARM_B_ROS_NAMESPACE:-arm_b}"
 stamp="$(date +%Y%m%d_%H%M%S)"
-out_dir="$repo_root/docs/s9_ros_snapshots/$stamp"
+out_dir="$repo_root/docs/evidence/ros_snapshots/$stamp"
 mkdir -p "$out_dir"
 failures=0
 

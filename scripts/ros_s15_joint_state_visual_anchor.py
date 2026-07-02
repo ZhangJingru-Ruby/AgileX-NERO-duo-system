@@ -13,7 +13,7 @@ from sensor_msgs.msg import JointState
 JOINT_NAMES = [f"joint{i}" for i in range(1, 8)]
 
 # S11 accepted post-TF read-only snapshot:
-# docs/s9_ros_snapshots/20260626_055339/*_joint_states_once.txt
+# docs/evidence/ros_snapshots/20260626_055339/*_joint_states_once.txt
 S11_REFERENCE_RAD = {
     "arm_a": [
         0.02429498318776107,

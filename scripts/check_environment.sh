@@ -119,20 +119,20 @@ fi
 
 printf '\nProject documents\n'
 printf '%s\n' '-----------------'
-check_file "${NERO_USER_MANUAL:-docs/nero 用户手册.md}" "user manual"
-check_file "${NERO_CAN_PROTOCOL:-docs/机械臂通信协议V1.2.1.xlsx}" "CAN protocol"
-check_file "${NERO_BASE_STEP:-docs/nero3d.stp}" "base STEP model"
-check_file "${NERO_GRIPPER_STEP:-docs/nero带夹爪以及带灵巧手模型/NERO夹爪版外发.STEP}" "gripper STEP model"
-check_file "${NERO_DEXTEROUS_HAND_STEP:-docs/nero带夹爪以及带灵巧手模型/NERO带灵巧手.STEP}" "dexterous hand STEP model"
-check_file "${NERO_PANEL_IMAGE:-docs/pics/2.1.1控制面板说明.png}" "panel image"
-check_file "${NERO_END_CONNECTOR_IMAGE:-docs/pics/2.1.2末端连接电器说明.png}" "end connector image"
-check_file "${NERO_BASE_MOUNT_IMAGE:-docs/pics/2.3.1 底座安装说明.png}" "base mounting image"
-check_file "${NERO_CAN_WIRING_IMAGE:-docs/pics/3.1can线链接.jpg}" "CAN wiring image"
-check_file "${NERO_CAN_TERMINAL_IMAGE:-docs/pics/3.1can线链接1.png}" "CAN terminal image"
-check_file "${NERO_POWER_SEQUENCE_IMAGE:-docs/pics/3.2上电使用说明.png}" "power sequence image"
-check_file "${NERO_AVIATION_CONNECTOR_IMAGE:-docs/pics/航插接口示意图.jpg}" "aviation connector image"
-check_file "${NERO_HAND_DIMENSION_IMAGE:-docs/pics/4 灵巧手示意图.png}" "dexterous hand dimension image"
-check_file "${NERO_HAND_FLANGE_IMAGE:-docs/pics/5 灵巧手法兰安装示意图.png}" "dexterous hand flange image"
+check_file "${NERO_USER_MANUAL:-docs/assets/manuals/nero 用户手册.md}" "user manual"
+check_file "${NERO_CAN_PROTOCOL:-docs/assets/manuals/机械臂通信协议V1.2.1.xlsx}" "CAN protocol"
+check_file "${NERO_BASE_STEP:-docs/assets/cad/nero3d.stp}" "base STEP model"
+check_file "${NERO_GRIPPER_STEP:-docs/assets/cad/nero带夹爪以及带灵巧手模型/NERO夹爪版外发.STEP}" "gripper STEP model"
+check_file "${NERO_DEXTEROUS_HAND_STEP:-docs/assets/cad/nero带夹爪以及带灵巧手模型/NERO带灵巧手.STEP}" "dexterous hand STEP model"
+check_file "${NERO_PANEL_IMAGE:-docs/evidence/pics/2.1.1控制面板说明.png}" "panel image"
+check_file "${NERO_END_CONNECTOR_IMAGE:-docs/evidence/pics/2.1.2末端连接电器说明.png}" "end connector image"
+check_file "${NERO_BASE_MOUNT_IMAGE:-docs/evidence/pics/2.3.1 底座安装说明.png}" "base mounting image"
+check_file "${NERO_CAN_WIRING_IMAGE:-docs/evidence/pics/3.1can线链接.jpg}" "CAN wiring image"
+check_file "${NERO_CAN_TERMINAL_IMAGE:-docs/evidence/pics/3.1can线链接1.png}" "CAN terminal image"
+check_file "${NERO_POWER_SEQUENCE_IMAGE:-docs/evidence/pics/3.2上电使用说明.png}" "power sequence image"
+check_file "${NERO_AVIATION_CONNECTOR_IMAGE:-docs/evidence/pics/航插接口示意图.jpg}" "aviation connector image"
+check_file "${NERO_HAND_DIMENSION_IMAGE:-docs/evidence/pics/4 灵巧手示意图.png}" "dexterous hand dimension image"
+check_file "${NERO_HAND_FLANGE_IMAGE:-docs/evidence/pics/5 灵巧手法兰安装示意图.png}" "dexterous hand flange image"
 
 printf '\nNERO defaults\n'
 printf '%s\n' '-------------'

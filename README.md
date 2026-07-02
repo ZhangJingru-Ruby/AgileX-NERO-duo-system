@@ -1,54 +1,130 @@
-# NERO Arm 部署与调试工作区
+# NERO 双臂双手交付工作区
 
-这个目录用于沉淀 NERO 七自由度双臂系统的本地部署、调试、验收与注意事项。当前 S12 控制隔离与日志闭环已关闭通过，下一目标是 S13 低风险双臂协同原语。
+本仓库沉淀 NERO 双七自由度机械臂 + 双 LinkerHand L6 灵巧手的部署、调试、验收证据和后续操作流程。
+
+截至 2026-07-02，S0-S14 已完成，S15 双臂双手 elbow-curl/fist 演示已按现场 operator report 跑通。当前下一 gate 是使用默认 `zero` 姿态做回零复验并关闭 S15 交付闭环。该系统仍处于 bring-up/demo 阶段，不是接触式抓取、交接或近距离协作 manipulation 原语。
+
+English entry: [README_EN.md](README_EN.md)  
+完整流程计划: [PLAN.md](PLAN.md) / [PLAN_EN.md](PLAN_EN.md)
 
 ## 必读入口
 
-- [Agent Operating Rules](agent.md)：后续调试代理/协作者必须遵守的事实源、记录和路线更新规则。
-- [机器人部署与调试行动路线](docs/机器人部署与调试行动路线.md)：主路线，包含阶段目标、执行动作、验收标准和注意事项。
-- [当前 Bring-Up 状态](docs/current_bringup_status.md)：已确认配置、S0/S1 状态和图片索引。
-- [部署日志](docs/deployment_log.md)：每一步实际执行、证据、选择和风险记录。
-- [上游仓库分析](docs/upstream_repo_analysis.md)：本地 clone 的 AgileX ROS/SDK/URDF 仓库证据与 ROS 版本决策。
-- [S2 混合部署方案](docs/s2_hybrid_host_container_plan.md)：共享 Ubuntu 20.04 主机 + Docker ROS2 Humble 的执行方案。
-- [S11 双臂实验基线](docs/s11_dual_arm_experiment_baseline.md)：`lab_world`、双臂 base TF、TCP 和日志/rosbag 规则。
-- [S11 post-TF 快照](docs/s9_ros_snapshots/20260626_055339/README.md)：S11 关闭用双臂只读反馈证据。
-- [S12 控制隔离计划](docs/s12_control_isolation_plan.md)：单臂轮流控制、另一臂只读监控和日志验收。
-- [S13 低风险双臂原语计划](docs/s13_low_risk_dual_arm_primitives_plan.md)：双臂 active/hold 与非接触 joint-space 同步动作。
-- [Setup Framework](docs/setup_framework.md)：工程分层、关键事实、配置边界。
-- [Bring-Up Checklist](docs/bringup_checklist.md)：现场逐项检查表。
-- [NERO 用户手册](docs/nero%20用户手册.md)：语雀导出的用户手册文本。
-- [机械臂通信协议 V1.2.1](docs/机械臂通信协议V1.2.1.xlsx)：CAN 协议源文件。
+- [Agent Operating Rules](agent.md): 后续协作者必须遵守的事实源、记录和安全规则。
+- [当前 Bring-Up 状态](docs/status/current_bringup_status.md): 当前配置、阶段状态、验收结果和下一步。
+- [部署日志](docs/status/deployment_log.md): 每一步真实执行、证据、风险和后续动作。
+- [Bring-Up Checklist](docs/status/bringup_checklist.md): 现场复验清单。
+- [Setup Framework](docs/status/setup_framework.md): 工程分层、硬件事实、默认配置。
+- [机器人部署与调试行动路线](docs/phases/机器人部署与调试行动路线.md): 历史阶段路线和详细记录。
+- [S15 双臂双手协调计划](docs/phases/s15_dual_arm_hand_coordination_plan.md): 当前 hybrid 控制架构和 S15 gate。
+- [S15 操作流程](docs/phases/s15_arm_hand_coordination_sequence_plan.md): observe/dry-run/active/execute 顺序。
+- [S15 回零与 elbow-curl 设计](docs/phases/s15_return_to_initial_and_elbow_curl_design.md): 回零目标、手势定义和左右臂映射。
 
-## 本地资料状态
+## 目录结构
 
-本地 `docs/` 已包含：
+```text
+.
+├── config/                 # 固定环境变量和设备映射
+├── docker/                 # ROS2 Humble 容器
+├── examples/               # SDK-only 示例
+├── rviz/                   # RViz 配置
+├── scripts/                # 已验收操作脚本，路径保持稳定
+├── docs/
+│   ├── status/             # 当前状态、日志、checklist、工程框架
+│   ├── phases/             # S2-S15 阶段计划、设计和操作流程
+│   ├── results/            # 验收结果、audit、diagnostics
+│   ├── evidence/           # 图片证据和 ROS 快照入口
+│   ├── assets/             # 手册、协议表、CAD/STEP/STL
+│   └── upstream/           # 上游仓库分析和 review
+└── upstream/               # ignored，本地上游源码证据缓存
+```
 
-- 用户手册 Markdown：`docs/nero 用户手册.md`
-- CAN 协议 Excel：`docs/机械臂通信协议V1.2.1.xlsx`
-- 重复 CAN 协议副本：`docs/机械臂通信协议V1.2.1 (1).xlsx`
-- 机械臂本体 STEP：`docs/nero3d.stp`
-- 夹爪/灵巧手模型：`docs/nero带夹爪以及带灵巧手模型/`
-- 法兰连接件模型：`docs/NERO+两指夹爪-法兰.STEP/`、`docs/NERO+强脑标准版灵巧手 法兰连接件-左右前/`
-- 用户手册关键图片：`docs/pics/`
-- 上游仓库证据缓存：`upstream/agx_arm_ros`、`upstream/pyAgxArm`、`upstream/piper_ros`、
-  `upstream/linkerhand_sdk`
-  可在本机存在，但不纳入 git 首次提交；复现条件见下方“上游依赖”。
+ROS 只读快照已归档到 `docs/evidence/ros_snapshots`。该目录来自历史 S9/S10-S14 快照集合，后续新快照也写入同一 evidence 路径。
+
+## 固定控制架构
+
+| 设备 | 接口 | 控制路径 |
+| --- | --- | --- |
+| Arm A / 右侧 | `can_arm_a`, USB `1-3.4.1:1.0`, ROS `/arm_a` | ROS2 `agx_arm_ros` |
+| Arm B / 左侧 | `can_arm_b`, USB `1-3.4.3:1.0`, ROS `/arm_b` | ROS2 `agx_arm_ros` |
+| Left hand | `can1`, USB `1-3.4.4:1.0` | LinkerHand SDK wrapper |
+| Right hand | `can2`, USB `1-3.4.2:1.0` | LinkerHand SDK wrapper |
+
+不要在 ROS arm driver active 时运行 arm SDK motion。不要在项目 hand wrapper active 时运行 LinkerHand GUI/demo/gesture 脚本。
+
+## 快速命令
+
+```bash
+source config/nero.env
+bash scripts/check_environment.sh
+bash scripts/s10_control_source_audit.sh
+```
+
+启动 S15 只读观察和 RViz：
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-observe \
+  bash scripts/run_humble_container.sh --allow-xhost \
+    bash /workspace/nero/scripts/launch_s15_dual_arm_hand_observe.sh --readonly
+```
+
+S15 回零 dry-run：
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-init \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_return_to_initial.py
+```
+
+S15 回零执行：
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-init \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_return_to_initial.py \
+      --execute \
+      --allow-wide-motion \
+      --confirm-clearance \
+      --confirm-rviz-visible
+```
+
+S15 双臂双手 elbow-curl/fist dry-run：
+
+```bash
+NERO_CONTAINER_NAME=nero-humble-s15-elbow-demo \
+  bash scripts/run_humble_container.sh \
+    python3 /workspace/nero/scripts/ros_s15_elbow_curl_demo.py \
+      --side both \
+      --left-j1-delta-deg -10 \
+      --right-j1-delta-deg -20 \
+      --left-j4-delta-deg 15 \
+      --right-j4-delta-deg 15 \
+      --arm-profile single-target \
+      --hand-timing during-curl \
+      --hand-close-fraction 0.5
+```
+
+执行前必须先停止 readonly observe，并用 `--active` 重启观察/driver session。
+
+## 硬安全边界
+
+- 默认状态是不运动；所有真实 motion 都必须 dry-run 先过。
+- 外部供电不超过 25V，电流能力不小于 10A；末端 XT30 2+2 为 24V、2A MAX。
+- 任何新控制路径、较大动作、接触式任务、MoveIt execute、Cartesian motion、raw CAN motion、MIT 控制、零点设置、固件升级、碰撞等级修改，都需要单独计划和验收。
+- S15 RViz visual anchor 只用于观察，不用于控制、规划、限位、标定或语义验收。
+- USB/CAN 或机械臂电源重连后等待约 20 秒，再判断 `candump` 或 ROS topic 是否正常。
+- 如果 RViz 与实物姿态不一致，先运行 `scripts/s15_rviz_pose_diagnostics.sh`，不要执行 motion。
 
 ## Git 包边界
 
-本仓库提交项目自有的部署脚本、配置、现场记录、行动路线、截图、快照和本地文档证据。
-以下内容故意不提交：
+提交项目自有脚本、配置、文档、证据、图片和 CAD 资产。以下内容故意不提交：
 
-- `upstream/`：上游仓库/SDK 证据缓存，体积较大，可按固定 URL 和记录条件复现。
-- `.venv/`：本机 Python 虚拟环境，应由脚本重新创建。
-- `build/`、`install/`、`log/`：ROS/colcon 构建产物。
-- `.agents/`、`.codex/`、`__pycache__/`：本地运行缓存。
+- `upstream/`: 上游源码缓存，可按 README/PLAN 记录复现。
+- `.venv/`: 本机 SDK 虚拟环境。
+- `build/`, `install/`, `log/`: ROS/colcon 构建产物。
+- `.agents/`, `.codex/`, `__pycache__/`: 本地运行缓存。
+- `docs/vendor/`: 大体积 vendor 包和展开目录，保留 review 文档即可。
 
-`docs/` 不在 `.gitignore` 中，属于当前部署包的一部分。
-
-## 上游依赖
-
-如果 `upstream/` 不存在，按以下条件恢复本地证据缓存：
+## 上游依赖复现
 
 ```bash
 mkdir -p upstream
@@ -63,91 +139,8 @@ git clone https://github.com/agilexrobotics/piper_ros.git upstream/piper_ros
 git -C upstream/piper_ros checkout 2dc30fca68cbf4e04d1d0bc15c123d026380ece7
 ```
 
-S14 LinkerHand SDK source is currently a user-provided downloaded tree:
+LinkerHand SDK 为用户提供或私有访问来源：
 
 ```bash
-# Requires repository access credentials if cloned directly.
 git clone https://github.com/LV-Robotics-Lab/linkerhand_sdk upstream/linkerhand_sdk
 ```
-
-The local `upstream/linkerhand_sdk/` copy has no recorded git commit because it
-was provided as a downloaded source tree. Review summary:
-`docs/s14_linkerhand_sdk_review.md`.
-
-当前项目实际 ROS2 工作区位于 `~/agx_arm_ws`，并由
-`bash scripts/build_humble_container.sh` 和 Humble 容器内的 `colcon build`
-建立；`upstream/` 是分析与复现缓存，不是运行时必须直接 source 的工作区。
-
-## 快速开始
-
-离线阶段先跑环境检查：
-
-```bash
-bash scripts/check_environment.sh
-```
-
-配置默认变量：
-
-```bash
-source config/nero.env
-```
-
-当前共享电脑不重装、不升级。ROS2 Humble 在 Docker 容器中运行，主机只做 SDK/CAN-only。
-
-准备主机 SDK venv：
-
-```bash
-bash scripts/setup_host_sdk_venv.sh
-```
-
-构建并进入 ROS2 Humble 容器：
-
-```bash
-bash scripts/build_humble_container.sh
-bash scripts/run_humble_container.sh
-```
-
-S11 双臂 RViz 基线已通过。需要复验时使用：
-
-```bash
-NERO_CONTAINER_NAME=nero-humble-s11-rviz \
-  bash scripts/run_humble_container.sh --allow-xhost \
-    bash /workspace/nero/scripts/launch_s11_dual_model_view.sh
-```
-
-如果容器构建后 `~/agx_arm_ws/build`、`install`、`log` 在主机上权限异常：
-
-```bash
-bash scripts/fix_ros_ws_permissions.sh
-```
-
-上游仓库已作为证据缓存 clone 到 `upstream/`。后续正式准备 ROS2 工作区时，在 Humble
-容器中执行：
-
-```bash
-mkdir -p ~/agx_arm_ws/src
-cd ~/agx_arm_ws/src
-git clone -b ros2 --recurse-submodules https://github.com/agilexrobotics/agx_arm_ros.git
-git clone https://github.com/agilexrobotics/pyAgxArm.git
-```
-
-CAN 接入阶段，NERO 使用 CAN2.0B 标准帧、1 Mbps、Motorola/MSB 数据格式。黄色线接 CAN_H，蓝色线接 CAN_L：
-
-```bash
-bash scripts/activate_can.sh can0 1000000
-candump can0
-```
-
-SDK 只读状态检查示例：
-
-```bash
-python3 examples/nero_read_state.py --connect --channel can0 --firmware v112
-```
-
-## 硬安全边界
-
-- 供电使用 DC24V；外部供电电压不得超过 25V，电流能力不小于 10A。
-- 末端 XT30 2+2 接口为 24V、2A MAX，末端 CAN 只适配松灵自有设备。
-- S10 首次低速运动已通过；后续任何新控制路径或更大动作仍需按阶段闸口单独验收。
-- 不在原点/奇异点附近做笛卡尔点位运动；先用低速关节运动离开奇异位形。
-- MIT 控制、固件升级、零点设置、主从联动、碰撞等级修改属于高风险操作，单独审批后执行。
