@@ -9,6 +9,7 @@ __pycache__/
 # Local agent/runtime metadata
 .agents/
 .codex/
+/agent.md
 
 # Reproducible upstream clones. See README.md for required URLs and commits.
 upstream/
