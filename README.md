@@ -121,7 +121,7 @@ NERO_CONTAINER_NAME=nero-dual-arm-hand-demo \
   bash scripts/run_humble_container.sh \
     python3 /workspace/nero/scripts/dual_arm_hand_elbow_curl_demo.py \
       --side both \
-      --left-j1-delta-deg -10 \
+      --left-j1-delta-deg -20 \
       --right-j1-delta-deg -20 \
       --left-j4-delta-deg 15 \
       --right-j4-delta-deg 15 \
