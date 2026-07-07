@@ -28,7 +28,7 @@
   install/
   log/
 
-/home/lv-robotics/workspace/nero/
+/home/lv-robotics/workspace/nero-perception-control/arm-hand-duo/
   README.md
   config/
   docs/

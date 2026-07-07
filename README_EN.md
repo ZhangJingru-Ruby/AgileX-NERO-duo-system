@@ -1,6 +1,6 @@
-# NERO Dual-Arm Dual-Hand Delivery Workspace
+# NERO Arm-Hand Duo Workspace
 
-This repository is the delivery package for the NERO dual 7-DOF arm system with two LinkerHand L6 dexterous hands. It contains the fixed operating workflow, script entry points, device mapping, validation evidence, and archived development records. The default demo is a dual-arm dual-hand elbow-curl/fist motion: both arms curl, both hands make a half fist, then the system returns to a safe posture.
+This repository is the arm-hand control workspace under the top-level `nero-perception-control` workspace. It keeps the fixed operating workflow, script entry points, device mapping, validation evidence, and archived development records for the NERO dual 7-DOF arm system with two LinkerHand L6 dexterous hands. The default demo is a dual-arm dual-hand elbow-curl/fist motion: both arms curl, both hands make a half fist, then the system returns to a safe posture. Camera and external acquisition-device bring-up live in sibling workspaces.
 
 Chinese entry: [README.md](README.md)  
 Full workflow: [PLAN.md](PLAN.md) / [PLAN_EN.md](PLAN_EN.md)

@@ -380,7 +380,7 @@ New Drive document review on 2026-06-30:
 
 - Downloaded and reviewed the newer Linker document set from the supplied
   Google Drive folder.
-- Review record: `docs/upstream/s14_linker_drive_review.md`.
+- Review record: `../data-collection/docs/reviews/linker_drive_20260630_review.md`.
 - The documents confirm LinkerHand L6 as a CAN/RS485 hand with `24 V` power and
   native `0..255` L6 commands.
 - The direct LinkerHand SDK uses right hand CAN ID `0x27` and left hand CAN ID

@@ -1,6 +1,6 @@
 # NERO Current Bring-Up Status
 
-Last updated: 2026-07-02
+Last updated: 2026-07-06
 
 ## Confirmed Configuration
 
@@ -122,18 +122,15 @@ S2 offline environment result:
 
 ## Immediate Next Step
 
-S14 low-risk dual-hand bring-up is complete, and S15 dual-arm/dual-hand
-elbow-curl/fist reproduction is accepted by operator report.
-
-The next concrete gate is closing S15 with a zero-return revalidation using the
-updated default `ros_s15_return_to_initial.py` behavior:
-`docs/phases/s15_return_to_initial_and_elbow_curl_design.md`.
+S15 dual-arm/dual-hand elbow-curl/fist reproduction is accepted by operator
+report. Keep this workspace focused on the accepted arm-hand control stack,
+reproducible demo commands, safety boundaries, and post-S15 revalidation.
 
 Recommended architecture remains unchanged: arms via ROS2 `agx_arm_ros`, hands
 via LinkerHand SDK wrappers. This gate is still a bring-up demo, not a contact
 manipulation primitive. Do not run Cartesian, MoveIt execute, grasping,
-handoff, or close-proximity manipulation until a post-S15 safety gate is written
-and accepted.
+handoff, close-proximity manipulation, or new full-hand gestures until a
+separate safety gate is written and accepted.
 
 ## S2 Discovery Result
 

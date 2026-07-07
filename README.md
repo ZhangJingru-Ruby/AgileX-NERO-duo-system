@@ -1,6 +1,6 @@
-# NERO 双臂双手交付工作区
+# NERO Arm-Hand Duo Workspace
 
-本仓库是 NERO 双七自由度机械臂 + 双 LinkerHand L6 灵巧手的交付工作包，包含固定操作流程、脚本入口、设备映射、验收证据和历史开发档案。当前默认演示是双臂双手 elbow-curl/fist：双臂弯曲，双手半握拳，再回到安全姿态。
+本仓库是 `nero-perception-control` 大工作区下的双臂双手控制子仓库，保留 NERO 双七自由度机械臂 + 双 LinkerHand L6 灵巧手的固定操作流程、脚本入口、设备映射、验收证据和历史开发档案。当前默认演示是双臂双手 elbow-curl/fist：双臂弯曲，双手半握拳，再回到安全姿态。相机和外部采集设备调试放在 sibling workspace 中维护。
 
 English entry: [README_EN.md](README_EN.md)  
 完整流程计划: [PLAN.md](PLAN.md) / [PLAN_EN.md](PLAN_EN.md)

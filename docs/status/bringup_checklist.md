@@ -299,7 +299,7 @@
 - [x] S14.3J Web `6.8.5 末端执行器配置` 已截图/记录：当前配置为 `强脑灵巧手`，不是默认无加载。
 - [x] S14.3J Web `6.3 灵巧手` 已截图/记录：`普通灵巧手`、`revo2`、`位置控制`、enable 无报错。
 - [x] S14.3J Web 小幅单指 `发送` 同步 `candump` 证据已记录：Web 无报错但手未动，样本未见 Revo2 `0x1B*` / `0x1C*` 帧。
-- [x] 2026-06-30 新 Linker Drive 文档包已下载、校验、解压并审阅；记录见 `docs/upstream/s14_linker_drive_review.md`。
+- [x] 2026-06-30 新 Linker Drive 文档包已下载、校验、解压并审阅；记录见 `../data-collection/docs/reviews/linker_drive_20260630_review.md`。
 - [x] 新资料已将下一步修正为 S14.3K：先确认 Linker/LBOT `192.168.10.21` 控制器是否存在，再继续 Revo2/J6 假设。
 - [x] S14.3K Linker/LBOT 只读网络探针已完成：当前主机无 `192.168.10.x` 地址，`ping -c 2 192.168.10.21` 丢包，`curl -I --max-time 3 http://192.168.10.21:8000` 超时。
 - [x] `docs/evidence/pics/灵巧手连接设备/` 照片已分析：设备为 bench DC 电源 + USB-CAN 调试工装，不是 Linker/LBOT `192.168.10.21` 网络控制器。

@@ -6064,14 +6064,12 @@ changes the control-path assumptions.
 
 Actions:
 
-- Downloaded all eight files from the supplied Google Drive folder into
-  `docs/vendor/linker_drive_20260630/raw/`.
+- Downloaded all eight files from the supplied Google Drive folder. The local
+  artifact cache has been moved to
+  `../data-collection/docs/vendor/linker_drive_20260630/raw/`.
 - Validated the raw PDFs/zips and recorded SHA256 values in
-  `docs/upstream/s14_linker_drive_review.md`.
-- Extracted:
-  - `api_lk73_v1.0.4_1.zip`;
-  - `linkerta_v2_1.0.3.zip`;
-  - `Teleop-gloves_1.zip`.
+  `../data-collection/docs/reviews/linker_drive_20260630_review.md`.
+- Extracted the three vendor zip archives for offline review.
 - Generated text from all PDFs with `pdftotext -layout`.
 - Reviewed the L6 product manual, LinkerHand Python SDK, LBOT Python/C SDK,
   Web platform documentation, and control-interface documentation.
@@ -6106,7 +6104,7 @@ Deployment choice:
 
 Artifacts:
 
-- Review: `docs/upstream/s14_linker_drive_review.md`.
+- Review: `../data-collection/docs/reviews/linker_drive_20260630_review.md`.
 - Updated: `docs/phases/s14_end_effector_preinstall_plan.md`.
 - Updated: `docs/status/current_bringup_status.md`.
 - Updated: `docs/status/bringup_checklist.md`.
